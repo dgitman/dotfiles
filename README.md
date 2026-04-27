@@ -22,6 +22,16 @@ To install packages from the Brewfile:
 brew bundle --file brew/Brewfile
 ```
 
+## Automatic sync
+
+Install the hourly auto-sync job:
+
+```sh
+./scripts/install-launchagent.sh
+```
+
+The job commits changes in this repository with `Update dotfiles`, pulls with rebase, and pushes `main` to `origin`. Logs are written under `logs/`, which is intentionally ignored.
+
 ## Layout
 
 ```text
@@ -29,6 +39,7 @@ dotfiles/   Home-directory dotfiles
 git/        Git-related files
 ssh/        SSH client configuration
 brew/       Homebrew bundle
+launchd/    macOS scheduled job
 scripts/    Setup helpers
 ```
 

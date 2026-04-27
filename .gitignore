@@ -1,4 +1,5 @@
 .DS_Store
+logs/
 
 # Shell and editor history
 .*_history

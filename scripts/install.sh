@@ -27,6 +27,12 @@ link_file "$ROOT/config/gh/config.yml" "$HOME/.config/gh/config.yml"
 link_file "$ROOT/config/gcloud/active_config" "$HOME/.config/gcloud/active_config"
 link_file "$ROOT/config/gcloud/configurations/config_default" "$HOME/.config/gcloud/configurations/config_default"
 
+mkdir -p "$HOME/.config/op"
+if [ ! -e "$HOME/.config/op/dotfiles.env" ]; then
+  cp "$ROOT/config/op/env.example" "$HOME/.config/op/dotfiles.env"
+  printf 'created %s from 1Password reference template\n' "$HOME/.config/op/dotfiles.env"
+fi
+
 mkdir -p "$HOME/.config/brewfile"
 link_file "$ROOT/brew/Brewfile" "$HOME/.config/brewfile/Brewfile"
 

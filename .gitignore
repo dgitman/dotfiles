@@ -25,3 +25,6 @@ known_hosts*
 .npm/
 .ssh/*
 !ssh/config
+
+# Local 1Password env files
+config/op/dotfiles.env

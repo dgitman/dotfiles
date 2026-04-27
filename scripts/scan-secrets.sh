@@ -18,7 +18,12 @@ FORBIDDEN_PATHS=(
   'config/gcloud/legacy_credentials/*'
   'config/gcloud/logs/*'
   'config/gcloud/virtenv/*'
+  'config/op/dotfiles.env'
 )
+
+filter_allowed_matches() {
+  grep -v '=[[:space:]]*op://' || true
+}
 
 scan_for_forbidden_paths() {
   local forbidden=0
@@ -40,19 +45,26 @@ scan_for_forbidden_paths() {
 }
 
 scan_content() {
-  rg --hidden --no-ignore --line-number --ignore-case --regexp "$PATTERN" "${EXCLUDES[@]}" .
+  local tmp
+  tmp="$(mktemp)"
+
+  rg --hidden --no-ignore --line-number --ignore-case --regexp "$PATTERN" "${EXCLUDES[@]}" . | filter_allowed_matches >"$tmp" || true
+
+  if [ -s "$tmp" ]; then
+    cat "$tmp"
+    rm -f "$tmp"
+    return 1
+  fi
+
+  rm -f "$tmp"
+  return 0
 }
 
 scan_worktree() {
   local failed=0
 
   scan_for_forbidden_paths || failed=1
-  scan_content || {
-    case "$?" in
-      1) ;;
-      *) failed=1 ;;
-    esac
-  }
+  scan_content || failed=1
 
   return "$failed"
 }
@@ -60,17 +72,23 @@ scan_worktree() {
 scan_history() {
   local found=0
   local commit
-  local tmp="/tmp/dotfiles-secret-scan.$$"
+  local tmp
+  local filtered
+  tmp="$(mktemp)"
+  filtered="$(mktemp)"
 
   while read -r commit; do
     if git grep -I -n -E "$PATTERN" "$commit" -- . ':(exclude)brew/Brewfile' ':(exclude)logs/**' >"$tmp" 2>/dev/null; then
-      printf 'Potential secret in commit %s:\n' "$commit"
-      cat "$tmp"
-      found=1
+      filter_allowed_matches <"$tmp" >"$filtered"
+      if [ -s "$filtered" ]; then
+        printf 'Potential secret in commit %s:\n' "$commit"
+        cat "$filtered"
+        found=1
+      fi
     fi
   done < <(git rev-list --all)
 
-  rm -f "$tmp"
+  rm -f "$tmp" "$filtered"
   return "$found"
 }
 

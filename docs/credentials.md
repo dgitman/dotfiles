@@ -1,6 +1,6 @@
 # Credentials
 
-Keep live credentials out of Git, even when this repository is private. Store secret values in 1Password, then restore authenticated tool state locally.
+Keep live credentials out of Git, even when this repository is private. Store secret values in 1Password, then restore authenticated tool state locally or load them at runtime with `op run`.
 
 ## GitHub CLI
 
@@ -34,3 +34,13 @@ If a service account key is ever needed, store the JSON in 1Password and write i
 ## 1Password CLI
 
 The `op` CLI is installed on this Mac. For scripts that need secrets, prefer 1Password secret references or `op read` at runtime rather than committed secret files.
+
+## Runtime env secrets
+
+Use `config/op/env.example` as the tracked template for 1Password secret references. Keep the real local env file at `~/.config/op/dotfiles.env` and run commands through:
+
+```sh
+/Users/dgitman/Developer/dotfiles/scripts/with-secrets.sh some-command
+```
+
+See `docs/1password.md` for the full flow.

@@ -10,24 +10,67 @@ EXCLUDES=(
   --glob '!logs/**'
   --glob '!brew/Brewfile'
 )
+FORBIDDEN_PATHS=(
+  'config/gh/hosts.yml'
+  'config/gcloud/access_tokens.db'
+  'config/gcloud/credentials.db'
+  'config/gcloud/default_configs.db'
+  'config/gcloud/legacy_credentials/*'
+  'config/gcloud/logs/*'
+  'config/gcloud/virtenv/*'
+)
+
+scan_for_forbidden_paths() {
+  local forbidden=0
+  local path
+  local pattern
+
+  while read -r path; do
+    for pattern in "${FORBIDDEN_PATHS[@]}"; do
+      case "$path" in
+        $pattern)
+          printf 'Forbidden credential-bearing path is tracked: %s\n' "$path" >&2
+          forbidden=1
+          ;;
+      esac
+    done
+  done < <(git ls-files)
+
+  return "$forbidden"
+}
+
+scan_content() {
+  rg --hidden --no-ignore --line-number --ignore-case --regexp "$PATTERN" "${EXCLUDES[@]}" .
+}
 
 scan_worktree() {
-  rg --hidden --no-ignore --line-number --ignore-case --regexp "$PATTERN" "${EXCLUDES[@]}" .
+  local failed=0
+
+  scan_for_forbidden_paths || failed=1
+  scan_content || {
+    case "$?" in
+      1) ;;
+      *) failed=1 ;;
+    esac
+  }
+
+  return "$failed"
 }
 
 scan_history() {
   local found=0
   local commit
+  local tmp="/tmp/dotfiles-secret-scan.$$"
 
   while read -r commit; do
-    if git grep -I -n -E "$PATTERN" "$commit" -- . ':(exclude)brew/Brewfile' ':(exclude)logs/**' >/tmp/dotfiles-secret-scan.$$ 2>/dev/null; then
+    if git grep -I -n -E "$PATTERN" "$commit" -- . ':(exclude)brew/Brewfile' ':(exclude)logs/**' >"$tmp" 2>/dev/null; then
       printf 'Potential secret in commit %s:\n' "$commit"
-      cat /tmp/dotfiles-secret-scan.$$
+      cat "$tmp"
       found=1
     fi
   done < <(git rev-list --all)
 
-  rm -f /tmp/dotfiles-secret-scan.$$
+  rm -f "$tmp"
   return "$found"
 }
 
@@ -42,10 +85,10 @@ case "${1:-}" in
     ;;
   *)
     if scan_worktree; then
+      printf 'Secret scan passed.\n'
+    else
       printf 'Secret scan failed. Review the matches above before committing or pushing.\n' >&2
       exit 1
     fi
-
-    printf 'Secret scan passed.\n'
     ;;
 esac

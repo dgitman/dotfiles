@@ -1,0 +1,18 @@
+# This is Git's per-user configuration file.
+[user]
+	name = David Gitman
+	email = 1743448+dgitman@users.noreply.github.com
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMkE3kHb9jtL75X3N2TMJGrQHbn6MjJxhXJF0I4z8C1d
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[init]
+	defaultBranch = main
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+[commit]
+	gpgsign = true

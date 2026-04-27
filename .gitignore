@@ -1,0 +1,26 @@
+.DS_Store
+
+# Shell and editor history
+.*_history
+.lesshst
+.python_history
+.sqlite_history
+.zcompdump*
+
+# Secrets and credentials
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.mobileprovision
+id_*
+known_hosts*
+
+# Local caches and machine state
+.cache/
+.config/gh/
+.config/op/
+.npm/
+.ssh/*
+!ssh/config

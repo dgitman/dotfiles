@@ -52,8 +52,8 @@ The job commits changes in this repository with `Update dotfiles`, pulls with re
 ## Layout
 
 ```text
-dotfiles/   Home-directory dotfiles
-git/        Git-related files
+dotfiles/   Home-directory shell dotfiles
+git/        Git dotfiles
 ssh/        SSH client configuration
 brew/       Homebrew bundle
 launchd/    macOS scheduled job

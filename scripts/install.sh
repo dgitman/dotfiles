@@ -19,9 +19,9 @@ link_file() {
   printf 'linked %s -> %s\n' "$target" "$source"
 }
 
-link_file "$ROOT/dotfiles/zshrc" "$HOME/.zshrc"
-link_file "$ROOT/dotfiles/zprofile" "$HOME/.zprofile"
-link_file "$ROOT/git/gitconfig" "$HOME/.gitconfig"
+link_file "$ROOT/dotfiles/.zshrc" "$HOME/.zshrc"
+link_file "$ROOT/dotfiles/.zprofile" "$HOME/.zprofile"
+link_file "$ROOT/git/.gitconfig" "$HOME/.gitconfig"
 link_file "$ROOT/ssh/config" "$HOME/.ssh/config"
 
 mkdir -p "$HOME/.config/brewfile"

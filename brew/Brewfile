@@ -1,10 +1,9 @@
-tap "adoptopenjdk/openjdk"
 tap "buo/cask-upgrade"
 tap "homebrew/autoupdate"
 tap "homebrew/bundle"
 tap "homebrew/cask"
 tap "homebrew/core"
-tap "jostasik/tap"
+tap "rcmdnk/file"
 tap "shopify/shopify"
 tap "wpscanteam/tap"
 # Interpreted, interactive, object-oriented programming language
@@ -45,6 +44,8 @@ brew "pv"
 brew "python@3.12"
 # Rsync for cloud storage
 brew "rclone"
+# Manage Brewfile from Homebrew
+brew "rcmdnk/file/brew-file"
 # Command-line interface for https://speedtest.net bandwidth tests
 brew "speedtest-cli"
 # Programmatically correct mistyped console commands

@@ -16,6 +16,8 @@ log() {
   printf '[%s] %s\n' "$(timestamp)" "$*" >>"$LOG_FILE"
 }
 
+"/scripts/scan-secrets.sh" >>"" 2>&1
+
 if ! git remote get-url origin >/dev/null 2>&1; then
   log "skipped: no origin remote configured"
   exit 0

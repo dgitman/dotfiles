@@ -22,6 +22,23 @@ To install packages from the Brewfile:
 brew bundle --file brew/Brewfile
 ```
 
+## Secret checks
+
+Run a local secret scan before making the repository public or pushing changes:
+
+```sh
+./scripts/scan-secrets.sh
+./scripts/scan-secrets.sh --history
+```
+
+Install Git hooks that run the scanner before commits and pushes:
+
+```sh
+./scripts/install-git-hooks.sh
+```
+
+The hourly auto-sync job also runs this scan before it commits or pushes. The scanner blocks common private keys, GitHub tokens, OpenAI keys, AWS keys, Google API keys, Slack tokens, and simple `password`, `token`, `secret`, or `api_key` assignments.
+
 ## Automatic sync
 
 Install the hourly auto-sync job:
@@ -40,6 +57,7 @@ git/        Git-related files
 ssh/        SSH client configuration
 brew/       Homebrew bundle
 launchd/    macOS scheduled job
+hooks/      Local Git hooks
 scripts/    Setup helpers
 ```
 

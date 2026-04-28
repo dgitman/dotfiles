@@ -8,7 +8,7 @@ Personal macOS dotfiles and bootstrap helpers.
 - Git defaults and signing setup
 - 1Password SSH agent config
 - Homebrew bundle for command-line tools, apps, Mac App Store apps, and VS Code extensions
-- VS Code settings and Warp dot-directory placeholder
+- VS Code, Cursor, Claude, and Warp settings
 - A small install script that backs up existing files before linking these dotfiles
 
 ## Install

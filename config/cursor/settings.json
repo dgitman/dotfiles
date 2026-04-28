@@ -1,0 +1,7 @@
+{
+    "parallels-desktop.extension.path": "/Users/dgitman/.parallels-desktop-vscode",
+    "parallels-desktop.brew.path": "/opt/homebrew/bin/brew",
+    "parallels-desktop.git.path": "/opt/homebrew/bin/git",
+    "editor.accessibilitySupport": "on",
+    "parallels-desktop.devops-service.path": "/Users/dgitman/.parallels-desktop-vscode/tools/prldevops"
+}

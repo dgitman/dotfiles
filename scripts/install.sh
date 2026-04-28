@@ -33,6 +33,10 @@ link_file "$ROOT/config/gh/config.yml" "$HOME/.config/gh/config.yml"
 link_file "$ROOT/config/gcloud/active_config" "$HOME/.config/gcloud/active_config"
 link_file "$ROOT/config/gcloud/configurations/config_default" "$HOME/.config/gcloud/configurations/config_default"
 link_file "$ROOT/config/vscode/settings.json" "$HOME/Library/Application Support/Code/User/settings.json"
+link_file "$ROOT/config/cursor/settings.json" "$HOME/Library/Application Support/Cursor/User/settings.json"
+link_file "$ROOT/config/cursor/keybindings.json" "$HOME/Library/Application Support/Cursor/User/keybindings.json"
+link_file "$ROOT/config/claude/settings.json" "$HOME/.claude/settings.json"
+link_file "$ROOT/config/claude/plugins/config.json" "$HOME/.claude/plugins/config.json"
 
 mkdir -p "$HOME/.config/op"
 if [ ! -e "$HOME/.config/op/dotfiles.env" ]; then

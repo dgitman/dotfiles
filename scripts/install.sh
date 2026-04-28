@@ -21,6 +21,7 @@ link_file() {
 
 link_file "$ROOT/dotfiles/.zshrc" "$HOME/.zshrc"
 link_file "$ROOT/dotfiles/.zprofile" "$HOME/.zprofile"
+link_file "$ROOT/dotfiles/.warp" "$HOME/.warp"
 link_file "$ROOT/git/.gitconfig" "$HOME/.gitconfig"
 
 mkdir -p "$HOME/.ssh"

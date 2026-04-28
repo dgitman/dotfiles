@@ -56,7 +56,7 @@ dotfiles/   Home-directory shell dotfiles
 git/        Git dotfiles
 ssh/        SSH client configuration
 brew/       Homebrew bundle
-config/     Safe app configuration and 1Password reference templates
+config/     Safe app configuration, editor settings, and 1Password reference templates
 docs/       Notes for credential restoration and secret handling
 launchd/    macOS scheduled job
 hooks/      Local Git hooks

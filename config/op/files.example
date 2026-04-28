@@ -1,0 +1,8 @@
+# 1Password secret references for restoring local credential-bearing files.
+# Copy this file to ~/.config/op/dotfiles-files.env and replace item names/fields as needed.
+# Do not put raw secret values in this file.
+
+# GH_HOSTS_YML="op://Private/GitHub CLI hosts.yml/notesPlain"
+# CLAUDE_JSON="op://Private/Claude config/notesPlain"
+# CODEX_AUTH_JSON="op://Private/Codex auth.json/notesPlain"
+# GCLOUD_APPLICATION_DEFAULT_CREDENTIALS_JSON="op://Private/Google ADC JSON/notesPlain"

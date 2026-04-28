@@ -19,6 +19,7 @@ FORBIDDEN_PATHS=(
   'config/gcloud/logs/*'
   'config/gcloud/virtenv/*'
   'config/op/dotfiles.env'
+  'config/op/dotfiles-files.env'
 )
 
 filter_allowed_matches() {

@@ -9,6 +9,8 @@ Personal macOS dotfiles and bootstrap helpers.
 - 1Password SSH agent config
 - Homebrew bundle for command-line tools, apps, Mac App Store apps, and VS Code extensions
 - VS Code, Cursor, Claude, and Warp settings
+- Codex and rbenv settings
+- Optional 1Password-backed restore helper for credential-bearing local config files
 - A small install script that backs up existing files before linking these dotfiles
 
 ## Install
@@ -21,6 +23,18 @@ To install packages from the Brewfile:
 
 ```sh
 brew bundle --file brew/Brewfile
+```
+
+To restore local credential-bearing files from 1Password references:
+
+```sh
+./scripts/restore-op-files.sh
+```
+
+To store supported local credential files in 1Password and update the local references:
+
+```sh
+./scripts/store-op-files.sh
 ```
 
 ## Secret checks
@@ -57,7 +71,7 @@ dotfiles/   Home-directory shell dotfiles
 git/        Git dotfiles
 ssh/        SSH client configuration
 brew/       Homebrew bundle
-config/     Safe app configuration, editor settings, and 1Password reference templates
+config/     Safe app configuration, editor settings, runtime settings, and 1Password reference templates
 docs/       Notes for credential restoration and secret handling
 launchd/    macOS scheduled job
 hooks/      Local Git hooks

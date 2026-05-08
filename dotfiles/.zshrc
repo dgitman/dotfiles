@@ -5,8 +5,8 @@ if [ -d "$HOME/bin" ]; then
   esac
 fi
 
-export HOMEBREW_BREWFILE="$HOME/.config/brewfile/Brewfile"
-export HOMEBREW_BUNDLE_FILE="$HOME/.config/brewfile/Brewfile"
+export HOMEBREW_BREWFILE="$HOME/dotfiles/brew/Brewfile"
+export HOMEBREW_BUNDLE_FILE="$HOME/dotfiles/brew/Brewfile"
 export HOMEBREW_BREWFILE_DESCRIBE=1
 export HOMEBREW_BREWFILE_VSCODE=1
 

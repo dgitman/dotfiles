@@ -55,9 +55,6 @@ if [ ! -e "$HOME/.config/op/dotfiles-files.env" ]; then
   printf 'created %s from 1Password file reference template\n' "$HOME/.config/op/dotfiles-files.env"
 fi
 
-mkdir -p "$HOME/.config/brewfile"
-link_file "$ROOT/brew/Brewfile" "$HOME/.config/brewfile/Brewfile"
-
 if [ -d "$BACKUP_DIR" ]; then
   printf 'backups saved in %s\n' "$BACKUP_DIR"
 fi

@@ -16,7 +16,10 @@ log() {
   printf '[%s] %s\n' "$(timestamp)" "$*" >>"$LOG_FILE"
 }
 
-"/scripts/scan-secrets.sh" >>"" 2>&1
+if ! "$ROOT/scripts/scan-secrets.sh" >> "$LOG_FILE" 2>&1; then
+  log "aborting: secret scan failed"
+  exit 1
+fi
 
 if ! git remote get-url origin >/dev/null 2>&1; then
   log "skipped: no origin remote configured"

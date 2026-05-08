@@ -8,11 +8,11 @@
 
   <key>ProgramArguments</key>
   <array>
-    <string>/Users/dgitman/Developer/dotfiles/scripts/auto-sync.sh</string>
+    <string>/Users/dgitman/dotfiles/scripts/auto-sync.sh</string>
   </array>
 
   <key>WorkingDirectory</key>
-  <string>/Users/dgitman/Developer/dotfiles</string>
+  <string>/Users/dgitman/dotfiles</string>
 
   <key>StartInterval</key>
   <integer>3600</integer>
@@ -21,9 +21,9 @@
   <true/>
 
   <key>StandardOutPath</key>
-  <string>/Users/dgitman/Developer/dotfiles/logs/launchd.out.log</string>
+  <string>/Users/dgitman/dotfiles/logs/launchd.out.log</string>
 
   <key>StandardErrorPath</key>
-  <string>/Users/dgitman/Developer/dotfiles/logs/launchd.err.log</string>
+  <string>/Users/dgitman/dotfiles/logs/launchd.err.log</string>
 </dict>
 </plist>

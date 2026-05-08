@@ -1,211 +1,199 @@
-tap "adoptopenjdk/openjdk"
-tap "buo/cask-upgrade"
-tap "homebrew/autoupdate"
-tap "homebrew/cask"
-tap "homebrew/core"
-tap "jostasik/tap"
-tap "rcmdnk/file"
-tap "shopify/shopify"
-tap "wpscanteam/tap"
-# Interpreted, interactive, object-oriented programming language
-brew "python@3.14"
-# Official Amazon AWS command-line interface
-brew "awscli"
-# Emacs dependency management
-brew "cask"
-# Identify or delete duplicate files
-brew "fdupes"
-# Play, record, convert, and stream select audio and video codecs
-brew "ffmpeg"
-# GitHub command-line tool
-brew "gh"
-# Distributed revision control system
-brew "git"
-# Improved top (interactive process viewer)
-brew "htop"
-# Website copier/offline browser
-brew "httrack"
-# Command-line tool to export and inspect local iMessage database
-brew "imessage-exporter"
-# Lightweight and flexible command-line JSON processor
-brew "jq"
-# Mac App Store command-line interface
-brew "mas"
-# Port scanning utility for large networks
-brew "nmap"
-# Pinentry for GPG on Mac
-brew "pinentry-mac"
-# Execute binaries from Python packages in isolated environments
-brew "pipx"
-# Package compiler and linker metadata toolkit
-brew "pkgconf"
-# Monitor data's progress through a pipe
-brew "pv"
-# Install various Ruby versions and implementations
-brew "ruby-build"
-# Ruby version manager
-brew "rbenv"
-# Rsync for cloud storage
-brew "rclone"
-# Programmatically correct mistyped console commands
-brew "thefuck"
-# Executes a program periodically, showing output fullscreen
-brew "watch"
-# Internet file retriever
-brew "wget"
-# Fish-like fast/unobtrusive autosuggestions for zsh
-brew "zsh-autosuggestions"
-# Additional completion definitions for zsh
-brew "zsh-completions"
-# Fish shell like syntax highlighting for zsh
-brew "zsh-syntax-highlighting"
-# Brewfile manager for Homebrew.
-brew "rcmdnk/file/brew-file"
-# A CLI tool to build for the Shopify platform
-brew "shopify/shopify/shopify-cli"
-# Black box WordPress vulnerability scanner
-brew "wpscanteam/tap/wpscan"
-# Password manager that keeps all passwords secure behind one password
-cask "1password"
-# Command-line interface for 1Password
-cask "1password-cli"
-# Application uninstaller
-cask "appcleaner"
-# Menu bar icon organiser
-cask "bartender"
-# OpenAI's official ChatGPT desktop app
-cask "chatgpt"
-# Anthropic's official Claude AI desktop app
-cask "claude"
-# Terminal-based AI coding assistant
-cask "claude-code"
-# Tool to remove unnecessary files and folders from disk
-cask "cleanmymac"
-# OpenAI's coding agent that runs in your terminal
-cask "codex"
-# OpenAI's Codex desktop app for managing coding agents
-cask "codex-app"
-# Slicer for all Creality FDM 3D printers
-cask "creality-slicer"
-# Write, edit, and chat about your code with AI
-cask "cursor"
-# Voice and text chat software
-cask "discord"
-# App to build and share containerised applications and microservices
-cask "docker-desktop"
-# Client for the Dropbox cloud storage service
-cask "dropbox"
-# Eclipse IDE for Java developers
-cask "eclipse-java"
-# Collaborative team software
-cask "figma"
-# Fujitsu ScanSnap Scanner software
-cask "fujitsu-scansnap-home"
-# Set of tools to manage resources and applications hosted on Google Cloud
-cask "gcloud-cli"
-# Desktop client for GitHub repositories
-cask "github"
-# Web browser
-cask "google-chrome"
-# Client for the Google Drive storage service
-cask "google-drive"
-# Native desktop AI assistant from Google
-cask "google-gemini"
-# Grammarly for desktop
-cask "grammarly-desktop"
-# Open-source video transcoder
-cask "handbrake-app"
-# iPhone management application
-cask "imazing"
-# Spot and merge differences in text and image files or folders
-cask "kaleidoscope"
-# Shows the next meeting in the menu bar
-cask "meetingbar"
-# Private rolodex to remember people better
-cask "mesh"
-# Provides updates to various Microsoft products
-cask "microsoft-auto-update"
-# Office suite
-cask "microsoft-office"
-# Meet, chat, call, and collaborate in just one place
-cask "microsoft-teams"
-# Native app email client for Gmail
-cask "mimestream"
-# Tool to control external monitor brightness & volume
-cask "monitorcontrol"
-# App to write, plan, collaborate, and get organised
-cask "notion"
-# Calendar for professionals and teams
-cask "notion-calendar"
-# Personal AI assistant
-cask "openclaw"
-# Collaboration platform for API development
-cask "postman"
-# Client for Proton Mail and Proton Calendar
-cask "proton-mail"
-# Imaging utility to install operating systems to a microSD card
-cask "raspberry-pi-imager"
-# Client for the Progress ShareFile storage service
-cask "sharefile"
-# Instant messaging application focusing on security
-cask "signal"
-# Team communication and collaboration software
-cask "slack"
-# Control your Sonos system
-cask "sonos"
-# Music streaming service
-cask "spotify"
-# System monitor for the menu bar
-cask "stats"
-# Video game digital distribution service
-cask "steam"
-# Remote access and connectivity software focused on security
-cask "teamviewer"
-# Messaging app with a focus on speed and security
-cask "telegram"
-# Open-source BitTorrent client
-cask "transmission"
-# File transfer application
-cask "transmit"
-# 3D printer and slicing GUI
-cask "ultimaker-cura"
-# Calling and messaging application focusing on security
-cask "viber"
-# Open-source code editor
-cask "visual-studio-code"
-# Rust-based terminal
-cask "warp"
-# Native desktop client for WhatsApp
-cask "whatsapp"
-# Network protocol analyzer
-cask "wireshark-app"
-# Voice-to-text dictation with AI-powered auto-editing
-cask "wispr-flow"
-# Video communication and virtual meeting platform
-cask "zoom"
-mas "1Password for Safari", id: 1569813296
-mas "AwardWallet", id: 1473828829
-mas "Awesome Screenshot & Recorder", id: 1531282066
-mas "Clay for Safari", id: 6745995785
-mas "Grammarly for Safari", id: 1462114288
-mas "Kindle", id: 302584613
-mas "Magnet", id: 441258766
-mas "Notion Web Clipper", id: 1559269364
-mas "PayPal Honey", id: 1472777122
-mas "Prime Video", id: 545519333
-mas "Speechify", id: 1624912180
-mas "Wayback Machine", id: 1472432422
-vscode "anthropic.claude-code"
-vscode "charliermarsh.ruff"
-vscode "esbenp.prettier-vscode"
-vscode "github.copilot-chat"
-vscode "github.vscode-github-actions"
-vscode "ms-azuretools.vscode-containers"
-vscode "ms-python.debugpy"
-vscode "ms-python.python"
-vscode "ms-python.vscode-pylance"
-vscode "ms-python.vscode-python-envs"
-vscode "ms-vscode-remote.remote-containers"
-vscode "openai.chatgpt"
-vscode "redhat.vscode-yaml"
-vscode "zainchen.json"
+
+# tap repositories and their packages
+
+tap 'homebrew/core'
+brew 'ada-url' # WHATWG-compliant and fast URL parser written in modern C++
+brew 'autoconf' # Automatic configure script builder
+brew 'awscli' # Official Amazon AWS command-line interface
+brew 'brotli' # Generic-purpose lossless compression algorithm by Google
+brew 'c-ares' # Asynchronous DNS library
+brew 'ca-certificates' # Mozilla CA certificate store
+brew 'cask' # Emacs dependency management
+brew 'coreutils' # GNU File, Shell, and Text utilities
+brew 'dav1d' # AV1 decoder targeted to be small and fast
+brew 'emacs' # GNU Emacs text editor
+brew 'fdupes' # Identify or delete duplicate files
+brew 'ffmpeg' # Play, record, convert, and stream select audio and video codecs
+brew 'fmt' # Open-source formatting library for C++
+brew 'gettext' # GNU internationalization (i18n) and localization (l10n) library
+brew 'gh' # GitHub command-line tool
+brew 'git' # Distributed revision control system
+brew 'gmp' # GNU multiple precision arithmetic library
+brew 'gnutls' # GNU Transport Layer Security (TLS) Library
+brew 'hdrhistogram_c' # C port of the HdrHistogram
+brew 'htop' # Improved top (interactive process viewer)
+brew 'httrack' # Website copier/offline browser
+brew 'icu4c@78' # C/C++ and Java libraries for Unicode and globalization
+brew 'imessage-exporter' # Command-line tool to export and inspect local iMessage database
+brew 'jq' # Lightweight and flexible command-line JSON processor
+brew 'lame' # High quality MPEG Audio Layer III (MP3) encoder
+brew 'libassuan' # Assuan IPC Library
+brew 'libevent' # Asynchronous event library
+brew 'libgpg-error' # Common error values for all GnuPG components
+brew 'libidn2' # International domain name library (IDNA2008, Punycode and TR46)
+brew 'liblinear' # Library for large linear classification
+brew 'libnghttp2' # HTTP/2 C Library
+brew 'libnghttp3' # HTTP/3 library written in C
+brew 'libngtcp2' # IETF QUIC protocol implementation
+brew 'libssh2' # C library implementing the SSH2 protocol
+brew 'libtasn1' # ASN.1 structure parser library
+brew 'libunistring' # C string library for manipulating Unicode strings
+brew 'libuv' # Multi-platform support library with a focus on asynchronous I/O
+brew 'libvmaf' # Perceptual video quality assessment based on multi-method fusion
+brew 'libvpx' # VP8/VP9 video codec
+brew 'libyaml' # YAML Parser
+brew 'llhttp' # Port of http_parser to llparse
+brew 'lua' # Powerful, lightweight programming language
+brew 'lz4' # Extremely Fast Compression algorithm
+brew 'm4' # Macro processing language
+brew 'mas' # Mac App Store command-line interface
+brew 'merve' # C++ lexer for extracting named exports from CommonJS modules
+brew 'mpdecimal' # Library for decimal floating point arithmetic
+brew 'nbytes' # Library of byte handling functions extracted from Node.js core
+brew 'ncurses' # Text-based UI library
+brew 'nettle' # Low-level cryptographic library
+brew 'nmap' # Port scanning utility for large networks
+brew 'node' # Open-source, cross-platform JavaScript runtime environment
+brew 'oniguruma' # Regular expressions library
+brew 'openssl@3' # Cryptography and SSL/TLS Toolkit
+brew 'openssl@4' # Cryptography and SSL/TLS Toolkit
+brew 'opus' # Audio codec
+brew 'p11-kit' # Library to load and enumerate PKCS#11 modules
+brew 'pcre2' # Perl compatible regular expressions library with a new API
+brew 'pinentry-mac' # Pinentry for GPG on Mac
+brew 'pipx' # Execute binaries from Python packages in isolated environments
+brew 'pkgconf' # Package compiler and linker metadata toolkit
+brew 'pv' # Monitor data's progress through a pipe
+brew 'python@3.14' # Interpreted, interactive, object-oriented programming language
+brew 'rbenv' # Ruby version manager
+brew 'rclone' # Rsync for cloud storage
+brew 'readline' # Library for command-line editing
+brew 'ripgrep' # Search tool like grep and The Silver Searcher
+brew 'ruby-build' # Install various Ruby versions and implementations
+brew 'ruby@3.4' # Powerful, clean, object-oriented scripting language
+brew 'sdl2' # Low-level access to audio, keyboard, mouse, joystick, and graphics
+brew 'simdjson' # SIMD-accelerated C++ JSON parser
+brew 'simdutf' # Unicode conversion routines, fast
+brew 'sqlite' # Command-line interface for SQLite
+brew 'svt-av1' # AV1 encoder
+brew 'thefuck' # Programmatically correct mistyped console commands
+brew 'tree-sitter' # Incremental parsing library
+brew 'tree-sitter@0.25' # Incremental parsing library
+brew 'unbound' # Validating, recursive, caching DNS resolver
+brew 'uvwasi' # WASI syscall API built atop libuv
+brew 'watch' # Executes a program periodically, showing output fullscreen
+brew 'wget' # Internet file retriever
+brew 'x264' # H.264/AVC encoder
+brew 'x265' # H.265/HEVC encoder
+brew 'xz' # General-purpose data compression with high compression ratio
+brew 'zsh-autosuggestions' # Fish-like fast/unobtrusive autosuggestions for zsh
+brew 'zsh-completions' # Additional completion definitions for zsh
+brew 'zsh-syntax-highlighting' # Fish shell like syntax highlighting for zsh
+brew 'zstd' # Zstandard is a real-time compression algorithm
+
+tap 'homebrew/cask'
+cask '1password' # Password manager that keeps all passwords secure behind one password
+cask '1password-cli' # Command-line interface for 1Password
+cask 'appcleaner' # Application uninstaller
+cask 'bartender' # Menu bar icon organiser
+cask 'chatgpt' # OpenAI's official ChatGPT desktop app
+cask 'claude' # Anthropic's official Claude AI desktop app
+cask 'claude-code' # Terminal-based AI coding assistant
+cask 'cleanmymac' # Tool to remove unnecessary files and folders from disk
+cask 'codex' # OpenAI's coding agent that runs in your terminal
+cask 'codex-app' # OpenAI's Codex desktop app for managing coding agents
+cask 'creality-slicer' # Slicer for all Creality FDM 3D printers
+cask 'cursor' # Write, edit, and chat about your code with AI
+cask 'discord' # Voice and text chat software
+cask 'docker-desktop' # App to build and share containerised applications and microservices
+cask 'dropbox' # Client for the Dropbox cloud storage service
+cask 'eclipse-java' # Eclipse IDE for Java developers
+cask 'figma' # Collaborative team software
+cask 'fujitsu-scansnap-home' # Fujitsu ScanSnap Scanner software
+cask 'github' # Desktop client for GitHub repositories
+cask 'google-chrome' # Web browser
+cask 'google-drive' # Client for the Google Drive storage service
+cask 'google-gemini' # Native desktop AI assistant from Google
+cask 'grammarly-desktop' # Grammarly for desktop
+cask 'handbrake-app' # Open-source video transcoder
+cask 'imazing' # iPhone management application
+cask 'kaleidoscope' # Spot and merge differences in text and image files or folders
+cask 'meetingbar' # Shows the next meeting in the menu bar
+cask 'mesh' # Private rolodex to remember people better
+cask 'microsoft-auto-update' # Provides updates to various Microsoft products
+cask 'microsoft-office' # Office suite
+cask 'microsoft-teams' # Meet, chat, call, and collaborate in just one place
+cask 'mimestream' # Native app email client for Gmail
+cask 'monitorcontrol' # Tool to control external monitor brightness & volume
+cask 'notion' # App to write, plan, collaborate, and get organised
+cask 'notion-calendar' # Calendar for professionals and teams
+cask 'openclaw' # Personal AI assistant
+cask 'postman' # Collaboration platform for API development
+cask 'proton-mail' # Client for Proton Mail and Proton Calendar
+cask 'raspberry-pi-imager' # Imaging utility to install operating systems to a microSD card
+cask 'sharefile' # Client for the Progress ShareFile storage service
+cask 'signal' # Instant messaging application focusing on security
+cask 'slack' # Team communication and collaboration software
+cask 'sonos' # Control your Sonos system
+cask 'spotify' # Music streaming service
+cask 'stats' # System monitor for the menu bar
+cask 'steam' # Video game digital distribution service
+cask 'teamviewer' # Remote access and connectivity software focused on security
+cask 'telegram' # Messaging app with a focus on speed and security
+cask 'transmission' # Open-source BitTorrent client
+cask 'transmit' # File transfer application
+cask 'ultimaker-cura' # 3D printer and slicing GUI
+cask 'viber' # Calling and messaging application focusing on security
+cask 'visual-studio-code' # Open-source code editor
+cask 'warp' # Rust-based terminal
+cask 'whatsapp' # Native desktop client for WhatsApp
+cask 'wireshark-app' # Network protocol analyzer
+cask 'wispr-flow' # Voice-to-text dictation with AI-powered auto-editing
+cask 'zoom' # Video communication and virtual meeting platform
+
+tap 'homebrew/autoupdate'
+
+tap 'adoptopenjdk/openjdk'
+
+tap 'buo/cask-upgrade'
+
+tap 'jostasik/tap'
+
+tap 'rcmdnk/file'
+brew 'brew-file' # Brewfile manager for Homebrew.
+
+tap 'shopify/shopify'
+brew 'shopify-cli' # A CLI tool to build for the Shopify platform
+
+tap 'wpscanteam/tap'
+brew 'wpscan' # Black box WordPress vulnerability scanner
+
+# App Store applications
+mas '1Password for Safari (8.12.12)', id: 1569813296
+mas 'Amazon Kindle (7.58)', id: 302584613
+mas 'AwardWallet (3.6.15)', id: 1473828829
+mas 'Awesome Screenshot & Recorder (2.3.1)', id: 1531282066
+mas 'Clay for Safari (2026.1)', id: 6745995785
+mas 'Grammarly for Safari (9.96)', id: 1462114288
+mas 'Magnet (3.0.7)', id: 441258766
+mas 'Notion Web Clipper (1.0.3)', id: 1559269364
+mas 'PayPal Honey (19.1.2)', id: 1472777122
+mas 'Prime Video (10.120.1)', id: 545519333
+mas 'Speechify (2.1.13)', id: 1624912180
+mas 'Wayback Machine (3.3)', id: 1472432422
+
+# VSCode extensions
+vscode 'anthropic.claude-code'
+vscode 'charliermarsh.ruff'
+vscode 'esbenp.prettier-vscode'
+vscode 'github.copilot-chat'
+vscode 'github.vscode-github-actions'
+vscode 'ms-azuretools.vscode-containers'
+vscode 'ms-python.debugpy'
+vscode 'ms-python.python'
+vscode 'ms-python.vscode-pylance'
+vscode 'ms-python.vscode-python-envs'
+vscode 'ms-vscode-remote.remote-containers'
+vscode 'openai.chatgpt'
+vscode 'redhat.vscode-yaml'
+vscode 'zainchen.json'

@@ -19,11 +19,25 @@ Personal macOS dotfiles and bootstrap helpers.
 ./scripts/install.sh
 ```
 
-To install packages from the Brewfile:
+To bootstrap Homebrew and install all packages from the Brewfile:
 
 ```sh
-brew bundle --file brew/Brewfile
+brew/install_apps_via_homebrew.py
 ```
+
+To update the Brewfile from the current machine and push it:
+
+```sh
+brew/update.py
+```
+
+To preview packages installed locally but not in the Brewfile:
+
+```sh
+brew/cleanup_preview.py
+```
+
+If `~/bin` is on `PATH`, these are also available as `mac-bootstrap`, `brewfile-update`, and `brewfile-cleanup-preview` after running `~/bin/setup-bin-path.sh`.
 
 To restore local credential-bearing files from 1Password references:
 

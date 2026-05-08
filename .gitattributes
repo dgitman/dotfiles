@@ -1,2 +1,1 @@
-# Homebrew Brewfiles use Ruby syntax, but this repository is dotfiles.
-brew/Brewfile linguist-generated=true
+brew/Brewfile linguist-vendored

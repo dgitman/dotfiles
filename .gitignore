@@ -1,6 +1,11 @@
 .DS_Store
 logs/
 
+# Homebrew
+brew/Brewfile.lock.json
+brew/__pycache__/
+brew/*.pyc
+
 # Shell and editor history
 .*_history
 .lesshst

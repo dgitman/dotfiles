@@ -1,8 +1,9 @@
+tap "adoptopenjdk/openjdk"
 tap "buo/cask-upgrade"
 tap "homebrew/autoupdate"
-tap "homebrew/bundle"
 tap "homebrew/cask"
 tap "homebrew/core"
+tap "jostasik/tap"
 tap "rcmdnk/file"
 tap "shopify/shopify"
 tap "wpscanteam/tap"
@@ -40,14 +41,12 @@ brew "pipx"
 brew "pkgconf"
 # Monitor data's progress through a pipe
 brew "pv"
-# Interpreted, interactive, object-oriented programming language
-brew "python@3.12"
+# Install various Ruby versions and implementations
+brew "ruby-build"
+# Ruby version manager
+brew "rbenv"
 # Rsync for cloud storage
 brew "rclone"
-# Manage Brewfile from Homebrew
-brew "rcmdnk/file/brew-file"
-# Command-line interface for https://speedtest.net bandwidth tests
-brew "speedtest-cli"
 # Programmatically correct mistyped console commands
 brew "thefuck"
 # Executes a program periodically, showing output fullscreen
@@ -60,6 +59,8 @@ brew "zsh-autosuggestions"
 brew "zsh-completions"
 # Fish shell like syntax highlighting for zsh
 brew "zsh-syntax-highlighting"
+# Brewfile manager for Homebrew.
+brew "rcmdnk/file/brew-file"
 # A CLI tool to build for the Shopify platform
 brew "shopify/shopify/shopify-cli"
 # Black box WordPress vulnerability scanner
@@ -74,8 +75,6 @@ cask "appcleaner"
 cask "bartender"
 # OpenAI's official ChatGPT desktop app
 cask "chatgpt"
-# OpenAI's official browser with ChatGPT built in
-cask "chatgpt-atlas"
 # Anthropic's official Claude AI desktop app
 cask "claude"
 # Terminal-based AI coding assistant
@@ -84,6 +83,8 @@ cask "claude-code"
 cask "cleanmymac"
 # OpenAI's coding agent that runs in your terminal
 cask "codex"
+# OpenAI's Codex desktop app for managing coding agents
+cask "codex-app"
 # Slicer for all Creality FDM 3D printers
 cask "creality-slicer"
 # Write, edit, and chat about your code with AI
@@ -118,10 +119,6 @@ cask "handbrake-app"
 cask "imazing"
 # Spot and merge differences in text and image files or folders
 cask "kaleidoscope"
-# Open-source Markdown editor
-cask "macdown"
-# Video format converter (transcoder)
-cask "makemkv"
 # Shows the next meeting in the menu bar
 cask "meetingbar"
 # Private rolodex to remember people better
@@ -140,8 +137,6 @@ cask "monitorcontrol"
 cask "notion"
 # Calendar for professionals and teams
 cask "notion-calendar"
-# Verify system files structure, run miscellaneous maintenance and more
-cask "onyx"
 # Personal AI assistant
 cask "openclaw"
 # Collaboration platform for API development
@@ -150,8 +145,6 @@ cask "postman"
 cask "proton-mail"
 # Imaging utility to install operating systems to a microSD card
 cask "raspberry-pi-imager"
-# Move and resize windows using keyboard shortcuts or snap areas
-cask "rectangle"
 # Client for the Progress ShareFile storage service
 cask "sharefile"
 # Instant messaging application focusing on security
@@ -199,11 +192,12 @@ mas "Kindle", id: 302584613
 mas "Magnet", id: 441258766
 mas "Notion Web Clipper", id: 1559269364
 mas "PayPal Honey", id: 1472777122
-mas "Perplexity", id: 6714467650
 mas "Prime Video", id: 545519333
 mas "Speechify", id: 1624912180
 mas "Wayback Machine", id: 1472432422
+vscode "anthropic.claude-code"
 vscode "charliermarsh.ruff"
+vscode "esbenp.prettier-vscode"
 vscode "github.copilot-chat"
 vscode "github.vscode-github-actions"
 vscode "ms-azuretools.vscode-containers"
@@ -213,4 +207,5 @@ vscode "ms-python.vscode-pylance"
 vscode "ms-python.vscode-python-envs"
 vscode "ms-vscode-remote.remote-containers"
 vscode "openai.chatgpt"
+vscode "redhat.vscode-yaml"
 vscode "zainchen.json"

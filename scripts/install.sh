@@ -22,6 +22,7 @@ link_file() {
 link_file "$ROOT/dotfiles/.zshrc" "$HOME/.zshrc"
 link_file "$ROOT/dotfiles/.zprofile" "$HOME/.zprofile"
 link_file "$ROOT/git/.gitconfig" "$HOME/.gitconfig"
+link_file "$ROOT/git/.gitignore_global" "$HOME/.gitignore_global"
 
 mkdir -p "$HOME/.ssh"
 chmod 700 "$HOME/.ssh"

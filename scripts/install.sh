@@ -21,7 +21,6 @@ link_file() {
 
 link_file "$ROOT/dotfiles/.zshrc" "$HOME/.zshrc"
 link_file "$ROOT/dotfiles/.zprofile" "$HOME/.zprofile"
-link_file "$ROOT/dotfiles/.warp" "$HOME/.warp"
 link_file "$ROOT/git/.gitconfig" "$HOME/.gitconfig"
 
 mkdir -p "$HOME/.ssh"
@@ -32,6 +31,11 @@ chmod 600 "$ROOT/ssh/config"
 link_file "$ROOT/config/gh/config.yml" "$HOME/.config/gh/config.yml"
 link_file "$ROOT/config/gcloud/active_config" "$HOME/.config/gcloud/active_config"
 link_file "$ROOT/config/gcloud/configurations/config_default" "$HOME/.config/gcloud/configurations/config_default"
+mkdir -p "$HOME/.warp"
+link_file "$ROOT/dotfiles/.warp/settings.toml" "$HOME/.warp/settings.toml"
+
+mkdir -p "$HOME/.vscode"
+link_file "$ROOT/config/vscode/argv.json" "$HOME/.vscode/argv.json"
 link_file "$ROOT/config/vscode/settings.json" "$HOME/Library/Application Support/Code/User/settings.json"
 link_file "$ROOT/config/cursor/settings.json" "$HOME/Library/Application Support/Cursor/User/settings.json"
 link_file "$ROOT/config/cursor/keybindings.json" "$HOME/Library/Application Support/Cursor/User/keybindings.json"

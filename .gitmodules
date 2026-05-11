@@ -1,0 +1,15 @@
+[submodule "bin/beautify_bash"]
+	path = bin/beautify_bash
+	url = https://github.com/ewiger/beautify_bash.git
+[submodule "bin/colinmollenhour_modman"]
+	path = bin/colinmollenhour_modman
+	url = https://github.com/colinmollenhour/modman
+[submodule "bin/duplicity-backup"]
+	path = bin/duplicity-backup
+	url = https://github.com/zertrin/duplicity-backup.git
+[submodule "bin/mysqltuner-perl"]
+	path = bin/mysqltuner-perl
+	url = https://github.com/major/mysqltuner-perl
+[submodule "bin/s3tools-s3cmd"]
+	path = bin/s3tools-s3cmd
+	url = https://github.com/s3tools/s3cmd.git

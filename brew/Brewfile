@@ -9,9 +9,12 @@ brew 'brotli' # Generic-purpose lossless compression algorithm by Google
 brew 'c-ares' # Asynchronous DNS library
 brew 'ca-certificates' # Mozilla CA certificate store
 brew 'cask' # Emacs dependency management
+brew 'certifi' # Mozilla CA bundle for Python
 brew 'coreutils' # GNU File, Shell, and Text utilities
 brew 'dav1d' # AV1 decoder targeted to be small and fast
+brew 'deno' # Secure runtime for JavaScript and TypeScript
 brew 'emacs' # GNU Emacs text editor
+brew 'exiftool' # Perl lib for reading and writing EXIF metadata
 brew 'fdupes' # Identify or delete duplicate files
 brew 'ffmpeg' # Play, record, convert, and stream select audio and video codecs
 brew 'fmt' # Open-source formatting library for C++
@@ -25,6 +28,7 @@ brew 'htop' # Improved top (interactive process viewer)
 brew 'httrack' # Website copier/offline browser
 brew 'icu4c@78' # C/C++ and Java libraries for Unicode and globalization
 brew 'imessage-exporter' # Command-line tool to export and inspect local iMessage database
+brew 'jpeg-turbo' # JPEG image codec that aids compression and decompression
 brew 'jq' # Lightweight and flexible command-line JSON processor
 brew 'lame' # High quality MPEG Audio Layer III (MP3) encoder
 brew 'libassuan' # Assuan IPC Library
@@ -37,11 +41,13 @@ brew 'libnghttp3' # HTTP/3 library written in C
 brew 'libngtcp2' # IETF QUIC protocol implementation
 brew 'libssh2' # C library implementing the SSH2 protocol
 brew 'libtasn1' # ASN.1 structure parser library
+brew 'libtiff' # TIFF library and utilities
 brew 'libunistring' # C string library for manipulating Unicode strings
 brew 'libuv' # Multi-platform support library with a focus on asynchronous I/O
 brew 'libvmaf' # Perceptual video quality assessment based on multi-method fusion
 brew 'libvpx' # VP8/VP9 video codec
 brew 'libyaml' # YAML Parser
+brew 'little-cms2' # Color management engine supporting ICC profiles
 brew 'llhttp' # Port of http_parser to llparse
 brew 'lua' # Powerful, lightweight programming language
 brew 'lz4' # Extremely Fast Compression algorithm
@@ -64,6 +70,7 @@ brew 'pinentry-mac' # Pinentry for GPG on Mac
 brew 'pipx' # Execute binaries from Python packages in isolated environments
 brew 'pkgconf' # Package compiler and linker metadata toolkit
 brew 'pv' # Monitor data's progress through a pipe
+brew 'python@3.13' # Interpreted, interactive, object-oriented programming language
 brew 'python@3.14' # Interpreted, interactive, object-oriented programming language
 brew 'rbenv' # Ruby version manager
 brew 'rclone' # Rsync for cloud storage
@@ -86,6 +93,7 @@ brew 'wget' # Internet file retriever
 brew 'x264' # H.264/AVC encoder
 brew 'x265' # H.265/HEVC encoder
 brew 'xz' # General-purpose data compression with high compression ratio
+brew 'yt-dlp' # Feature-rich command-line audio/video downloader
 brew 'zsh-autosuggestions' # Fish-like fast/unobtrusive autosuggestions for zsh
 brew 'zsh-completions' # Additional completion definitions for zsh
 brew 'zsh-syntax-highlighting' # Fish shell like syntax highlighting for zsh
@@ -102,6 +110,7 @@ cask 'claude-code' # Terminal-based AI coding assistant
 cask 'cleanmymac' # Tool to remove unnecessary files and folders from disk
 cask 'codex' # OpenAI's coding agent that runs in your terminal
 cask 'codex-app' # OpenAI's Codex desktop app for managing coding agents
+cask 'copilot-cli' # Brings the power of Copilot coding agent directly to your terminal
 cask 'creality-slicer' # Slicer for all Creality FDM 3D printers
 cask 'cursor' # Write, edit, and chat about your code with AI
 cask 'discord' # Voice and text chat software
@@ -110,6 +119,7 @@ cask 'dropbox' # Client for the Dropbox cloud storage service
 cask 'eclipse-java' # Eclipse IDE for Java developers
 cask 'figma' # Collaborative team software
 cask 'fujitsu-scansnap-home' # Fujitsu ScanSnap Scanner software
+cask 'gcloud-cli' # Set of tools to manage resources and applications hosted on Google Cloud
 cask 'github' # Desktop client for GitHub repositories
 cask 'google-chrome' # Web browser
 cask 'google-drive' # Client for the Google Drive storage service
@@ -186,7 +196,6 @@ mas 'Wayback Machine (3.3)', id: 1472432422
 vscode 'anthropic.claude-code'
 vscode 'charliermarsh.ruff'
 vscode 'esbenp.prettier-vscode'
-vscode 'github.copilot-chat'
 vscode 'github.vscode-github-actions'
 vscode 'ms-azuretools.vscode-containers'
 vscode 'ms-python.debugpy'

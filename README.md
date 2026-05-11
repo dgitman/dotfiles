@@ -37,7 +37,7 @@ To preview packages installed locally but not in the Brewfile:
 brew/cleanup_preview.py
 ```
 
-If `~/bin` is on `PATH`, these are also available as `mac-bootstrap`, `brewfile-update`, and `brewfile-cleanup-preview` after running `~/bin/setup-bin-path.sh`.
+If `~/.local/bin` is on `PATH`, these are also available as `mac-bootstrap`, `brewfile-update`, and `brewfile-cleanup-preview` after initializing submodules and running `~/dotfiles/bin/setup-bin-path.sh`.
 
 To restore local credential-bearing files from 1Password references:
 

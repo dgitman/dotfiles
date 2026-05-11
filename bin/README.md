@@ -40,7 +40,7 @@ source ~/.zshrc
 | `setup-bin-path.sh` | Add `~/.local/bin` to your shell `PATH`. |
 | `speed-test.sh <user@host[:port]> [size_kb]` | Test SSH upload/download throughput with `scp`. |
 | `tuning-primer.sh` | MySQL performance tuning primer script (legacy, read-only analysis). |
-| `update-pingdom-iptables.py [-n]` | Update a `PINGDOM` iptables chain from Pingdom probe IPs. |
+| `update-pingdom-iptables.sh [-n]` | Update a `PINGDOM` iptables chain from Pingdom probe IPs. |
 | `xtrabackup-s3-backup.sh` | Run Percona XtraBackup and upload the result to Amazon S3. |
 
 ## Notes

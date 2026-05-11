@@ -1,3 +1,5 @@
 bash
 httpcompression
 subl
+__pycache__/
+.DS_Store

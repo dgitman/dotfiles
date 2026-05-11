@@ -1,16 +1,26 @@
 # -*- coding: utf-8 -*-
 
+## --------------------------------------------------------------------
 ## Amazon S3 manager
-## Author: Michal Ludvig <michal@logix.cz>
-##         http://www.logix.cz/michal
-## License: GPL Version 2
-## Copyright: TGRMN Software and contributors
+##
+## Authors   : Michal Ludvig <michal@logix.cz> (https://www.logix.cz/michal)
+##             Florent Viard <florent@sodria.com> (https://www.sodria.com)
+## Copyright : TGRMN Software, Sodria SAS and contributors
+## License   : GPL Version 2
+## Website   : https://s3tools.org
+## --------------------------------------------------------------------
+
+from __future__ import absolute_import, print_function
 
 import os
 import re
 import sys
-from Utils import unicodise, deunicodise, check_bucket_name_dns_support
-import Config
+from .Utils import unicodise, deunicodise, check_bucket_name_dns_support
+from . import Config
+
+
+PY3 = (sys.version_info >= (3, 0))
+
 
 class S3Uri(object):
     type = None
@@ -36,13 +46,16 @@ class S3Uri(object):
         raise ValueError("%s: not a recognized URI" % string)
 
     def __str__(self):
-        return self.uri()
+        if PY3:
+            return self.uri()
+        else:
+            return deunicodise(self.uri())
 
     def __unicode__(self):
         return self.uri()
 
     def __repr__(self):
-        return "<%s: %s>" % (self.__class__.__name__, self.__unicode__())
+        return repr("<%s: %s>" % (self.__class__.__name__, self.__unicode__()))
 
     def public_url(self):
         raise ValueError("This S3 URI does not have Anonymous URL representation")
@@ -52,7 +65,7 @@ class S3Uri(object):
 
 class S3UriS3(S3Uri):
     type = "s3"
-    _re = re.compile("^s3://([^/]*)/?(.*)", re.IGNORECASE | re.UNICODE)
+    _re = re.compile("^s3:///*([^/]*)/?(.*)", re.IGNORECASE | re.UNICODE)
     def __init__(self, string):
         match = self._re.match(string)
         if not match:
@@ -80,10 +93,13 @@ class S3UriS3(S3Uri):
         return check_bucket_name_dns_support(Config.Config().host_bucket, self._bucket)
 
     def public_url(self):
+        public_url_protocol = "http"
+        if Config.Config().public_url_use_https:
+            public_url_protocol = "https"
         if self.is_dns_compatible():
-            return "http://%s.%s/%s" % (self._bucket, Config.Config().host_base, self._object)
+            return "%s://%s.%s/%s" % (public_url_protocol, self._bucket, Config.Config().host_base, self._object)
         else:
-            return "http://%s/%s/%s" % (Config.Config().host_base, self._bucket, self._object)
+            return "%s://%s/%s/%s" % (public_url_protocol, Config.Config().host_base, self._bucket, self._object)
 
     def host_name(self):
         if self.is_dns_compatible():
@@ -97,30 +113,41 @@ class S3UriS3(S3Uri):
 
     @staticmethod
     def httpurl_to_s3uri(http_url):
-        m=re.match("(https?://)?([^/]+)/?(.*)", http_url, re.IGNORECASE | re.UNICODE)
+        m = re.match("(https?://)?([^/]+)/?(.*)", http_url, re.IGNORECASE | re.UNICODE)
         hostname, object = m.groups()[1:]
         hostname = hostname.lower()
-        if hostname == "s3.amazonaws.com":
+
+        # Worst case scenario, we would like to be able to match something like
+        # my.website.com.s3-fips.dualstack.us-west-1.amazonaws.com.cn
+        m = re.match(r"(.*\.)?s3(?:\-[^\.]*)?(?:\.dualstack)?(?:\.[^\.]*)?\.amazonaws\.com(?:\.cn)?$",
+                     hostname, re.IGNORECASE | re.UNICODE)
+        if not m:
+            raise ValueError("Unable to parse URL: %s" % http_url)
+
+        bucket = m.groups()[0]
+        if not bucket:
             ## old-style url: http://s3.amazonaws.com/bucket/object
-            if object.count("/") == 0:
+            if "/" not in object:
                 ## no object given
                 bucket = object
                 object = ""
             else:
                 ## bucket/object
                 bucket, object = object.split("/", 1)
-        elif hostname.endswith(".s3.amazonaws.com"):
-            ## new-style url: http://bucket.s3.amazonaws.com/object
-            bucket = hostname[:-(len(".s3.amazonaws.com"))]
         else:
-            raise ValueError("Unable to parse URL: %s" % http_url)
-        return S3Uri(u"s3://%(bucket)s/%(object)s" % {
-            'bucket' : bucket,
-            'object' : object })
+            ## new-style url: http://bucket.s3.amazonaws.com/object
+            bucket = bucket.rstrip('.')
+
+        return S3Uri(
+            u"s3://%(bucket)s/%(object)s" % {
+                'bucket' : bucket,
+                'object' : object
+            }
+        )
 
 class S3UriS3FS(S3Uri):
     type = "s3fs"
-    _re = re.compile("^s3fs://([^/]*)/?(.*)", re.IGNORECASE | re.UNICODE)
+    _re = re.compile("^s3fs:///*([^/]*)/?(.*)", re.IGNORECASE | re.UNICODE)
     def __init__(self, string):
         match = self._re.match(string)
         if not match:
@@ -136,29 +163,35 @@ class S3UriS3FS(S3Uri):
         return "/".join(self._path)
 
     def uri(self):
-        return "/".join([u"s3fs:/", self._fsname, self.path()])
+        return u"/".join([u"s3fs:/", self._fsname, self.path()])
 
 class S3UriFile(S3Uri):
     type = "file"
-    _re = re.compile("^(\w+://)?(.*)", re.UNICODE)
+    _re = re.compile(r"^(\w+://)?(.*)", re.UNICODE)
     def __init__(self, string):
         match = self._re.match(string)
         groups = match.groups()
         if groups[0] not in (None, "file://"):
             raise ValueError("%s: not a file:// URI" % string)
-        self._path = groups[1].split("/")
+        if groups[0] is None:
+            self._path = groups[1].split(os.sep)
+        else:
+            self._path = groups[1].split("/")
 
     def path(self):
-        return "/".join(self._path)
+        return os.sep.join(self._path)
 
     def uri(self):
-        return "/".join(["file:/", self.path()])
+        return u"/".join([u"file:/"]+self._path)
 
     def isdir(self):
         return os.path.isdir(deunicodise(self.path()))
 
     def dirname(self):
         return unicodise(os.path.dirname(deunicodise(self.path())))
+
+    def basename(self):
+        return unicodise(os.path.basename(deunicodise(self.path())))
 
 class S3UriCloudFront(S3Uri):
     type = "cf"
@@ -178,46 +211,46 @@ class S3UriCloudFront(S3Uri):
         return self._request_id
 
     def uri(self):
-        uri = "cf://" + self.dist_id()
+        uri = u"cf://" + self.dist_id()
         if self.request_id():
-            uri += "/" + self.request_id()
+            uri += u"/" + self.request_id()
         return uri
 
 if __name__ == "__main__":
     uri = S3Uri("s3://bucket/object")
-    print "type()  =", type(uri)
-    print "uri     =", uri
-    print "uri.type=", uri.type
-    print "bucket  =", uri.bucket()
-    print "object  =", uri.object()
-    print
+    print("type()  =", type(uri))
+    print("uri     =", uri)
+    print("uri.type=", uri.type)
+    print("bucket  =", uri.bucket())
+    print("object  =", uri.object())
+    print()
 
     uri = S3Uri("s3://bucket")
-    print "type()  =", type(uri)
-    print "uri     =", uri
-    print "uri.type=", uri.type
-    print "bucket  =", uri.bucket()
-    print
+    print("type()  =", type(uri))
+    print("uri     =", uri)
+    print("uri.type=", uri.type)
+    print("bucket  =", uri.bucket())
+    print()
 
     uri = S3Uri("s3fs://filesystem1/path/to/remote/file.txt")
-    print "type()  =", type(uri)
-    print "uri     =", uri
-    print "uri.type=", uri.type
-    print "path    =", uri.path()
-    print
+    print("type()  =", type(uri))
+    print("uri     =", uri)
+    print("uri.type=", uri.type)
+    print("path    =", uri.path())
+    print()
 
     uri = S3Uri("/path/to/local/file.txt")
-    print "type()  =", type(uri)
-    print "uri     =", uri
-    print "uri.type=", uri.type
-    print "path    =", uri.path()
-    print
+    print("type()  =", type(uri))
+    print("uri     =", uri)
+    print("uri.type=", uri.type)
+    print("path    =", uri.path())
+    print()
 
     uri = S3Uri("cf://1234567890ABCD/")
-    print "type()  =", type(uri)
-    print "uri     =", uri
-    print "uri.type=", uri.type
-    print "dist_id =", uri.dist_id()
-    print
+    print("type()  =", type(uri))
+    print("uri     =", uri)
+    print("uri.type=", uri.type)
+    print("dist_id =", uri.dist_id())
+    print()
 
 # vim:et:ts=4:sts=4:ai

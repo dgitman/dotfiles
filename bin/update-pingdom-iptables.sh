@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 #
 # Whitelist Pingdom probe-servers in iptables.
 #
@@ -28,10 +29,14 @@ FEED_URL=https://my.pingdom.com/probes/feed
 
 
 # Dry-run?
-[ "$1" = "-n" ] && IPTABLES="echo $IPTABLES"
+[ "${1:-}" = "-n" ] && IPTABLES="echo $IPTABLES"
 
-IPS=$(curl -s $FEED_URL |grep '<pingdom:ip>' |sed 's/[^0-9\.]//g')
+feed=$(curl -fsS "$FEED_URL")
+IPS=$(echo "$feed" | grep '<pingdom:ip>' | sed 's/[^0-9\.]//g' || true)
 if [ "$IPS" != "" ]; then
-  $IPTABLES -F $CHAIN
-  echo $IPS |xargs -n1 $IPTABLES -A $CHAIN -p tcp --dport $PORT -j ACCEPT -s
+  $IPTABLES -F "$CHAIN"
+  echo "$IPS" | xargs -n1 $IPTABLES -A "$CHAIN" -p tcp --dport "$PORT" -j ACCEPT -s
+else
+  echo "No Pingdom probe IPs found; leaving firewall unchanged." >&2
+  exit 1
 fi

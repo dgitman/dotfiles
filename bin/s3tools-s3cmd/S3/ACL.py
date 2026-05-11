@@ -1,17 +1,27 @@
 # -*- coding: utf-8 -*-
 
+## --------------------------------------------------------------------
 ## Amazon S3 - Access Control List representation
-## Author: Michal Ludvig <michal@logix.cz>
-##         http://www.logix.cz/michal
-## License: GPL Version 2
-## Copyright: TGRMN Software and contributors
+##
+## Authors   : Michal Ludvig <michal@logix.cz> (https://www.logix.cz/michal)
+##             Florent Viard <florent@sodria.com> (https://www.sodria.com)
+## Copyright : TGRMN Software, Sodria SAS and contributors
+## License   : GPL Version 2
+## Website   : https://s3tools.org
+## --------------------------------------------------------------------
 
-from Utils import getTreeFromXml
+from __future__ import absolute_import, print_function
+
+import sys
+from .BaseUtils import getTreeFromXml, encode_to_s3, decode_from_s3
+from .Utils import deunicodise
 
 try:
     import xml.etree.ElementTree as ET
 except ImportError:
     import elementtree.ElementTree as ET
+
+PY3 = (sys.version_info >= (3, 0))
 
 class Grantee(object):
     ALL_USERS_URI = "http://acs.amazonaws.com/groups/global/AllUsers"
@@ -21,21 +31,24 @@ class Grantee(object):
         self.xsi_type = None
         self.tag = None
         self.name = None
-        self.display_name = None
+        self.display_name = ''
         self.permission = None
 
     def __repr__(self):
-        return 'Grantee("%(tag)s", "%(name)s", "%(permission)s")' % {
+        return repr('Grantee("%(tag)s", "%(name)s", "%(permission)s")' % {
             "tag" : self.tag,
             "name" : self.name,
             "permission" : self.permission
-        }
+        })
 
     def isAllUsers(self):
         return self.tag == "URI" and self.name == Grantee.ALL_USERS_URI
 
     def isAnonRead(self):
         return self.isAllUsers() and (self.permission == "READ" or self.permission == "FULL_CONTROL")
+
+    def isAnonWrite(self):
+        return self.isAllUsers() and (self.permission == "WRITE" or self.permission == "FULL_CONTROL")
 
     def getElement(self):
         el = ET.Element("Grant")
@@ -69,7 +82,7 @@ class GranteeLogDelivery(Grantee):
         self.permission = permission
 
 class ACL(object):
-    EMPTY_ACL = "<AccessControlPolicy><Owner><ID></ID></Owner><AccessControlList></AccessControlList></AccessControlPolicy>"
+    EMPTY_ACL = b"<AccessControlPolicy><Owner><ID></ID></Owner><AccessControlList></AccessControlList></AccessControlPolicy>"
 
     def __init__(self, xml = None):
         if not xml:
@@ -79,7 +92,7 @@ class ACL(object):
         self.owner_id = ""
         self.owner_nick = ""
 
-        tree = getTreeFromXml(xml)
+        tree = getTreeFromXml(encode_to_s3(xml))
         self.parseOwner(tree)
         self.parseGrants(tree)
 
@@ -122,12 +135,21 @@ class ACL(object):
                 return True
         return False
 
+    def isAnonWrite(self):
+        for grantee in self.grantees:
+            if grantee.isAnonWrite():
+                return True
+        return False
+
     def grantAnonRead(self):
         if not self.isAnonRead():
             self.appendGrantee(GranteeAnonRead())
 
     def revokeAnonRead(self):
         self.grantees = [g for g in self.grantees if not g.isAnonRead()]
+
+    def revokeAnonWrite(self):
+        self.grantees = [g for g in self.grantees if not g.isAnonWrite()]
 
     def appendGrantee(self, grantee):
         self.grantees.append(grantee)
@@ -143,7 +165,7 @@ class ACL(object):
                 elif grantee.permission.upper() == permission:
                     return True
 
-        return False;
+        return False
 
     def grant(self, name, permission):
         if self.hasGrant(name, permission):
@@ -181,13 +203,12 @@ class ACL(object):
         permission = permission.upper()
 
         if "ALL" == permission:
-            self.grantees = [g for g in self.grantees if not (g.name.lower() == name or g.display_name.lower() == name)]
+            self.grantees = [g for g in self.grantees if not (g.name.lower() == name or (g.display_name is not None and g.display_name.lower() == name))]
         else:
-            self.grantees = [g for g in self.grantees if not ((g.display_name.lower() == name and g.permission.upper() == permission)\
-				 or (g.name.lower() == name and g.permission.upper() ==  permission))]
+            self.grantees = [g for g in self.grantees if not (((g.display_name is not None and g.display_name.lower() == name) or g.name.lower() == name)
+                and g.permission.upper() == permission)]
 
-
-    def __str__(self):
+    def get_printable_tree(self):
         tree = getTreeFromXml(ACL.EMPTY_ACL)
         tree.attrib['xmlns'] = "http://s3.amazonaws.com/doc/2006-03-01/"
         owner = tree.find(".//Owner//ID")
@@ -195,10 +216,21 @@ class ACL(object):
         acl = tree.find(".//AccessControlList")
         for grantee in self.grantees:
             acl.append(grantee.getElement())
-        return ET.tostring(tree)
+        return tree
+
+    def __unicode__(self):
+        return decode_from_s3(ET.tostring(self.get_printable_tree()))
+
+    def __str__(self):
+        if PY3:
+            # Return unicode
+            return ET.tostring(self.get_printable_tree(), encoding="unicode")
+        else:
+            # Return bytes
+            return ET.tostring(self.get_printable_tree())
 
 if __name__ == "__main__":
-    xml = """<?xml version="1.0" encoding="UTF-8"?>
+    xml = b"""<?xml version="1.0" encoding="UTF-8"?>
 <AccessControlPolicy xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
 <Owner>
     <ID>12345678901234567890</ID>
@@ -222,11 +254,11 @@ if __name__ == "__main__":
 </AccessControlPolicy>
     """
     acl = ACL(xml)
-    print "Grants:", acl.getGrantList()
+    print("Grants:", acl.getGrantList())
     acl.revokeAnonRead()
-    print "Grants:", acl.getGrantList()
+    print("Grants:", acl.getGrantList())
     acl.grantAnonRead()
-    print "Grants:", acl.getGrantList()
-    print acl
+    print("Grants:", acl.getGrantList())
+    print(acl)
 
 # vim:et:ts=4:sts=4:ai

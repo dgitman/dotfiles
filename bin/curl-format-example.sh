@@ -1,8 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 # ------------------------------------------------------------------
 #                  curl Format Example
-#        This make curl display information on stdout after a completed transfer
+#        Make curl display transfer information after a completed request.
 # ------------------------------------------------------------------
 
-curl -w "@curl-format.txt" -o /dev/null -s "http://wordpress.com/"
+script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+url=${1:-https://wordpress.com/}
 
+curl -w "@$script_dir/curl-format.txt" -o /dev/null -sS "$url"

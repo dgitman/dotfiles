@@ -1,5 +1,5 @@
-VERSION := 1.5.0
 SHELL  := /bin/bash
+VERSION := $(shell /usr/bin/env python2 -c 'from S3 import PkgInfo;print PkgInfo.version')
 SPEC   := s3cmd.spec
 COMMIT := $(shell git rev-parse HEAD)
 SHORTCOMMIT := $(shell git rev-parse --short=8 HEAD)
@@ -21,7 +21,7 @@ $(SPEC): $(SPEC).in
 
 # fixme: python setup.py sdist also generates a PKG-INFO file which we don't have using straight git archive
 git-tarball:
-	git archive --format tar --prefix s3cmd-$(COMMIT)/ HEAD S3/ s3cmd NEWS README.md INSTALL setup.cfg s3cmd.1 setup.py| gzip -c > $(TARBALL)
+	git archive --format tar --prefix s3cmd-$(COMMIT)/ HEAD S3/ s3cmd NEWS README.md LICENSE INSTALL.md setup.cfg s3cmd.1 setup.py| gzip -c > $(TARBALL)
 
 # Use older digest algorithms for local rpmbuilds, as EPEL5 and
 # earlier releases need this.  When building using mock for a

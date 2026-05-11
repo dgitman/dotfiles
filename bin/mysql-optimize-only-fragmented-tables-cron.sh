@@ -1,16 +1,14 @@
-#!/bin/sh                                                                                                                                                          
-mysql -NBe "SHOW DATABASES;" | grep -v 'lost+found' \
-    | while read database ; do
+#!/usr/bin/env bash
+set -euo pipefail
 
-    #skip system-db                                       
-    if [ "$database" = "mysql" ] ; then
-        continue
-    fi
-    mysql -NBe "SHOW TABLE STATUS;" $database \
-        | while read name engine version rowformat rows avgrowlength \   
-            datalength maxdatalength indexlength datafree autoincrement \
-            createtime updatetime checktime collation checksum \
-            createoptions comment ; do
+mysql -NBe "SHOW DATABASES;" | grep -Ev '^(lost\+found|information_schema|performance_schema|mysql|sys)$' \
+    | while IFS= read -r database ; do
+
+    mysql -NBe "SHOW TABLE STATUS;" "$database" \
+        | while read -r name _engine _version _rowformat _rows _avgrowlength \
+            _datalength _maxdatalength _indexlength datafree _autoincrement \
+            _createtime _updatetime _checktime _collation _checksum \
+            _createoptions _comment ; do
 
         #skip views                                
         if [ "$datafree" = "NULL" ] ; then

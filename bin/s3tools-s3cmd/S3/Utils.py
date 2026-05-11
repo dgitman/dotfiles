@@ -1,200 +1,69 @@
 # -*- coding: utf-8 -*-
 
+## --------------------------------------------------------------------
 ## Amazon S3 manager
-## Author: Michal Ludvig <michal@logix.cz>
-##         http://www.logix.cz/michal
-## License: GPL Version 2
-## Copyright: TGRMN Software and contributors
+##
+## Authors   : Michal Ludvig <michal@logix.cz> (https://www.logix.cz/michal)
+##             Florent Viard <florent@sodria.com> (https://www.sodria.com)
+## Copyright : TGRMN Software, Sodria SAS and contributors
+## License   : GPL Version 2
+## Website   : https://s3tools.org
+## --------------------------------------------------------------------
+
+from __future__ import absolute_import, division
 
 import os
-import sys
 import time
 import re
-import string
+import string as string_mod
 import random
 import errno
-from calendar import timegm
-from logging import debug, warning, error
-from ExitCodes import EX_OSFILE
-try:
-    import dateutil.parser
-except ImportError:
-    sys.stderr.write(u"""
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-ImportError trying to import dateutil.parser.
-Please install the python dateutil module:
-$ sudo apt-get install python-dateutil
-  or
-$ sudo yum install python-dateutil
-  or
-$ pip install python-dateutil
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-""")
-    sys.stderr.flush()
-    sys.exit(EX_OSFILE)
+from logging import debug
 
-import Config
-import Exceptions
-
-# hashlib backported to python 2.4 / 2.5 is not compatible with hmac!
-if sys.version_info[0] == 2 and sys.version_info[1] < 6:
-    from md5 import md5
-else:
-    from hashlib import md5
 
 try:
-    import xml.etree.ElementTree as ET
-except ImportError:
-    # xml.etree.ElementTree was only added in python 2.5
-    import elementtree.ElementTree as ET
+    unicode
+except NameError:
+    # python 3 support
+    # In python 3, unicode -> str, and str -> bytes
+    unicode = str
+
+
+import S3.Config
+import S3.Exceptions
+
+from S3.BaseUtils import (base_urlencode_string, base_replace_nonprintables,
+                          base_unicodise, base_deunicodise, md5)
+
 
 __all__ = []
-def parseNodes(nodes):
-    ## WARNING: Ignores text nodes from mixed xml/text.
-    ## For instance <tag1>some text<tag2>other text</tag2></tag1>
-    ## will be ignore "some text" node
-    retval = []
-    for node in nodes:
-        retval_item = {}
-        for child in node.getchildren():
-            name = decode_from_s3(child.tag)
-            if child.getchildren():
-                retval_item[name] = parseNodes([child])
-            else:
-                found_text = node.findtext(".//%s" % child.tag)
-                retval_item[name] = decode_from_s3(found_text) if found_text is not None else None
-        retval.append(retval_item)
-    return retval
-__all__.append("parseNodes")
 
-def stripNameSpace(xml):
-    """
-    removeNameSpace(xml) -- remove top-level AWS namespace
-    """
-    r = re.compile('^(<?[^>]+?>\s*)(<\w+) xmlns=[\'"](http://[^\'"]+)[\'"](.*)', re.MULTILINE)
-    if r.match(xml):
-        xmlns = r.match(xml).groups()[2]
-        xml = r.sub("\\1\\2\\4", xml)
-    else:
-        xmlns = None
-    return xml, xmlns
-__all__.append("stripNameSpace")
 
-def getTreeFromXml(xml):
-    xml, xmlns = stripNameSpace(xml)
-    try:
-        tree = ET.fromstring(xml)
-        if xmlns:
-            tree.attrib['xmlns'] = xmlns
-        return tree
-    except Exception, e:
-        error("Error parsing xml: %s", e)
-        error(xml)
-        raise
-
-__all__.append("getTreeFromXml")
-
-def getListFromXml(xml, node):
-    tree = getTreeFromXml(xml)
-    nodes = tree.findall('.//%s' % (node))
-    return parseNodes(nodes)
-__all__.append("getListFromXml")
-
-def getDictFromTree(tree):
-    ret_dict = {}
-    for child in tree.getchildren():
-        if child.getchildren():
-            ## Complex-type child. Recurse
-            content = getDictFromTree(child)
-        else:
-            content = decode_from_s3(child.text) if child.text is not None else None
-        child_tag = decode_from_s3(child.tag)
-        if ret_dict.has_key(child_tag):
-            if not type(ret_dict[child_tag]) == list:
-                ret_dict[child_tag] = [ret_dict[child_tag]]
-            ret_dict[child_tag].append(content or "")
-        else:
-            ret_dict[child_tag] = content or ""
-    return ret_dict
-__all__.append("getDictFromTree")
-
-def getTextFromXml(xml, xpath):
-    tree = getTreeFromXml(xml)
-    if tree.tag.endswith(xpath):
-        return decode_from_s3(tree.text) if tree.text is not None else None
-    else:
-        result = tree.findtext(xpath)
-        return decode_from_s3(result) if result is not None else None
-__all__.append("getTextFromXml")
-
-def getRootTagName(xml):
-    tree = getTreeFromXml(xml)
-    return decode_from_s3(tree.tag) if tree.tag is not None else None
-__all__.append("getRootTagName")
-
-def xmlTextNode(tag_name, text):
-    el = ET.Element(tag_name)
-    el.text = decode_from_s3(text)
-    return el
-__all__.append("xmlTextNode")
-
-def appendXmlTextNode(tag_name, text, parent):
-    """
-    Creates a new <tag_name> Node and sets
-    its content to 'text'. Then appends the
-    created Node to 'parent' element if given.
-    Returns the newly created Node.
-    """
-    el = xmlTextNode(tag_name, text)
-    parent.append(el)
-    return el
-__all__.append("appendXmlTextNode")
-
-def dateS3toPython(date):
-    # Reset milliseconds to 000
-    date = re.compile('\.[0-9]*(?:[Z\\-\\+]*?)').sub(".000", date)
-    return dateutil.parser.parse(date, fuzzy=True)
-__all__.append("dateS3toPython")
-
-def dateS3toUnix(date):
-    ## NOTE: This is timezone-aware and return the timestamp regarding GMT
-    return timegm(dateS3toPython(date).utctimetuple())
-__all__.append("dateS3toUnix")
-
-def dateRFC822toPython(date):
-    return dateutil.parser.parse(date, fuzzy=True)
-__all__.append("dateRFC822toPython")
-
-def dateRFC822toUnix(date):
-    return timegm(dateRFC822toPython(date).utctimetuple())
-__all__.append("dateRFC822toUnix")
-
-def formatSize(size, human_readable = False, floating_point = False):
+def formatSize(size, human_readable=False, floating_point=False):
     size = floating_point and float(size) or int(size)
     if human_readable:
-        coeffs = ['k', 'M', 'G', 'T']
+        coeffs = ['K', 'M', 'G', 'T']
         coeff = ""
         while size > 2048:
             size /= 1024
             coeff = coeffs.pop(0)
-        return (size, coeff)
+        return (floating_point and float(size) or int(size), coeff)
     else:
         return (size, "")
 __all__.append("formatSize")
 
-def formatDateTime(s3timestamp):
-    date_obj = dateutil.parser.parse(s3timestamp, fuzzy=True)
-    return date_obj.strftime("%Y-%m-%d %H:%M")
-__all__.append("formatDateTime")
 
-def convertTupleListToDict(list):
+def convertHeaderTupleListToDict(list):
+    """
+    Header keys are always in lowercase in python2 but not in python3.
+    """
     retval = {}
     for tuple in list:
-        retval[tuple[0]] = tuple[1]
+        retval[tuple[0].lower()] = tuple[1]
     return retval
-__all__.append("convertTupleListToDict")
+__all__.append("convertHeaderTupleListToDict")
 
-_rnd_chars = string.ascii_letters+string.digits
+_rnd_chars = string_mod.ascii_letters + string_mod.digits
 _rnd_chars_len = len(_rnd_chars)
 def rndstr(len):
     retval = ""
@@ -204,15 +73,16 @@ def rndstr(len):
     return retval
 __all__.append("rndstr")
 
+
 def mktmpsomething(prefix, randchars, createfunc):
-    old_umask = os.umask(0077)
+    old_umask = os.umask(0o077)
     tries = 5
     while tries > 0:
         dirname = prefix + rndstr(randchars)
         try:
             createfunc(dirname)
             break
-        except OSError, e:
+        except OSError as e:
             if e.errno != errno.EEXIST:
                 os.umask(old_umask)
                 raise
@@ -222,27 +92,17 @@ def mktmpsomething(prefix, randchars, createfunc):
     return dirname
 __all__.append("mktmpsomething")
 
+
 def mktmpdir(prefix = os.getenv('TMP','/tmp') + "/tmpdir-", randchars = 10):
     return mktmpsomething(prefix, randchars, os.mkdir)
 __all__.append("mktmpdir")
+
 
 def mktmpfile(prefix = os.getenv('TMP','/tmp') + "/tmpfile-", randchars = 20):
     createfunc = lambda filename : os.close(os.open(deunicodise(filename), os.O_CREAT | os.O_EXCL))
     return mktmpsomething(prefix, randchars, createfunc)
 __all__.append("mktmpfile")
 
-def hash_file_md5(filename):
-    h = md5()
-    f = open(deunicodise(filename), "rb")
-    while True:
-        # Hash 32kB chunks
-        data = f.read(32*1024)
-        if not data:
-            break
-        h.update(data)
-    f.close()
-    return h.hexdigest()
-__all__.append("hash_file_md5")
 
 def mkdir_with_parents(dir_name):
     """
@@ -262,51 +122,46 @@ def mkdir_with_parents(dir_name):
         try:
             debug("mkdir(%s)" % cur_dir)
             os.mkdir(deunicodise(cur_dir))
-        except (OSError, IOError), e:
-            warning("%s: can not make directory: %s" % (cur_dir, e.strerror))
+        except (OSError, IOError) as e:
+            debug("Can not make directory '%s' (Reason: %s)" % (cur_dir, e.strerror))
             return False
-        except Exception, e:
-            warning("%s: %s" % (cur_dir, e))
+        except Exception as e:
+            debug("Can not make directory '%s' (Reason: %s)" % (cur_dir, e))
             return False
     return True
 __all__.append("mkdir_with_parents")
 
-def unicodise(string, encoding = None, errors = "replace"):
-    """
-    Convert 'string' to Unicode or raise an exception.
-    """
-
+def unicodise(string, encoding=None, errors='replace', silent=False):
     if not encoding:
-        encoding = Config.Config().encoding
-
-    if type(string) == unicode:
-        return string
-    debug("Unicodising %r using %s" % (string, encoding))
-    try:
-        return unicode(string, encoding, errors)
-    except UnicodeDecodeError:
-        raise UnicodeDecodeError("Conversion to unicode failed: %r" % string)
+        encoding = S3.Config.Config().encoding
+    return base_unicodise(string, encoding, errors, silent)
 __all__.append("unicodise")
 
-def deunicodise(string, encoding = None, errors = "replace"):
-    """
-    Convert unicode 'string' to <type str>, by default replacing
-    all invalid characters with '?' or raise an exception.
-    """
 
+def unicodise_s(string, encoding=None, errors='replace'):
+    """
+    Alias to silent version of unicodise
+    """
+    return unicodise(string, encoding, errors, True)
+__all__.append("unicodise_s")
+
+
+def deunicodise(string, encoding=None, errors='replace', silent=False):
     if not encoding:
-        encoding = Config.Config().encoding
-
-    if type(string) != unicode:
-        return str(string)
-    debug("DeUnicodising %r using %s" % (string, encoding))
-    try:
-        return string.encode(encoding, errors)
-    except UnicodeEncodeError:
-        raise UnicodeEncodeError("Conversion from unicode failed: %r" % string)
+        encoding = S3.Config.Config().encoding
+    return base_deunicodise(string, encoding, errors, silent)
 __all__.append("deunicodise")
 
-def unicodise_safe(string, encoding = None):
+
+def deunicodise_s(string, encoding=None, errors='replace'):
+    """
+    Alias to silent version of deunicodise
+    """
+    return deunicodise(string, encoding, errors, True)
+__all__.append("deunicodise_s")
+
+
+def unicodise_safe(string, encoding=None):
     """
     Convert 'string' to Unicode according to current encoding
     and replace all invalid characters with '?'
@@ -315,34 +170,14 @@ def unicodise_safe(string, encoding = None):
     return unicodise(deunicodise(string, encoding), encoding).replace(u'\ufffd', '?')
 __all__.append("unicodise_safe")
 
-def decode_from_s3(string, errors = "replace"):
-    """
-    Convert S3 UTF-8 'string' to Unicode or raise an exception.
-    """
-    if type(string) == unicode:
-        return string
-    # Be quiet by default
-    #debug("Decoding string from S3: %r" % string)
-    try:
-        return unicode(string, "UTF-8", errors)
-    except UnicodeDecodeError:
-        raise UnicodeDecodeError("Conversion to unicode failed: %r" % string)
-__all__.append("decode_from_s3")
 
-def encode_to_s3(string, errors = "replace"):
-    """
-    Convert Unicode to S3 UTF-8 'string', by default replacing
-    all invalid characters with '?' or raise an exception.
-    """
-    if type(string) != unicode:
-        return str(string)
-    # Be quiet by default
-    #debug("Encoding string to S3: %r" % string)
-    try:
-        return string.encode("UTF-8", errors)
-    except UnicodeEncodeError:
-        raise UnicodeEncodeError("Conversion from unicode failed: %r" % string)
-__all__.append("encode_to_s3")
+## Low level methods
+def urlencode_string(string, urlencoding_mode=None, unicode_output=False):
+    if urlencoding_mode is None:
+        urlencoding_mode = S3.Config.Config().urlencoding_mode
+    return base_urlencode_string(string, urlencoding_mode, unicode_output)
+__all__.append("urlencode_string")
+
 
 def replace_nonprintables(string):
     """
@@ -351,22 +186,10 @@ def replace_nonprintables(string):
     Replaces all non-printable characters 'ch' in 'string'
     where ord(ch) <= 26 with ^@, ^A, ... ^Z
     """
-    new_string = ""
-    modified = 0
-    for c in string:
-        o = ord(c)
-        if (o <= 31):
-            new_string += "^" + chr(ord('@') + o)
-            modified += 1
-        elif (o == 127):
-            new_string += "^?"
-            modified += 1
-        else:
-            new_string += c
-    if modified and Config.Config().urlencoding_mode != "fixbucket":
-        warning("%d non-printable characters replaced in: %s" % (modified, new_string))
-    return new_string
+    warning_message = (S3.Config.Config().urlencoding_mode != "fixbucket")
+    return base_replace_nonprintables(string, warning_message)
 __all__.append("replace_nonprintables")
+
 
 def time_to_epoch(t):
     """Convert time specified in a variety of forms into UNIX epoch time.
@@ -384,7 +207,7 @@ def time_to_epoch(t):
     elif hasattr(t, 'strftime'):
         # Looks like the object supports standard srftime()
         return int(t.strftime('%s'))
-    elif isinstance(t, str) or isinstance(t, unicode):
+    elif isinstance(t, str) or isinstance(t, unicode) or isinstance(t, bytes):
         # See if it's a string representation of an epoch
         try:
             # Support relative times (eg. "+60")
@@ -395,47 +218,48 @@ def time_to_epoch(t):
             # Try to parse it as a timestamp string
             try:
                 return time.strptime(t)
-            except ValueError, ex:
+            except ValueError as ex:
                 # Will fall through
                 debug("Failed to parse date with strptime: %s", ex)
                 pass
-    raise Exceptions.ParameterError('Unable to convert %r to an epoch time. Pass an epoch time. Try `date -d \'now + 1 year\' +%%s` (shell) or time.mktime (Python).' % t)
+    raise S3.Exceptions.ParameterError('Unable to convert %r to an epoch time. Pass an epoch time. Try `date -d \'now + 1 year\' +%%s` (shell) or time.mktime (Python).' % t)
 
 
-def check_bucket_name(bucket, dns_strict = True):
+def check_bucket_name(bucket, dns_strict=True):
     if dns_strict:
-        invalid = re.search("([^a-z0-9\.-])", bucket, re.UNICODE)
+        invalid = re.search(r"([^a-z0-9\.-])", bucket, re.UNICODE)
         if invalid:
-            raise Exceptions.ParameterError("Bucket name '%s' contains disallowed character '%s'. The only supported ones are: lowercase us-ascii letters (a-z), digits (0-9), dot (.) and hyphen (-)." % (bucket, invalid.groups()[0]))
+            raise S3.Exceptions.ParameterError("Bucket name '%s' contains disallowed character '%s'. The only supported ones are: lowercase us-ascii letters (a-z), digits (0-9), dot (.) and hyphen (-)." % (bucket, invalid.groups()[0]))
     else:
-        invalid = re.search("([^A-Za-z0-9\._-])", bucket, re.UNICODE)
+        invalid = re.search(r"([^A-Za-z0-9\._-])", bucket, re.UNICODE)
         if invalid:
-            raise Exceptions.ParameterError("Bucket name '%s' contains disallowed character '%s'. The only supported ones are: us-ascii letters (a-z, A-Z), digits (0-9), dot (.), hyphen (-) and underscore (_)." % (bucket, invalid.groups()[0]))
+            raise S3.Exceptions.ParameterError("Bucket name '%s' contains disallowed character '%s'. The only supported ones are: us-ascii letters (a-z, A-Z), digits (0-9), dot (.), hyphen (-) and underscore (_)." % (bucket, invalid.groups()[0]))
 
     if len(bucket) < 3:
-        raise Exceptions.ParameterError("Bucket name '%s' is too short (min 3 characters)" % bucket)
+        raise S3.Exceptions.ParameterError("Bucket name '%s' is too short (min 3 characters)" % bucket)
     if len(bucket) > 255:
-        raise Exceptions.ParameterError("Bucket name '%s' is too long (max 255 characters)" % bucket)
+        raise S3.Exceptions.ParameterError("Bucket name '%s' is too long (max 255 characters)" % bucket)
     if dns_strict:
         if len(bucket) > 63:
-            raise Exceptions.ParameterError("Bucket name '%s' is too long (max 63 characters)" % bucket)
-        if re.search("-\.", bucket, re.UNICODE):
-            raise Exceptions.ParameterError("Bucket name '%s' must not contain sequence '-.' for DNS compatibility" % bucket)
-        if re.search("\.\.", bucket, re.UNICODE):
-            raise Exceptions.ParameterError("Bucket name '%s' must not contain sequence '..' for DNS compatibility" % bucket)
-        if not re.search("^[0-9a-z]", bucket, re.UNICODE):
-            raise Exceptions.ParameterError("Bucket name '%s' must start with a letter or a digit" % bucket)
-        if not re.search("[0-9a-z]$", bucket, re.UNICODE):
-            raise Exceptions.ParameterError("Bucket name '%s' must end with a letter or a digit" % bucket)
+            raise S3.Exceptions.ParameterError("Bucket name '%s' is too long (max 63 characters)" % bucket)
+        if re.search(r"-\.", bucket, re.UNICODE):
+            raise S3.Exceptions.ParameterError("Bucket name '%s' must not contain sequence '-.' for DNS compatibility" % bucket)
+        if re.search(r"\.\.", bucket, re.UNICODE):
+            raise S3.Exceptions.ParameterError("Bucket name '%s' must not contain sequence '..' for DNS compatibility" % bucket)
+        if not re.search(r"^[0-9a-z]", bucket, re.UNICODE):
+            raise S3.Exceptions.ParameterError("Bucket name '%s' must start with a letter or a digit" % bucket)
+        if not re.search(r"[0-9a-z]$", bucket, re.UNICODE):
+            raise S3.Exceptions.ParameterError("Bucket name '%s' must end with a letter or a digit" % bucket)
     return True
 __all__.append("check_bucket_name")
 
 def check_bucket_name_dns_conformity(bucket):
     try:
         return check_bucket_name(bucket, dns_strict = True)
-    except Exceptions.ParameterError:
+    except S3.Exceptions.ParameterError:
         return False
 __all__.append("check_bucket_name_dns_conformity")
+
 
 def check_bucket_name_dns_support(bucket_host, bucket_name):
     """
@@ -445,11 +269,9 @@ def check_bucket_name_dns_support(bucket_host, bucket_name):
     if "%(bucket)s" not in bucket_host:
         return False
 
-    try:
-        return check_bucket_name(bucket_name, dns_strict = True)
-    except Exceptions.ParameterError:
-        return False
+    return check_bucket_name_dns_conformity(bucket_name)
 __all__.append("check_bucket_name_dns_support")
+
 
 def getBucketFromHostname(hostname):
     """
@@ -460,62 +282,46 @@ def getBucketFromHostname(hostname):
 
     Returns bucket name and a boolean success flag.
     """
+    if "%(bucket)s" not in S3.Config.Config().host_bucket:
+        return (hostname, False)
 
     # Create RE pattern from Config.host_bucket
-    pattern = Config.Config().host_bucket % { 'bucket' : '(?P<bucket>.*)' }
+    pattern = S3.Config.Config().host_bucket.lower() % { 'bucket' : '(?P<bucket>.*)' }
     m = re.match(pattern, hostname, re.UNICODE)
     if not m:
         return (hostname, False)
-    return m.groups()[0], True
+    return m.group(1), True
 __all__.append("getBucketFromHostname")
 
+
 def getHostnameFromBucket(bucket):
-    return Config.Config().host_bucket % { 'bucket' : bucket }
+    return S3.Config.Config().host_bucket.lower() % { 'bucket' : bucket }
 __all__.append("getHostnameFromBucket")
-
-
-def calculateChecksum(buffer, mfile, offset, chunk_size, send_chunk):
-    md5_hash = md5()
-    size_left = chunk_size
-    if buffer == '':
-        mfile.seek(offset)
-        while size_left > 0:
-            data = mfile.read(min(send_chunk, size_left))
-            md5_hash.update(data)
-            size_left -= len(data)
-    else:
-        md5_hash.update(buffer)
-
-    return md5_hash.hexdigest()
-
-
-__all__.append("calculateChecksum")
 
 
 # Deal with the fact that pwd and grp modules don't exist for Windows
 try:
     import pwd
     def getpwuid_username(uid):
-        """returns a username from the password databse for the given uid"""
-        return pwd.getpwuid(uid).pw_name
+        """returns a username from the password database for the given uid"""
+        return unicodise_s(pwd.getpwuid(uid).pw_name)
 except ImportError:
     import getpass
     def getpwuid_username(uid):
-        return getpass.getuser()
+        return unicodise_s(getpass.getuser())
 __all__.append("getpwuid_username")
 
 try:
     import grp
     def getgrgid_grpname(gid):
-        """returns a groupname from the group databse for the given gid"""
-        return  grp.getgrgid(gid).gr_name
+        """returns a groupname from the group database for the given gid"""
+        return unicodise_s(grp.getgrgid(gid).gr_name)
 except ImportError:
     def getgrgid_grpname(gid):
-        return "nobody"
+        return u"nobody"
 
 __all__.append("getgrgid_grpname")
 
 
 
 # vim:et:ts=4:sts=4:ai
-

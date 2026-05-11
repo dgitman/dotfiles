@@ -40,3 +40,19 @@ fi
 
 #
 alias d="cd ~/Developer"
+
+# Add ~/.local/bin to PATH
+if [ -d "/Users/dgitman/.local/bin" ]; then
+  case ":$PATH:" in
+    *":/Users/dgitman/.local/bin:"*) ;;
+    *) export PATH="/Users/dgitman/.local/bin:$PATH" ;;
+  esac
+fi
+
+# Add ~/dotfiles/brew to PATH
+if [ -d "/Users/dgitman/dotfiles/brew" ]; then
+  case ":$PATH:" in
+    *":/Users/dgitman/dotfiles/brew:"*) ;;
+    *) export PATH="/Users/dgitman/dotfiles/brew:$PATH" ;;
+  esac
+fi

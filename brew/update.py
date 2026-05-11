@@ -9,6 +9,11 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 BREWFILE_PATH = SCRIPT_DIR / "Brewfile"
 # Brewfile may be a symlink; resolve to the actual file for git operations
 BREWFILE_REAL = BREWFILE_PATH.resolve()
+SKIP_VSCODE_EXTENSIONS = {
+    # VS Code now ships Copilot Chat as a built-in extension. Homebrew Bundle
+    # tries to install the older Marketplace package, then `check` never passes.
+    "github.copilot-chat",
+}
 GIT_DIR = next(
     p for p in [BREWFILE_REAL.parent, *BREWFILE_REAL.parents]
     if (p / ".git").exists()
@@ -28,8 +33,18 @@ def has_staged_changes() -> bool:
     return result.returncode != 0
 
 
+def remove_unsupported_vscode_extensions() -> None:
+    lines = BREWFILE_REAL.read_text().splitlines()
+    filtered = [
+        line for line in lines
+        if not any(line.strip() == f"vscode '{extension}'" for extension in SKIP_VSCODE_EXTENSIONS)
+    ]
+    BREWFILE_REAL.write_text("\n".join(filtered) + "\n")
+
+
 def main() -> None:
     run("brew", "bundle", "dump", "--describe", "--file", str(BREWFILE_REAL), "-f", cwd=SCRIPT_DIR)
+    remove_unsupported_vscode_extensions()
     run("git", "add", str(BREWFILE_REAL.relative_to(GIT_DIR)), cwd=GIT_DIR)
 
     if not has_staged_changes():

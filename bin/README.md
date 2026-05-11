@@ -2,20 +2,6 @@
 
 Personal scripts and command-line helpers.
 
-## Setup
-
-Run this once so scripts in `~/.local/bin` and `~/dotfiles/brew` are available from any new terminal:
-
-```sh
-~/dotfiles/bin/setup-bin-path.sh
-```
-
-After it runs, restart your terminal or reload your shell:
-
-```sh
-source ~/.zprofile
-```
-
 ## Commands
 
 | Command | Purpose |
@@ -37,7 +23,6 @@ source ~/.zprofile
 | `mysqltuner.pl` | Analyze a MySQL server and suggest performance tuning (via submodule). |
 | `rename-db.sh <server> <database> <new_database>` | Rename a MySQL database by moving all tables to a new schema. |
 | `s3cmd` | S3 command-line tool (via submodule). |
-| `setup-bin-path.sh` | Add `~/.local/bin` to your shell `PATH`. |
 | `speed-test.sh <user@host[:port]> [size_kb]` | Test SSH upload/download throughput with `scp`. |
 | `tuning-primer.sh` | MySQL performance tuning primer script (legacy, read-only analysis). |
 | `update-pingdom-iptables.sh [-n]` | Update a `PINGDOM` iptables chain from Pingdom probe IPs. |

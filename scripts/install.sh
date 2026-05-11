@@ -24,6 +24,12 @@ link_file "$ROOT/dotfiles/.zprofile" "$HOME/.zprofile"
 link_file "$ROOT/git/.gitconfig" "$HOME/.gitconfig"
 link_file "$ROOT/git/.gitignore_global" "$HOME/.gitignore_global"
 
+# Ensure ~/.local/bin is first on PATH (login shells via ~/.zprofile).
+if ! grep -Fqx 'export PATH="$HOME/.local/bin:$PATH"' "$HOME/.zprofile" 2>/dev/null; then
+  printf '\n# Prefer XDG-style personal bin\nexport PATH=\"$HOME/.local/bin:$PATH\"\n' >>"$HOME/.zprofile"
+  printf 'updated %s to include ~/.local/bin on PATH\n' "$HOME/.zprofile"
+fi
+
 mkdir -p "$HOME/.ssh"
 chmod 700 "$HOME/.ssh"
 link_file "$ROOT/ssh/config" "$HOME/.ssh/config"

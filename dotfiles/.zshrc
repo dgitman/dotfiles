@@ -1,10 +1,3 @@
-if [ -d "$HOME/bin" ]; then
-  case ":$PATH:" in
-    *":$HOME/bin:"*) ;;
-    *) export PATH="$HOME/bin:$PATH" ;;
-  esac
-fi
-
 export HOMEBREW_BREWFILE="$HOME/dotfiles/brew/Brewfile"
 export HOMEBREW_BUNDLE_FILE="$HOME/dotfiles/brew/Brewfile"
 export HOMEBREW_BREWFILE_DESCRIBE=1
@@ -34,25 +27,8 @@ if type brew &>/dev/null; then
   fi
 fi
 
-if command -v rbenv >/dev/null 2>&1; then
-  eval "$(rbenv init - zsh)"
-fi
 
 #
 alias d="cd ~/Developer"
 
-# Add ~/.local/bin to PATH
-if [ -d "/Users/dgitman/.local/bin" ]; then
-  case ":$PATH:" in
-    *":/Users/dgitman/.local/bin:"*) ;;
-    *) export PATH="/Users/dgitman/.local/bin:$PATH" ;;
-  esac
-fi
 
-# Add ~/dotfiles/brew to PATH
-if [ -d "/Users/dgitman/dotfiles/brew" ]; then
-  case ":$PATH:" in
-    *":/Users/dgitman/dotfiles/brew:"*) ;;
-    *) export PATH="/Users/dgitman/dotfiles/brew:$PATH" ;;
-  esac
-fi

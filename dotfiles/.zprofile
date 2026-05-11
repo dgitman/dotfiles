@@ -9,9 +9,6 @@ fi
 # Prefer XDG-style personal bin
 export PATH="$HOME/.local/bin:$PATH"
 
-# Add ~/dotfiles/bin to PATH
-export PATH="$HOME/dotfiles/bin:$PATH"
-
 # Add $HOME/bin to PATH (legacy, if present)
 if [ -d "$HOME/bin" ]; then
   case ":$PATH:" in

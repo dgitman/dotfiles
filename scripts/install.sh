@@ -24,54 +24,32 @@ link_file "$ROOT/dotfiles/.zprofile" "$HOME/.zprofile"
 link_file "$ROOT/git/.gitconfig" "$HOME/.gitconfig"
 link_file "$ROOT/git/.gitignore_global" "$HOME/.gitignore_global"
 
-# Ensure ~/.local/bin is first on PATH and include ~/dotfiles/bin (login shells via ~/.zprofile).
+# Ensure ~/.local/bin is first on PATH (login shells via ~/.zprofile).
 if ! grep -Fqx 'export PATH="$HOME/.local/bin:$PATH"' "$HOME/.zprofile" 2>/dev/null; then
   printf '\n# Prefer XDG-style personal bin\nexport PATH=\"$HOME/.local/bin:$PATH\"\n' >>"$HOME/.zprofile"
   printf 'updated %s to include ~/.local/bin on PATH\n' "$HOME/.zprofile"
 fi
 
-# Ensure ~/dotfiles/bin is on PATH.
-if ! grep -Fqx 'export PATH="$HOME/dotfiles/bin:$PATH"' "$HOME/.zprofile" 2>/dev/null; then
-  printf '\n# Add ~/dotfiles/bin to PATH\nexport PATH=\"$HOME/dotfiles/bin:$PATH\"\n' >>"$HOME/.zprofile"
-  printf 'updated %s to include ~/dotfiles/bin on PATH\n' "$HOME/.zprofile"
-fi
 
-mkdir -p "$HOME/.ssh"
-chmod 700 "$HOME/.ssh"
-link_file "$ROOT/ssh/config" "$HOME/.ssh/config"
-chmod 600 "$ROOT/ssh/config"
+ensure_local_bin_symlink() {
+  local target="$HOME/dotfiles/bin"
+  local link="$HOME/.local/bin"
 
-link_file "$ROOT/config/gh/config.yml" "$HOME/.config/gh/config.yml"
-link_file "$ROOT/config/gcloud/active_config" "$HOME/.config/gcloud/active_config"
-link_file "$ROOT/config/gcloud/configurations/config_default" "$HOME/.config/gcloud/configurations/config_default"
-mkdir -p "$HOME/.warp"
-link_file "$ROOT/dotfiles/.warp/settings.toml" "$HOME/.warp/settings.toml"
+  mkdir -p "$HOME/.local"
 
-mkdir -p "$HOME/.vscode"
-link_file "$ROOT/config/vscode/argv.json" "$HOME/.vscode/argv.json"
-link_file "$ROOT/config/vscode/settings.json" "$HOME/Library/Application Support/Code/User/settings.json"
-link_file "$ROOT/config/cursor/settings.json" "$HOME/Library/Application Support/Cursor/User/settings.json"
-link_file "$ROOT/config/cursor/keybindings.json" "$HOME/Library/Application Support/Cursor/User/keybindings.json"
-link_file "$ROOT/config/claude/settings.json" "$HOME/.claude/settings.json"
-link_file "$ROOT/config/claude/plugins/config.json" "$HOME/.claude/plugins/config.json"
-link_file "$ROOT/config/claude/policy-limits.json" "$HOME/.claude/policy-limits.json"
-link_file "$ROOT/config/codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
-link_file "$ROOT/config/codex/config.toml" "$HOME/.codex/config.toml"
+  if [ -L "$link" ]; then
+    if [ "$(readlink "$link")" = "$target" ]; then
+      return
+    fi
+    rm -f "$link"
+  elif [ -e "$link" ]; then
+    local backup="$HOME/.local/bin.backup.$(date +%Y%m%d-%H%M%S)"
+    mv "$link" "$backup"
+  fi
 
-mkdir -p "$HOME/.rbenv"
-link_file "$ROOT/config/rbenv/version" "$HOME/.rbenv/version"
+  ln -s "$target" "$link"
+  printf 'linked %s -> %s\n' "$link" "$target"
+}
 
-mkdir -p "$HOME/.config/op"
-if [ ! -e "$HOME/.config/op/dotfiles.env" ]; then
-  cp "$ROOT/config/op/env.example" "$HOME/.config/op/dotfiles.env"
-  printf 'created %s from 1Password reference template\n' "$HOME/.config/op/dotfiles.env"
-fi
+ensure_local_bin_symlink
 
-if [ ! -e "$HOME/.config/op/dotfiles-files.env" ]; then
-  cp "$ROOT/config/op/files.example" "$HOME/.config/op/dotfiles-files.env"
-  printf 'created %s from 1Password file reference template\n' "$HOME/.config/op/dotfiles-files.env"
-fi
-
-if [ -d "$BACKUP_DIR" ]; then
-  printf 'backups saved in %s\n' "$BACKUP_DIR"
-fi

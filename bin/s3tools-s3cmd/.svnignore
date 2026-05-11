@@ -1,0 +1,12 @@
+## Run 'svn propset svn:ignore -F .svnignore .' after you change this list
+*.pyc
+.*.swp
+testsuite
+testsuite-out
+MANIFEST
+dist
+build
+s3cmd.egg-info
+s3cmd.spec
+.idea
+.s3cfg

@@ -1,0 +1,21 @@
+{
+  "timezone": "America/New_York",
+  "days": {
+    "2026-05-09": {
+      "chosen_review_hour": 8,
+      "review_done": true,
+      "converted_script": "update-pingdom-iptables.py",
+      "notes": "Converted update-pingdom-iptables.sh to Python for more robust feed parsing and IP validation.",
+      "run_history": [
+        {
+          "ts_local": "2026-05-09 10:31",
+          "action": "scheduled"
+        },
+        {
+          "ts_local": "2026-05-09 10:34",
+          "action": "converted:update-pingdom-iptables.py"
+        }
+      ]
+    }
+  }
+}

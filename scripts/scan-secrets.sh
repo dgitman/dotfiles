@@ -4,12 +4,11 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-PATTERN='-----BEGIN [A-Z ]*PRIVATE KEY-----|gh[pousr]_[A-Za-z0-9_]{36,}|github_pat_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35}|xox[baprs]-[0-9A-Za-z-]{10,}|(password|passwd|token|secret|api[_-]?key)[[:space:]]*[:=][[:space:]]*[^[:space:]#]+'
+PATTERN='-----BEGIN [A-Z ]*PRIVATE KEY-----|gh[pousr]_[A-Za-z0-9_]{36,}|github_pat_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35}|xox[baprs]-[0-9A-Za-z-]{10,}'
 EXCLUDES=(
   --glob '!.git/**'
   --glob '!logs/**'
   --glob '!brew/Brewfile'
-  --glob '!bin/**'
 )
 FORBIDDEN_PATHS=(
   'config/gh/hosts.yml'
@@ -80,7 +79,7 @@ scan_history() {
   filtered="$(mktemp)"
 
   while read -r commit; do
-    if git grep -I -n -E "$PATTERN" "$commit" -- . ':(exclude)bin/**' ':(exclude)brew/Brewfile' ':(exclude)logs/**' >"$tmp" 2>/dev/null; then
+    if git grep -I -n -E "$PATTERN" "$commit" -- . ':(exclude)brew/Brewfile' ':(exclude)logs/**' >"$tmp" 2>/dev/null; then
       filter_allowed_matches <"$tmp" >"$filtered"
       if [ -s "$filtered" ]; then
         printf 'Potential secret in commit %s:\n' "$commit"

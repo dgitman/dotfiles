@@ -51,6 +51,15 @@ To store supported local credential files in 1Password and update the local refe
 ./scripts/store-op-files.sh
 ```
 
+
+## Submodules
+
+Some tools under `bin/` are vendored as Git submodules. After cloning this repo, initialize them with:
+
+```sh
+git submodule update --init --recursive
+```
+
 ## Secret checks
 
 Run a local secret scan before making the repository public or pushing changes:
@@ -85,6 +94,7 @@ dotfiles/   Home-directory shell dotfiles
 git/        Git dotfiles
 ssh/        SSH client configuration
 brew/       Homebrew bundle
+bin/        Personal scripts (see `bin/README.md`)
 config/     Safe app configuration, editor settings, runtime settings, and 1Password reference templates
 docs/       Notes for credential restoration and secret handling
 launchd/    macOS scheduled job

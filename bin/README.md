@@ -7,13 +7,13 @@ Personal scripts and command-line helpers.
 Run this once so scripts in `~/.local/bin` and `~/dotfiles/brew` are available from any new terminal:
 
 ```sh
-~/.local/bin/setup-bin-path.sh
+~/dotfiles/bin/setup-bin-path.sh
 ```
 
 After it runs, restart your terminal or reload your shell:
 
 ```sh
-source ~/.zshrc
+source ~/.zprofile
 ```
 
 ## Commands

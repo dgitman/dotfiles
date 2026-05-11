@@ -1,40 +1,14 @@
 # -*- coding: utf-8 -*-
 
-## --------------------------------------------------------------------
 ## Amazon S3 manager - Exceptions library
-##
-## Authors   : Michal Ludvig <michal@logix.cz> (https://www.logix.cz/michal)
-##             Florent Viard <florent@sodria.com> (https://www.sodria.com)
-## Copyright : TGRMN Software, Sodria SAS and contributors
-## License   : GPL Version 2
-## Website   : https://s3tools.org
-## --------------------------------------------------------------------
+## Author: Michal Ludvig <michal@logix.cz>
+##         http://www.logix.cz/michal
+## License: GPL Version 2
+## Copyright: TGRMN Software and contributors
 
-from __future__ import absolute_import
-
+from Utils import getTreeFromXml, unicodise, deunicodise
 from logging import debug, error
-import sys
-import S3.BaseUtils
-import S3.Utils
-from . import ExitCodes
-
-if sys.version_info >= (3, 0):
-    PY3 = True
-    # In python 3, unicode -> str, and str -> bytes
-    unicode = str
-else:
-    PY3 = False
-
-## External exceptions
-
-from ssl import SSLError as S3SSLError
-
-try:
-    from ssl import CertificateError as S3SSLCertificateError
-except ImportError:
-    class S3SSLCertificateError(Exception):
-        pass
-
+import ExitCodes
 
 try:
     from xml.etree.ElementTree import ParseError as XmlParseError
@@ -42,20 +16,14 @@ except ImportError:
     # ParseError was only added in python2.7, before ET was raising ExpatError
     from xml.parsers.expat import ExpatError as XmlParseError
 
-
-## s3cmd exceptions
-
 class S3Exception(Exception):
-    def __init__(self, message=""):
-        self.message = S3.Utils.unicodise(message)
+    def __init__(self, message = ""):
+        self.message = unicodise(message)
 
     def __str__(self):
-        ## Don't return self.message directly because
+        ## Call unicode(self) instead of self.message because
         ## __unicode__() method could be overridden in subclasses!
-        if PY3:
-            return self.__unicode__()
-        else:
-            return S3.Utils.deunicodise(self.__unicode__())
+        return deunicodise(unicode(self))
 
     def __unicode__(self):
         return self.message
@@ -63,34 +31,33 @@ class S3Exception(Exception):
     ## (Base)Exception.message has been deprecated in Python 2.6
     def _get_message(self):
         return self._message
-
     def _set_message(self, message):
         self._message = message
     message = property(_get_message, _set_message)
 
 
-class S3Error(S3Exception):
+class S3Error (S3Exception):
     def __init__(self, response):
         self.status = response["status"]
         self.reason = response["reason"]
         self.info = {
-            "Code": "",
-            "Message": "",
-            "Resource": ""
+            "Code" : "",
+            "Message" : "",
+            "Resource" : ""
         }
         debug("S3Error: %s (%s)" % (self.status, self.reason))
-        if "headers" in response:
+        if response.has_key("headers"):
             for header in response["headers"]:
                 debug("HttpHeader: %s: %s" % (header, response["headers"][header]))
-        if "data" in response and response["data"]:
+        if response.has_key("data") and response["data"]:
             try:
-                tree = S3.BaseUtils.getTreeFromXml(response["data"])
+                tree = getTreeFromXml(response["data"])
             except XmlParseError:
                 debug("Not an XML response")
             else:
                 try:
                     self.info.update(self.parse_error_xml(tree))
-                except Exception as e:
+                except Exception, e:
                     error("Error parsing xml: %s.  ErrorXML: %s" % (e, response["data"]))
 
         self.code = self.info["Code"]
@@ -99,16 +66,15 @@ class S3Error(S3Exception):
 
     def __unicode__(self):
         retval = u"%d " % (self.status)
-        retval += (u"(%s)" % (self.code or self.reason))
-        error_msg = self.message
-        if error_msg:
-            retval += (u": %s" % error_msg)
+        retval += (u"(%s)" % (self.info.has_key("Code") and self.info["Code"] or self.reason))
+        if self.info.has_key("Message"):
+            retval += (u": %s" % self.info["Message"])
         return retval
 
     def get_error_code(self):
         if self.status in [301, 307]:
             return ExitCodes.EX_SERVERMOVED
-        elif self.status in [400, 405, 411, 416, 417, 501, 504]:
+        elif self.status in [400, 405, 411, 416, 501, 504]:
             return ExitCodes.EX_SERVERERROR
         elif self.status == 403:
             return ExitCodes.EX_ACCESSDENIED
@@ -120,7 +86,7 @@ class S3Error(S3Exception):
             return ExitCodes.EX_PRECONDITION
         elif self.status == 500:
             return ExitCodes.EX_SOFTWARE
-        elif self.status in [429, 503]:
+        elif self.status == 503:
             return ExitCodes.EX_SERVICE
         else:
             return ExitCodes.EX_SOFTWARE
@@ -132,7 +98,7 @@ class S3Error(S3Exception):
         if not error_node.tag == "Error":
             error_node = tree.find(".//Error")
         if error_node is not None:
-            for child in error_node:
+            for child in error_node.getchildren():
                 if child.text != "":
                     debug("ErrorXML: " + child.tag + ": " + repr(child.text))
                     info[child.tag] = child.text

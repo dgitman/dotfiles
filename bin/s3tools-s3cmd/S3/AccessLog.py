@@ -1,30 +1,20 @@
 # -*- coding: utf-8 -*-
 
-## --------------------------------------------------------------------
 ## Amazon S3 - Access Control List representation
-##
-## Authors   : Michal Ludvig <michal@logix.cz> (https://www.logix.cz/michal)
-##             Florent Viard <florent@sodria.com> (https://www.sodria.com)
-## Copyright : TGRMN Software, Sodria SAS and contributors
-## License   : GPL Version 2
-## Website   : https://s3tools.org
-## --------------------------------------------------------------------
+## Author: Michal Ludvig <michal@logix.cz>
+##         http://www.logix.cz/michal
+## License: GPL Version 2
+## Copyright: TGRMN Software and contributors
 
-from __future__ import absolute_import, print_function
-
-import sys
-
-from . import S3Uri
-from .Exceptions import ParameterError
-from .BaseUtils import getTreeFromXml, decode_from_s3
-from .ACL import GranteeAnonRead
+import S3Uri
+from Exceptions import ParameterError
+from Utils import getTreeFromXml
+from ACL import GranteeAnonRead
 
 try:
     import xml.etree.ElementTree as ET
 except ImportError:
     import elementtree.ElementTree as ET
-
-PY3 = (sys.version_info >= (3,0))
 
 __all__ = []
 class AccessLog(object):
@@ -38,7 +28,7 @@ class AccessLog(object):
         self.tree.attrib['xmlns'] = "http://doc.s3.amazonaws.com/2006-03-01"
 
     def isLoggingEnabled(self):
-        return (self.tree.find(".//LoggingEnabled") is not None)
+        return bool(self.tree.find(".//LoggingEnabled"))
 
     def disableLogging(self):
         el = self.tree.find(".//LoggingEnabled")
@@ -64,7 +54,7 @@ class AccessLog(object):
 
     def setAclPublic(self, acl_public):
         le = self.tree.find(".//LoggingEnabled")
-        if le is None:
+        if not le:
             raise ParameterError("Logging not enabled, can't set default ACL for logs")
         tg = le.find(".//TargetGrants")
         if not acl_public:
@@ -84,29 +74,20 @@ class AccessLog(object):
     def isAclPublic(self):
         raise NotImplementedError()
 
-    def __unicode__(self):
-        return decode_from_s3(ET.tostring(self.tree))
-
     def __str__(self):
-        if PY3:
-            # Return unicode
-            return ET.tostring(self.tree, encoding="unicode")
-        else:
-            # Return bytes
-            return ET.tostring(self.tree)
-
+        return ET.tostring(self.tree)
 __all__.append("AccessLog")
 
 if __name__ == "__main__":
     log = AccessLog()
-    print(log)
+    print log
     log.enableLogging(S3Uri.S3Uri(u"s3://targetbucket/prefix/log-"))
-    print(log)
+    print log
     log.setAclPublic(True)
-    print(log)
+    print log
     log.setAclPublic(False)
-    print(log)
+    print log
     log.disableLogging()
-    print(log)
+    print log
 
 # vim:et:ts=4:sts=4:ai

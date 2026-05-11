@@ -7,7 +7,7 @@ mysql -NBe "SHOW DATABASES;" | grep -v 'lost+found' \
         continue
     fi
     mysql -NBe "SHOW TABLE STATUS;" $database \
-        | while read name engine version rowformat rows avgrowlength \   
+        | while read name engine version rowformat rows avgrowlength \
             datalength maxdatalength indexlength datafree autoincrement \
             createtime updatetime checktime collation checksum \
             createoptions comment ; do

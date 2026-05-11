@@ -1,14 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
 ## --------------------------------------------------------------------
 ## s3cmd - S3 client
 ##
-## Authors   : Michal Ludvig <michal@logix.cz> (https://www.logix.cz/michal)
-##             Florent Viard <florent@sodria.com> (https://www.sodria.com)
-## Copyright : TGRMN Software, Sodria SAS and contributors
+## Authors   : Michal Ludvig and contributors
+## Copyright : TGRMN Software - http://www.tgrmn.com - and contributors
+## Website   : http://s3tools.org
 ## License   : GPL Version 2
-## Website   : https://s3tools.org
 ## --------------------------------------------------------------------
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -20,71 +19,31 @@
 ## GNU General Public License for more details.
 ## --------------------------------------------------------------------
 
-from __future__ import absolute_import, print_function, division
-
 import sys
 
-if sys.version_info < (2, 6):
+if float("%d.%d" %(sys.version_info[0], sys.version_info[1])) < 2.6:
     sys.stderr.write(u"ERROR: Python 2.6 or higher required, sorry.\n")
-    # 72 == EX_OSFILE
-    sys.exit(72)
+    sys.exit(EX_OSFILE)
 
-PY3 = (sys.version_info >= (3, 0))
-
-import codecs
-import errno
-import glob
-import io
-import locale
 import logging
+import time
 import os
 import re
-import shutil
-import socket
-import subprocess
-import tempfile
-import datetime
-import time
+import errno
+import glob
 import traceback
+import codecs
+import locale
+import subprocess
+import htmlentitydefs
+import socket
+import shutil
+import tempfile
 
 from copy import copy
 from optparse import OptionParser, Option, OptionValueError, IndentedHelpFormatter
 from logging import debug, info, warning, error
-
-
-try:
-    import htmlentitydefs
-except Exception:
-    # python 3 support
-    import html.entities as htmlentitydefs
-
-try:
-    unicode
-except NameError:
-    # python 3 support
-    # In python 3, unicode -> str, and str -> bytes
-    unicode = str
-
-try:
-    unichr
-except NameError:
-    # python 3 support
-    # In python 3, unichr was removed as chr can now do the job
-    unichr = chr
-
-try:
-    from shutil import which
-except ImportError:
-    # python2 fallback code
-    from distutils.spawn import find_executable as which
-
-if not PY3:
-    # ConnectionRefusedError does not exist in python2
-    class ConnectionError(OSError):
-        pass
-    class ConnectionRefusedError(ConnectionError):
-        pass
-
+from distutils.spawn import find_executable
 
 def output(message):
     sys.stdout.write(message + "\n")
@@ -111,7 +70,6 @@ def subcmd_bucket_usage_all(s3):
     Returns: sum of bucket sizes as integer
     Raises: S3Error
     """
-    cfg = Config()
     response = s3.list_all_buckets()
 
     buckets_size = 0
@@ -119,54 +77,54 @@ def subcmd_bucket_usage_all(s3):
         size = subcmd_bucket_usage(s3, S3Uri("s3://" + bucket["Name"]))
         if size != None:
             buckets_size += size
-    total_size, size_coeff = formatSize(buckets_size, cfg.human_readable_sizes)
+    total_size, size_coeff = formatSize(buckets_size, Config().human_readable_sizes)
     total_size_str = str(total_size) + size_coeff
-    output(u"".rjust(12, "-"))
-    output(u"%s Total" % (total_size_str.ljust(12)))
-    return buckets_size
+    output(u"".rjust(8, "-"))
+    output(u"%s Total" % (total_size_str.ljust(8)))
+    return size
 
 def subcmd_bucket_usage(s3, uri):
     """
     Returns: bucket size as integer
     Raises: S3Error
     """
-    bucket_size = 0
-    object_count = 0
-    extra_info = u''
 
     bucket = uri.bucket()
-    prefix = uri.object()
-    try:
-        for _, _, objects in s3.bucket_list_streaming(bucket, prefix=prefix, recursive=True):
-            for obj in objects:
-                bucket_size += int(obj["Size"])
-                object_count += 1
+    object = uri.object()
 
-    except S3Error as e:
-        if e.info["Code"] in S3.codes:
-            error(S3.codes[e.info["Code"]] % bucket)
-        raise
+    if object.endswith('*'):
+        object = object[:-1]
 
-    except KeyboardInterrupt as e:
-        extra_info = u' [interrupted]'
+    bucket_size = 0
+    # iterate and store directories to traverse, while summing objects:
+    dirs = [object]
+    while dirs:
+        try:
+            response = s3.bucket_list(bucket, prefix=dirs.pop())
+        except S3Error, e:
+            if S3.codes.has_key(e.info["Code"]):
+                error(S3.codes[e.info["Code"]] % bucket)
+            raise
 
-    total_size_str = u"%d%s" % formatSize(bucket_size,
-                                          Config().human_readable_sizes)
-    if Config().human_readable_sizes:
-        total_size_str = total_size_str.rjust(5)
-    else:
-        total_size_str = total_size_str.rjust(12)
-    output(u"%s %7s objects %s%s" % (total_size_str, object_count, uri,
-                                     extra_info))
+        # objects in the current scope:
+        for obj in response["list"]:
+            bucket_size += int(obj["Size"])
+
+        # directories found in current scope:
+        for obj in response["common_prefixes"]:
+            dirs.append(obj["Prefix"])
+
+    total_size, size_coeff = formatSize(bucket_size, Config().human_readable_sizes)
+    total_size_str = str(total_size) + size_coeff
+    output(u"%s %s" % (total_size_str.ljust(8), uri))
     return bucket_size
 
 def cmd_ls(args):
-    cfg = Config()
-    s3 = S3(cfg)
+    s3 = S3(Config())
     if len(args) > 0:
         uri = S3Uri(args[0])
         if uri.type == "s3" and uri.has_bucket():
-            subcmd_bucket_list(s3, uri, cfg.limit)
+            subcmd_bucket_list(s3, uri)
             return EX_OK
 
     # If not a s3 type uri or no bucket was provided, list all the buckets
@@ -182,19 +140,16 @@ def subcmd_all_buckets_list(s3):
                                  bucket["Name"]))
 
 def cmd_all_buckets_list_all_content(args):
-    cfg = Config()
-    s3 = S3(cfg)
+    s3 = S3(Config())
 
     response = s3.list_all_buckets()
 
     for bucket in response["list"]:
-        subcmd_bucket_list(s3, S3Uri("s3://" + bucket["Name"]), cfg.limit)
+        subcmd_bucket_list(s3, S3Uri("s3://" + bucket["Name"]))
         output(u"")
     return EX_OK
 
-def subcmd_bucket_list(s3, uri, limit):
-    cfg = Config()
-
+def subcmd_bucket_list(s3, uri):
     bucket = uri.bucket()
     prefix = uri.object()
 
@@ -202,88 +157,68 @@ def subcmd_bucket_list(s3, uri, limit):
     if prefix.endswith('*'):
         prefix = prefix[:-1]
     try:
-        response = s3.bucket_list(bucket, prefix = prefix, limit = limit)
-    except S3Error as e:
-        if e.info["Code"] in S3.codes:
+        response = s3.bucket_list(bucket, prefix = prefix)
+    except S3Error, e:
+        if S3.codes.has_key(e.info["Code"]):
             error(S3.codes[e.info["Code"]] % bucket)
         raise
 
-    # md5 are 32 char long, but for multipart there could be a suffix
-    if Config().human_readable_sizes:
-        # %(size)5s%(coeff)1s
-        format_size = u"%5d%1s"
-        dir_str = u"DIR".rjust(6)
-        dirobj_str = u"DIROBJ".rjust(6)
-    else:
-        format_size = u"%12d%s"
-        dir_str = u"DIR".rjust(12)
-        dirobj_str = u"DIROBJ".rjust(12)
     if cfg.long_listing:
-        format_string = u"%(timestamp)16s %(size)s  %(md5)-35s  %(storageclass)-11s  %(uri)s"
+        format_string = u"%(timestamp)16s %(size)9s%(coeff)1s  %(md5)32s  %(storageclass)s  %(uri)s"
     elif cfg.list_md5:
-        format_string = u"%(timestamp)16s %(size)s  %(md5)-35s  %(uri)s"
+        format_string = u"%(timestamp)16s %(size)9s%(coeff)1s  %(md5)32s  %(uri)s"
     else:
-        format_string = u"%(timestamp)16s %(size)s  %(uri)s"
+        format_string = u"%(timestamp)16s %(size)9s%(coeff)1s  %(uri)s"
 
     for prefix in response['common_prefixes']:
         output(format_string % {
             "timestamp": "",
-            "size": dir_str,
+            "size": "DIR",
+            "coeff": "",
             "md5": "",
             "storageclass": "",
             "uri": uri.compose_uri(bucket, prefix["Prefix"])})
 
     for object in response["list"]:
-        md5 = object.get('ETag', '').strip('"\'')
+        md5 = object['ETag'].strip('"\'')
         storageclass = object.get('StorageClass','')
-        object_key = object['Key']
 
         if cfg.list_md5:
             if '-' in md5: # need to get md5 from the object
-                object_uri = uri.compose_uri(bucket, object_key)
+                object_uri = uri.compose_uri(bucket, object["Key"])
                 info_response = s3.object_info(S3Uri(object_uri))
                 try:
                     md5 = info_response['s3cmd-attrs']['md5']
                 except KeyError:
                     pass
 
-        if object_key[-1] == '/':
-            size_str = dirobj_str
-        else:
-            size_and_coeff = formatSize(object["Size"], Config().human_readable_sizes)
-            size_str = format_size % size_and_coeff
-
+        size, size_coeff = formatSize(object["Size"], Config().human_readable_sizes)
         output(format_string % {
             "timestamp": formatDateTime(object["LastModified"]),
-            "size" : size_str,
+            "size" : str(size),
+            "coeff": size_coeff,
             "md5" : md5,
             "storageclass" : storageclass,
-            "uri": uri.compose_uri(bucket, object_key),
+            "uri": uri.compose_uri(bucket, object["Key"]),
             })
 
-    if response["truncated"]:
-        warning(u"The list is truncated because the settings limit was reached.")
-
 def cmd_bucket_create(args):
-    cfg = Config()
-    s3 = S3(cfg)
-
+    s3 = S3(Config())
     for arg in args:
         uri = S3Uri(arg)
         if not uri.type == "s3" or not uri.has_bucket() or uri.has_object():
             raise ParameterError("Expecting S3 URI with just the bucket name set instead of '%s'" % arg)
         try:
-            response = s3.bucket_create(uri.bucket(), cfg.bucket_location, cfg.extra_headers)
+            response = s3.bucket_create(uri.bucket(), cfg.bucket_location)
             output(u"Bucket '%s' created" % uri.uri())
-        except S3Error as e:
-            if e.info["Code"] in S3.codes:
+        except S3Error, e:
+            if S3.codes.has_key(e.info["Code"]):
                 error(S3.codes[e.info["Code"]] % uri.bucket())
             raise
     return EX_OK
 
 def cmd_website_info(args):
-    cfg = Config()
-    s3 = S3(cfg)
+    s3 = S3(Config())
     for arg in args:
         uri = S3Uri(arg)
         if not uri.type == "s3" or not uri.has_bucket() or uri.has_object():
@@ -296,16 +231,15 @@ def cmd_website_info(args):
                 output(u"Index document:   %s" % response['index_document'])
                 output(u"Error document:   %s" % response['error_document'])
             else:
-                output(u"Bucket %s: No website configuration found." % (uri.uri()))
-        except S3Error as e:
-            if e.info["Code"] in S3.codes:
+                output(u"Bucket %s: Unable to receive website configuration." % (uri.uri()))
+        except S3Error, e:
+            if S3.codes.has_key(e.info["Code"]):
                 error(S3.codes[e.info["Code"]] % uri.bucket())
             raise
     return EX_OK
 
 def cmd_website_create(args):
-    cfg = Config()
-    s3 = S3(cfg)
+    s3 = S3(Config())
     for arg in args:
         uri = S3Uri(arg)
         if not uri.type == "s3" or not uri.has_bucket() or uri.has_object():
@@ -313,15 +247,14 @@ def cmd_website_create(args):
         try:
             response = s3.website_create(uri, cfg.bucket_location)
             output(u"Bucket '%s': website configuration created." % (uri.uri()))
-        except S3Error as e:
-            if e.info["Code"] in S3.codes:
+        except S3Error, e:
+            if S3.codes.has_key(e.info["Code"]):
                 error(S3.codes[e.info["Code"]] % uri.bucket())
             raise
     return EX_OK
 
 def cmd_website_delete(args):
-    cfg = Config()
-    s3 = S3(cfg)
+    s3 = S3(Config())
     for arg in args:
         uri = S3Uri(arg)
         if not uri.type == "s3" or not uri.has_bucket() or uri.has_object():
@@ -329,45 +262,41 @@ def cmd_website_delete(args):
         try:
             response = s3.website_delete(uri, cfg.bucket_location)
             output(u"Bucket '%s': website configuration deleted." % (uri.uri()))
-        except S3Error as e:
-            if e.info["Code"] in S3.codes:
+        except S3Error, e:
+            if S3.codes.has_key(e.info["Code"]):
                 error(S3.codes[e.info["Code"]] % uri.bucket())
             raise
     return EX_OK
 
 def cmd_expiration_set(args):
-    cfg = Config()
-    s3 = S3(cfg)
+    s3 = S3(Config())
     for arg in args:
         uri = S3Uri(arg)
         if not uri.type == "s3" or not uri.has_bucket() or uri.has_object():
             raise ParameterError("Expecting S3 URI with just the bucket name set instead of '%s'" % arg)
         try:
             response = s3.expiration_set(uri, cfg.bucket_location)
-            if response["status"] == 200:
+            if response["status"] is 200:
                 output(u"Bucket '%s': expiration configuration is set." % (uri.uri()))
-            elif response["status"] == 204:
+            elif response["status"] is 204:
                 output(u"Bucket '%s': expiration configuration is deleted." % (uri.uri()))
-        except S3Error as e:
-            if e.info["Code"] in S3.codes:
+        except S3Error, e:
+            if S3.codes.has_key(e.info["Code"]):
                 error(S3.codes[e.info["Code"]] % uri.bucket())
             raise
     return EX_OK
 
 def cmd_bucket_delete(args):
-    cfg = Config()
-    s3 = S3(cfg)
-
     def _bucket_delete_one(uri, retry=True):
         try:
             response = s3.bucket_delete(uri.bucket())
             output(u"Bucket '%s' removed" % uri.uri())
-        except S3Error as e:
+        except S3Error, e:
             if e.info['Code'] == 'NoSuchBucket':
                 if cfg.force:
                     return EX_OK
                 else:
-                    raise
+                    return EX_USAGE
             if e.info['Code'] == 'BucketNotEmpty' and retry and (cfg.force or cfg.recursive):
                 warning(u"Bucket is not empty. Removing all the objects from it first. This may take some time...")
                 rc = subcmd_batch_del(uri_str = uri.uri())
@@ -375,11 +304,12 @@ def cmd_bucket_delete(args):
                     return _bucket_delete_one(uri, False)
                 else:
                     output(u"Bucket was not removed")
-            elif e.info["Code"] in S3.codes:
+            elif S3.codes.has_key(e.info["Code"]):
                 error(S3.codes[e.info["Code"]] % uri.bucket())
             raise
         return EX_OK
 
+    s3 = S3(Config())
     for arg in args:
         uri = S3Uri(arg)
         if not uri.type == "s3" or not uri.has_bucket() or uri.has_object():
@@ -405,8 +335,7 @@ def cmd_object_put(args):
     if len(args) == 0:
         raise ParameterError("Nothing to upload. Expecting a local file or directory.")
 
-    local_list, single_file_local, exclude_list, total_size_local = fetch_local_list(
-        args, is_src=True, with_dirs=cfg.keep_dirs)
+    local_list, single_file_local, exclude_list = fetch_local_list(args, is_src = True)
 
     local_count = len(local_list)
 
@@ -436,7 +365,7 @@ def cmd_object_put(args):
                 nicekey = local_list[key]['full_name']
             else:
                 nicekey = "<stdin>"
-            output(u"upload: '%s' -> '%s'" % (nicekey, local_list[key]['remote_uri']))
+            output(u"upload: %s -> %s" % (nicekey, local_list[key]['remote_uri']))
 
         warning(u"Exiting now because of --dry-run")
         return EX_OK
@@ -447,10 +376,6 @@ def cmd_object_put(args):
         seq += 1
 
         uri_final = S3Uri(local_list[key]['remote_uri'])
-        try:
-            src_md5 = local_list.get_md5(key)
-        except IOError:
-            src_md5 = None
 
         extra_headers = copy(cfg.extra_headers)
         full_name_orig = local_list[key]['full_name']
@@ -458,36 +383,25 @@ def cmd_object_put(args):
         seq_label = "[%d of %d]" % (seq, local_count)
         if Config().encrypt:
             gpg_exitcode, full_name, extra_headers["x-amz-meta-s3tools-gpgenc"] = gpg_encrypt(full_name_orig)
-        attr_header = _build_attr_header(local_list[key], key, src_md5)
-        debug(u"attr_header: %s" % attr_header)
-        extra_headers.update(attr_header)
+        if cfg.preserve_attrs or local_list[key]['size'] > (cfg.multipart_chunk_size_mb * 1024 * 1024):
+            attr_header = _build_attr_header(local_list, key)
+            debug(u"attr_header: %s" % attr_header)
+            extra_headers.update(attr_header)
         try:
             response = s3.object_put(full_name, uri_final, extra_headers, extra_label = seq_label)
-        except S3UploadError as exc:
-            error(u"Upload of '%s' failed too many times (Last reason: %s)" % (full_name_orig, exc))
-            if cfg.stop_on_error:
-                ret = EX_DATAERR
-                error(u"Exiting now because of --stop-on-error")
-                break
-            ret = EX_PARTIAL
+        except S3UploadError, e:
+            error(u"Upload of '%s' failed too many times. Skipping that file." % full_name_orig)
+            ret = EX_SOMEFAILED
             continue
-        except InvalidFileError as exc:
-            error(u"Upload of '%s' is not possible (Reason: %s)" % (full_name_orig, exc))
-            ret = EX_PARTIAL
-            if cfg.stop_on_error:
-                ret = EX_OSFILE
-                error(u"Exiting now because of --stop-on-error")
-                break
+        except InvalidFileError, e:
+            warning(u"File can not be uploaded: %s" % e)
+            ret = EX_SOMEFAILED
             continue
         if response is not None:
             speed_fmt = formatSize(response["speed"], human_readable = True, floating_point = True)
             if not Config().progress_meter:
-                if full_name_orig != "-":
-                    nicekey = full_name_orig
-                else:
-                    nicekey = "<stdin>"
-                output(u"upload: '%s' -> '%s' (%d bytes in %0.1f seconds, %0.2f %sB/s) %s" %
-                       (nicekey, uri_final, response["size"], response["elapsed"],
+                output(u"File '%s' stored as '%s' (%d bytes in %0.1f seconds, %0.2f %sB/s) %s" %
+                       (full_name_orig, uri_final, response["size"], response["elapsed"],
                         speed_fmt[0], speed_fmt[1], seq_label))
         if Config().acl_public:
             output(u"Public URL of the object is: %s" %
@@ -544,13 +458,7 @@ def cmd_object_get(args):
     if len(args) == 0:
         raise ParameterError("Nothing to download. Expecting S3 URI.")
 
-    try:
-        remote_list, exclude_list, remote_total_size = fetch_remote_list(
-            args, require_attribs = True)
-    except S3Error as exc:
-        if exc.code == 'NoSuchKey':
-            raise ParameterError("Source object '%s' does not exist." % exc.resource)
-        raise
+    remote_list, exclude_list = fetch_remote_list(args, require_attribs = False)
 
     remote_count = len(remote_list)
 
@@ -566,255 +474,119 @@ def cmd_object_get(args):
             if remote_count > 1:
                 raise ParameterError("Destination must be a directory or stdout when downloading multiple sources.")
             remote_list[remote_list.keys()[0]]['local_filename'] = destination_base
-        else:
+        elif os.path.isdir(deunicodise(destination_base)):
             if destination_base[-1] != os.path.sep:
                 destination_base += os.path.sep
             for key in remote_list:
                 local_filename = destination_base + key
                 if os.path.sep != "/":
                     local_filename = os.path.sep.join(local_filename.split("/"))
-                remote_obj = remote_list[key]
-                remote_obj['local_filename'] = local_filename
+                remote_list[key]['local_filename'] = local_filename
+        else:
+            raise InternalError("WTF? Is it a dir or not? -- %s" % destination_base)
 
     if cfg.dry_run:
         for key in exclude_list:
             output(u"exclude: %s" % key)
         for key in remote_list:
-            output(u"download: '%s' -> '%s'" % (remote_list[key]['object_uri_str'], remote_list[key]['local_filename']))
+            output(u"download: %s -> %s" % (remote_list[key]['object_uri_str'], remote_list[key]['local_filename']))
 
         warning(u"Exiting now because of --dry-run")
         return EX_OK
 
     seq = 0
-    ret = EX_OK
     for key in remote_list:
         seq += 1
         item = remote_list[key]
         uri = S3Uri(item['object_uri_str'])
         ## Encode / Decode destination with "replace" to make sure it's compatible with current encoding
         destination = unicodise_safe(item['local_filename'])
-        destination_bytes = deunicodise(destination)
-        last_modified_ts = item['timestamp']
-
         seq_label = "[%d of %d]" % (seq, remote_count)
 
-        is_dir_obj = item['is_dir']
-
-        response = None
         start_position = 0
 
         if destination == "-":
             ## stdout
-            dst_stream = io.open(sys.__stdout__.fileno(), mode='wb', closefd=False)
-            dst_stream.stream_name = u'<stdout>'
+            dst_stream = sys.__stdout__
             file_exists = True
-        elif is_dir_obj:
-            ## Folder
-            try:
-                file_exists = os.path.exists(destination_bytes)
-                if not file_exists:
-                    info(u"Creating directory: %s" % destination)
-                    os.makedirs(destination_bytes)
-            except IOError as e:
-                # If dir was created at the same time by a race condition, it is ok.
-                if e.errno != errno.EEXIST:
-                    error(u"Creation of directory '%s' failed (Reason: %s)"
-                        % (destination, e.strerror))
-                    if cfg.stop_on_error:
-                        error(u"Exiting now because of --stop-on-error")
-                        raise
-                    ret = EX_PARTIAL
-                    continue
-            if file_exists and not cfg.force:
-                # Directory already exists and we don't want to update metadata
-                continue
-            dst_stream = None
         else:
             ## File
             try:
-                file_exists = os.path.exists(destination_bytes)
+                file_exists = os.path.exists(deunicodise(destination))
                 try:
-                    dst_stream = io.open(destination_bytes, mode='ab')
-                    dst_stream.stream_name = destination
-                except IOError as e:
-                    if e.errno != errno.ENOENT:
+                    dst_stream = open(deunicodise(destination), "ab")
+                except IOError, e:
+                    if e.errno == errno.ENOENT:
+                        basename = destination[:destination.rindex(os.path.sep)]
+                        info(u"Creating directory: %s" % basename)
+                        os.makedirs(deunicodise(basename))
+                        dst_stream = open(deunicodise(destination), "ab")
+                    else:
                         raise
-                    dst_dir_bytes = os.path.dirname(destination)
-                    info(u"Creating directory: %s" % unicodise(dst_dir_bytes))
-                    os.makedirs(dst_dir_bytes)
-                    dst_stream = io.open(destination_bytes, mode='ab')
-                    dst_stream.stream_name = destination
-
                 if file_exists:
-                    force = False
-                    skip = False
-                    if cfg.get_continue:
+                    if Config().get_continue:
                         start_position = dst_stream.tell()
-                        item_size = item['size']
-                        if start_position == item_size:
-                            skip = True
-                        elif start_position > item_size:
-                            info(u"Download forced for '%s' as source is "
-                                 "smaller than local file" % destination)
-                            force = True
-                    elif cfg.force:
-                        force = True
-                    elif cfg.skip_existing:
-                        skip = True
+                    elif Config().force:
+                        start_position = 0L
+                        dst_stream.seek(0L)
+                        dst_stream.truncate()
+                    elif Config().skip_existing:
+                        info(u"Skipping over existing file: %s" % (destination))
+                        continue
                     else:
                         dst_stream.close()
-                        raise ParameterError(
-                            u"File '%s' already exists. Use either of --force /"
-                            " --continue / --skip-existing or give it a new"
-                            " name." % destination
-                        )
-
-                    if skip:
-                        dst_stream.close()
-                        info(u"Skipping over existing file: '%s'" % destination)
-                        continue
-
-                    if force:
-                        start_position = 0
-                        dst_stream.seek(0)
-                        dst_stream.truncate()
-
-            except IOError as e:
-                error(u"Creation of file '%s' failed (Reason: %s)"
-                      % (destination, e.strerror))
-                if cfg.stop_on_error:
-                    error(u"Exiting now because of --stop-on-error")
-                    raise
-                ret = EX_PARTIAL
+                        raise ParameterError(u"File %s already exists. Use either of --force / --continue / --skip-existing or give it a new name." % destination)
+            except IOError, e:
+                error(u"Skipping %s: %s" % (destination, e.strerror))
                 continue
-
         try:
-            # Retrieve the file content
-            if dst_stream:
-                try:
-                    response = s3.object_get(uri, dst_stream, destination,
-                                             start_position=start_position,
-                                             extra_label=seq_label)
-                finally:
-                    dst_stream.close()
-        except S3DownloadError as e:
-            error(u"Download of '%s' failed (Reason: %s)" % (destination, e))
-            # Delete, only if file didn't exist before!
-            if not file_exists:
-                debug(u"object_get failed for '%s', deleting..." % (destination,))
-                os.unlink(destination_bytes)
-            if cfg.stop_on_error:
-                error(u"Exiting now because of --stop-on-error")
-                raise
-            ret = EX_PARTIAL
-            continue
-        except S3Error as e:
-            error(u"Download of '%s' failed (Reason: %s)" % (destination, e))
+            response = s3.object_get(uri, dst_stream, start_position = start_position, extra_label = seq_label)
+        except S3DownloadError, e:
+            error(u"%s: Skipping that file.  This is usually a transient error, please try again later." % e)
             if not file_exists: # Delete, only if file didn't exist before!
                 debug(u"object_get failed for '%s', deleting..." % (destination,))
-                os.unlink(destination_bytes)
+                os.unlink(deunicodise(destination))
+            continue
+        except S3Error, e:
+            if not file_exists: # Delete, only if file didn't exist before!
+                debug(u"object_get failed for '%s', deleting..." % (destination,))
+                os.unlink(deunicodise(destination))
             raise
 
-        """
-        # TODO Enable once we add restoring s3cmd-attrs in get command
-        if is_dir_obj and cfg.preserve_attrs:
-            # Retrieve directory info to restore s3cmd-attrs metadata
-            try:
-                response = s3.object_info(uri)
-            except S3Error as exc:
-                error(u"Retrieving directory metadata for '%s' failed (Reason: %s)"
-                      % (destination, exc))
-                if cfg.stop_on_error:
-                    error(u"Exiting now because of --stop-on-error")
-                    raise
-                ret = EX_PARTIAL
-                continue
-        """
-
-        if response:
-            if "x-amz-meta-s3tools-gpgenc" in response["headers"]:
-                gpg_decrypt(destination, response["headers"]["x-amz-meta-s3tools-gpgenc"])
-                response["size"] = os.stat(destination_bytes)[6]
-            if "last-modified" in response["headers"]:
-                last_modified_ts = time.mktime(time.strptime(response["headers"]["last-modified"], "%a, %d %b %Y %H:%M:%S GMT"))
-
-        if last_modified_ts and destination != "-":
-            os.utime(destination_bytes, (last_modified_ts, last_modified_ts))
-            debug("set mtime to %s" % last_modified_ts)
-        if not Config().progress_meter and destination != "-" and not is_dir_obj:
+        if response["headers"].has_key("x-amz-meta-s3tools-gpgenc"):
+            gpg_decrypt(destination, response["headers"]["x-amz-meta-s3tools-gpgenc"])
+            response["size"] = os.stat(deunicodise(destination))[6]
+        if response["headers"].has_key("last-modified") and destination != "-":
+            last_modified = time.mktime(time.strptime(response["headers"]["last-modified"], "%a, %d %b %Y %H:%M:%S GMT"))
+            os.utime(deunicodise(destination), (last_modified, last_modified))
+            debug("set mtime to %s" % last_modified)
+        if not Config().progress_meter and destination != "-":
             speed_fmt = formatSize(response["speed"], human_readable = True, floating_point = True)
-            output(u"download: '%s' -> '%s' (%d bytes in %0.1f seconds, %0.2f %sB/s)" %
+            output(u"File %s saved as '%s' (%d bytes in %0.1f seconds, %0.2f %sB/s)" %
                 (uri, destination, response["size"], response["elapsed"], speed_fmt[0], speed_fmt[1]))
         if Config().delete_after_fetch:
             s3.object_delete(uri)
-            output(u"File '%s' removed after fetch" % (uri))
-    return ret
+            output(u"File %s removed after fetch" % (uri))
+    return EX_OK
 
 def cmd_object_del(args):
-    cfg = Config()
-    recursive = cfg.recursive
+    recursive = Config().recursive
     for uri_str in args:
         uri = S3Uri(uri_str)
         if uri.type != "s3":
             raise ParameterError("Expecting S3 URI instead of '%s'" % uri_str)
         if not uri.has_object():
-            if recursive and not cfg.force:
+            if recursive and not Config().force:
                 raise ParameterError("Please use --force to delete ALL contents of %s" % uri_str)
             elif not recursive:
                 raise ParameterError("File name required, not only the bucket name. Alternatively use --recursive")
 
         if not recursive:
             rc = subcmd_object_del_uri(uri_str)
-        elif cfg.exclude or cfg.include or cfg.max_delete > 0:
-            # subcmd_batch_del_iterative does not support file exclusion and can't
-            # accurately know how many total files will be deleted, so revert to batch delete.
-            rc = subcmd_batch_del(uri_str = uri_str)
         else:
-            rc = subcmd_batch_del_iterative(uri_str = uri_str)
+            rc = subcmd_batch_del(uri_str = uri_str)
         if not rc:
             return rc
-    return EX_OK
-
-def subcmd_batch_del_iterative(uri_str = None, bucket = None):
-    """ Streaming version of batch deletion (doesn't realize whole list in memory before deleting).
-
-    Differences from subcmd_batch_del:
-      - Does not obey --exclude directives or obey cfg.max_delete (use subcmd_batch_del in those cases)
-    """
-    if bucket and uri_str:
-        raise ValueError("Pass only one of uri_str or bucket")
-    if bucket: # bucket specified
-        uri_str = "s3://%s" % bucket
-    cfg = Config()
-    s3 = S3(cfg)
-    uri = S3Uri(uri_str)
-    bucket = uri.bucket()
-
-    deleted_bytes = deleted_count = 0
-
-    for _, _, to_delete in s3.bucket_list_streaming(bucket, prefix=uri.object(), recursive=True):
-        if not to_delete:
-            continue
-        if not cfg.dry_run:
-            response = s3.object_batch_delete_uri_strs([uri.compose_uri(bucket, item['Key']) for item in to_delete])
-        deleted_bytes += sum(int(item["Size"]) for item in to_delete)
-        deleted_count += len(to_delete)
-        output(u'\n'.join(u"delete: '%s'" % uri.compose_uri(bucket, p['Key']) for p in to_delete))
-
-    if deleted_count:
-        # display summary data of deleted files
-        if cfg.stats:
-            stats_info = StatsInfo()
-            stats_info.files_deleted = deleted_count
-            stats_info.size_deleted = deleted_bytes
-            output(stats_info.format_output())
-        else:
-            total_size, size_coeff = formatSize(deleted_bytes, Config().human_readable_sizes)
-            total_size_str = str(total_size) + size_coeff
-            info(u"Deleted %s objects (%s) from %s" % (deleted_count, total_size_str, uri))
-    else:
-        warning(u"Remote list is empty.")
-
     return EX_OK
 
 def subcmd_batch_del(uri_str = None, bucket = None, remote_list = None):
@@ -822,16 +594,16 @@ def subcmd_batch_del(uri_str = None, bucket = None, remote_list = None):
     Returns: EX_OK
     Raises: ValueError
     """
-    cfg = Config()
-    s3 = S3(cfg)
+
     def _batch_del(remote_list):
+        s3 = S3(cfg)
         to_delete = remote_list[:1000]
         remote_list = remote_list[1000:]
         while len(to_delete):
             debug(u"Batch delete %d, remaining %d" % (len(to_delete), len(remote_list)))
             if not cfg.dry_run:
                 response = s3.object_batch_delete(to_delete)
-            output(u'\n'.join((u"delete: '%s'" % to_delete[p]['object_uri_str']) for p in to_delete))
+            output('\n'.join((u"File %s deleted" % to_delete[p]['object_uri_str']) for p in to_delete))
             to_delete = remote_list[:1000]
             remote_list = remote_list[1000:]
 
@@ -844,7 +616,7 @@ def subcmd_batch_del(uri_str = None, bucket = None, remote_list = None):
     if bucket: # bucket specified
         uri_str = "s3://%s" % bucket
     if remote_list is None: # uri_str specified
-        remote_list, exclude_list, remote_total_size = fetch_remote_list(uri_str, require_attribs = False)
+        remote_list, exclude_list = fetch_remote_list(uri_str, require_attribs = False)
 
     if len(remote_list) == 0:
         warning(u"Remote list is empty.")
@@ -858,6 +630,7 @@ def subcmd_batch_del(uri_str = None, bucket = None, remote_list = None):
 
     if cfg.dry_run:
         warning(u"Exiting now because of --dry-run")
+        return EX_OK
     return EX_OK
 
 def subcmd_object_del_uri(uri_str, recursive = None):
@@ -865,13 +638,12 @@ def subcmd_object_del_uri(uri_str, recursive = None):
     Returns: True if XXX, False if XXX
     Raises: ValueError
     """
-    cfg = Config()
     s3 = S3(cfg)
 
     if recursive is None:
         recursive = cfg.recursive
 
-    remote_list, exclude_list, remote_total_size = fetch_remote_list(uri_str, require_attribs = False, recursive = recursive)
+    remote_list, exclude_list = fetch_remote_list(uri_str, require_attribs = False, recursive = recursive)
 
     remote_count = len(remote_list)
 
@@ -892,116 +664,79 @@ def subcmd_object_del_uri(uri_str, recursive = None):
     for key in remote_list:
         item = remote_list[key]
         response = s3.object_delete(S3Uri(item['object_uri_str']))
-        output(u"delete: '%s'" % item['object_uri_str'])
+        output(u"File %s deleted" % item['object_uri_str'])
     return True
 
 def cmd_object_restore(args):
-    cfg = Config()
     s3 = S3(cfg)
 
     if cfg.restore_days < 1:
         raise ParameterError("You must restore a file for 1 or more days")
 
-    # accept case-insensitive argument but fix it to match S3 API
-    if cfg.restore_priority.title() not in ['Standard', 'Expedited', 'Bulk']:
-        raise ParameterError("Valid restoration priorities: bulk, standard, expedited")
-    else:
-        cfg.restore_priority = cfg.restore_priority.title()
-
-    remote_list, exclude_list, remote_total_size = fetch_remote_list(args, require_attribs = False, recursive = cfg.recursive)
+    remote_list, exclude_list = fetch_remote_list(args, require_attribs = False, recursive = cfg.recursive)
 
     remote_count = len(remote_list)
 
-    info(u"Summary: Restoring %d remote files for %d days at %s priority" % (remote_count, cfg.restore_days, cfg.restore_priority))
+    info(u"Summary: Restoring %d remote files for %d days" % (remote_count, cfg.restore_days))
 
     if cfg.dry_run:
         for key in exclude_list:
             output(u"exclude: %s" % key)
         for key in remote_list:
-            output(u"restore: '%s'" % remote_list[key]['object_uri_str'])
+            output(u"restore: %s" % remote_list[key]['object_uri_str'])
 
         warning(u"Exiting now because of --dry-run")
         return EX_OK
-
-    ret = EX_OK
 
     for key in remote_list:
         item = remote_list[key]
 
         uri = S3Uri(item['object_uri_str'])
         if not item['object_uri_str'].endswith("/"):
-            try:
-                response = s3.object_restore(S3Uri(item['object_uri_str']))
-                output(u"restore: '%s'" % item['object_uri_str'])
-            except S3Error as e:
-                if e.code in ("RestoreAlreadyInProgress", "InvalidObjectState"):
-                    warning("%s: %s" % (e.message, item['object_uri_str']))
-                elif cfg.stop_on_error:
-                    raise e
-                else:
-                    error("restore failed for: '%s' (%s)", item['object_uri_str'], e)
-                    ret = EX_PARTIAL
-
+            response = s3.object_restore(S3Uri(item['object_uri_str']))
+            output(u"File %s restoration started" % item['object_uri_str'])
         else:
             debug(u"Skipping directory since only files may be restored")
-    return ret
+    return EX_OK
 
 
 def subcmd_cp_mv(args, process_fce, action_str, message):
-    cfg = Config()
-    if action_str == 'modify':
-        if len(args) < 1:
-            raise ParameterError("Expecting one or more S3 URIs for "
-                                 + action_str)
-        destination_base = None
-    else:
-        if len(args) < 2:
-            raise ParameterError("Expecting two or more S3 URIs for "
-                                 + action_str)
+    if action_str != 'modify' and len(args) < 2:
+        raise ParameterError("Expecting two or more S3 URIs for " + action_str)
+    if action_str == 'modify' and len(args) < 1:
+        raise ParameterError("Expecting one or more S3 URIs for " + action_str)
+    if action_str != 'modify':
         dst_base_uri = S3Uri(args.pop())
-        if dst_base_uri.type != "s3":
-            raise ParameterError("Destination must be S3 URI. To download a "
-                                 "file use 'get' or 'sync'.")
-        destination_base = dst_base_uri.uri()
+    else:
+        dst_base_uri = S3Uri(args[-1])
 
-    scoreboard = ExitScoreboard()
+    if dst_base_uri.type != "s3":
+        raise ParameterError("Destination must be S3 URI. To download a file use 'get' or 'sync'.")
+    destination_base = dst_base_uri.uri()
 
-    remote_list, exclude_list, remote_total_size = \
-        fetch_remote_list(args, require_attribs=False)
+    remote_list, exclude_list = fetch_remote_list(args, require_attribs = False)
 
     remote_count = len(remote_list)
 
     info(u"Summary: %d remote files to %s" % (remote_count, action_str))
 
-    if destination_base:
-        # Trying to mv dir1/ to dir2 will not pass a test in S3.FileLists,
-        # so we don't need to test for it here.
-        if not destination_base.endswith('/') \
-           and (len(remote_list) > 1 or cfg.recursive):
-            raise ParameterError("Destination must be a directory and end with"
-                                 " '/' when acting on a folder content or on "
-                                 "multiple sources.")
-
-        if cfg.recursive:
-            for key in remote_list:
-                remote_list[key]['dest_name'] = destination_base + key
-        else:
-            for key in remote_list:
-                if destination_base.endswith("/"):
-                    remote_list[key]['dest_name'] = destination_base + key
-                else:
-                    remote_list[key]['dest_name'] = destination_base
+    if cfg.recursive:
+        if not destination_base.endswith("/"):
+            destination_base += "/"
+        for key in remote_list:
+            remote_list[key]['dest_name'] = destination_base + key
     else:
         for key in remote_list:
-            remote_list[key]['dest_name'] = remote_list[key]['object_uri_str']
+            if destination_base.endswith("/"):
+                remote_list[key]['dest_name'] = destination_base + key
+            else:
+                remote_list[key]['dest_name'] = destination_base
 
     if cfg.dry_run:
         for key in exclude_list:
             output(u"exclude: %s" % key)
         for key in remote_list:
-            output(u"%s: '%s' -> '%s'" % (action_str,
-                                          remote_list[key]['object_uri_str'],
-                                          remote_list[key]['dest_name']))
+            output(u"%s: %s -> %s" % (action_str, remote_list[key]['object_uri_str'], remote_list[key]['dest_name']))
 
         warning(u"Exiting now because of --dry-run")
         return EX_OK
@@ -1014,49 +749,34 @@ def subcmd_cp_mv(args, process_fce, action_str, message):
         item = remote_list[key]
         src_uri = S3Uri(item['object_uri_str'])
         dst_uri = S3Uri(item['dest_name'])
-        src_size = item.get('size')
 
         extra_headers = copy(cfg.extra_headers)
         try:
-            response = process_fce(src_uri, dst_uri, extra_headers,
-                                   src_size=src_size,
-                                   extra_label=seq_label)
-            output(message % {"src": src_uri, "dst": dst_uri,
-                              "extra": seq_label})
+            response = process_fce(src_uri, dst_uri, extra_headers)
+            output(message % { "src" : src_uri, "dst" : dst_uri })
             if Config().acl_public:
                 info(u"Public URL is: %s" % dst_uri.public_url())
-            scoreboard.success()
-        except (S3Error, S3UploadError) as exc:
-            if isinstance(exc, S3Error) and exc.code == "NoSuchKey":
-                scoreboard.notfound()
+        except S3Error, e:
+            if cfg.ignore_failed_copy and e.code == "NoSuchKey":
                 warning(u"Key not found %s" % item['object_uri_str'])
             else:
-                scoreboard.failed()
-                error(u"Copy failed for: '%s' (%s)", item['object_uri_str'],
-                      exc)
-
-            if cfg.stop_on_error:
-                break
-    return scoreboard.rc()
+                raise
+    return EX_OK
 
 def cmd_cp(args):
     s3 = S3(Config())
-    return subcmd_cp_mv(args, s3.object_copy, "copy",
-                        u"remote copy: '%(src)s' -> '%(dst)s'  %(extra)s")
+    return subcmd_cp_mv(args, s3.object_copy, "copy", u"File %(src)s copied to %(dst)s")
 
 def cmd_modify(args):
     s3 = S3(Config())
-    return subcmd_cp_mv(args, s3.object_modify, "modify",
-                        u"modify: '%(src)s'  %(extra)s")
+    return subcmd_cp_mv(args, s3.object_modify, "modify", u"File %(src)s modified")
 
 def cmd_mv(args):
     s3 = S3(Config())
-    return subcmd_cp_mv(args, s3.object_move, "move",
-                        u"move: '%(src)s' -> '%(dst)s'  %(extra)s")
+    return subcmd_cp_mv(args, s3.object_move, "move", u"File %(src)s moved to %(dst)s")
 
 def cmd_info(args):
-    cfg = Config()
-    s3 = S3(cfg)
+    s3 = S3(Config())
 
     while (len(args)):
         uri_arg = args.pop(0)
@@ -1070,9 +790,8 @@ def cmd_info(args):
                 output(u"%s (object):" % uri.uri())
                 output(u"   File size: %s" % info['headers']['content-length'])
                 output(u"   Last mod:  %s" % info['headers']['last-modified'])
-                output(u"   MIME type: %s" % info['headers'].get('content-type', 'none'))
-                output(u"   Storage:   %s" % info['headers'].get('x-amz-storage-class', 'STANDARD'))
-                md5 = info['headers'].get('etag', '').strip('"\'')
+                output(u"   MIME type: %s" % info['headers']['content-type'])
+                md5 = info['headers']['etag'].strip('"\'')
                 try:
                     md5 = info['s3cmd-attrs']['md5']
                 except KeyError:
@@ -1081,26 +800,19 @@ def cmd_info(args):
                 if 'x-amz-server-side-encryption' in info['headers']:
                     output(u"   SSE:       %s" % info['headers']['x-amz-server-side-encryption'])
                 else:
-                    output(u"   SSE:       none")
+                    output(u"   SSE:       NONE")
 
             else:
                 info = s3.bucket_info(uri)
                 output(u"%s (bucket):" % uri.uri())
-                output(u"   Location:  %s" % (info['bucket-location']
-                                              or 'none'))
-                output(u"   Payer:     %s" % (info['requester-pays']
-                                              or 'none'))
-                output(u"   Ownership: %s" % (info['ownership']
-                                              or 'none'))
-                output(u"   Versioning:%s" % (info['versioning']
-                                              or 'none'))
-
-                expiration = s3.expiration_info(uri, cfg.bucket_location)
-                if expiration and expiration['prefix'] is not None:
+                output(u"   Location:  %s" % info['bucket-location'])
+                output(u"   Payer: %s" % info['requester-pays'])
+                try:
+                    expiration = s3.expiration_info(uri, cfg.bucket_location)
                     expiration_desc = "Expiration Rule: "
                     if expiration['prefix'] == "":
                         expiration_desc += "all objects in this bucket "
-                    elif expiration['prefix'] is not None:
+                    else:
                         expiration_desc += "objects with key prefix '" + expiration['prefix'] + "' "
                     expiration_desc += "will expire in '"
                     if expiration['days']:
@@ -1108,68 +820,28 @@ def cmd_info(args):
                     elif expiration['date']:
                         expiration_desc += expiration['date'] + "' "
                     output(u"   %s" % expiration_desc)
-                else:
-                    output(u"   Expiration rule: none")
-
-                public_access_block = ','.join([
-                    key for key, val in info['public-access-block'].items()
-                    if val
-                ])
-                output(u"   Block Public Access: %s" % (public_access_block
-                                                        or 'none'))
-
+                except:
+                    output(u"   Expiration Rule: none")
+            acl = s3.get_acl(uri)
+            acl_grant_list = acl.getGrantList()
             try:
                 policy = s3.get_policy(uri)
-                output(u"   Policy:    %s" % policy)
-            except S3Error as exc:
-                # Ignore the exception and don't fail the info
-                # if the server doesn't support setting ACLs
-                if exc.status == 403:
-                    output(u"   Policy:    Not available: GetPolicy permission is needed to read the policy")
-                elif exc.status == 405:
-                    output(u"   Policy:    Not available: Only the bucket owner can read the policy")
-                elif exc.status not in [404, 501]:
-                    raise exc
-                else:
-                    output(u"   Policy:    none")
+                output(u"   policy:    %s" % policy)
+            except:
+                output(u"   policy:    none")
 
-            try:
-                cors = s3.get_cors(uri)
-                output(u"   CORS:      %s" % cors)
-            except S3Error as exc:
-                # Ignore the exception and don't fail the info
-                # if the server doesn't support setting ACLs
-                if exc.status not in [404, 501]:
-                    raise exc
-                output(u"   CORS:      none")
-
-            try:
-                acl = s3.get_acl(uri)
-                acl_grant_list = acl.getGrantList()
-                for grant in acl_grant_list:
-                    output(u"   ACL:       %s: %s" % (grant['grantee'], grant['permission']))
-                if acl.isAnonRead():
-                    output(u"   URL:       %s" % uri.public_url())
-            except S3Error as exc:
-                # Ignore the exception and don't fail the info
-                # if the server doesn't support setting ACLs
-                if exc.status not in [404, 501]:
-                    raise exc
-                else:
-                    output(u"   ACL:       none")
+            for grant in acl_grant_list:
+                output(u"   ACL:       %s: %s" % (grant['grantee'], grant['permission']))
+            if acl.isAnonRead():
+                output(u"   URL:       %s" % uri.public_url())
 
             if uri.has_object():
-                # Temporary hack for performance + python3 compatibility
-                if PY3:
-                    info_headers_iter = info['headers'].items()
-                else:
-                    info_headers_iter = info['headers'].iteritems()
-                for header, value in info_headers_iter:
+                for header, value in info['headers'].iteritems():
                     if header.startswith('x-amz-meta-'):
                         output(u"   %s: %s" % (header, value))
 
-        except S3Error as e:
-            if e.info["Code"] in S3.codes:
+        except S3Error, e:
+            if S3.codes.has_key(e.info["Code"]):
                 error(S3.codes[e.info["Code"]] % uri.bucket())
             raise
     return EX_OK
@@ -1183,30 +855,17 @@ def filedicts_to_keys(*args):
     return keys
 
 def cmd_sync_remote2remote(args):
-    cfg = Config()
-    s3 = S3(cfg)
+    s3 = S3(Config())
 
     # Normalise s3://uri (e.g. assert trailing slash)
     destination_base = S3Uri(args[-1]).uri()
 
-    destbase_with_source_list = set()
-    for source_arg in args[:-1]:
-        if source_arg.endswith('/'):
-            destbase_with_source_list.add(destination_base)
-        else:
-            destbase_with_source_list.add(s3path.join(
-                destination_base, s3path.basename(source_arg)
-            ))
-
-    stats_info = StatsInfo()
-
-    src_list, src_exclude_list, remote_total_size = fetch_remote_list(args[:-1], recursive = True, require_attribs = True)
-    dst_list, dst_exclude_list, _ = fetch_remote_list(destbase_with_source_list, recursive = True, require_attribs = True)
+    src_list, src_exclude_list = fetch_remote_list(args[:-1], recursive = True, require_attribs = True)
+    dst_list, dst_exclude_list = fetch_remote_list(destination_base, recursive = True, require_attribs = True)
 
     src_count = len(src_list)
     orig_src_count = src_count
     dst_count = len(dst_list)
-    deleted_count = 0
 
     info(u"Found %d source files, %d destination files" % (src_count, dst_count))
 
@@ -1216,7 +875,7 @@ def cmd_sync_remote2remote(args):
     update_count = len(update_list)
     dst_count = len(dst_list)
 
-    print(u"Summary: %d source files to copy, %d files at destination to delete" % (src_count + update_count, dst_count))
+    print(u"Summary: %d source files to copy, %d files at destination to delete" % (src_count, dst_count))
 
     ### Populate 'target_uri' only if we've got something to sync from src to dst
     for key in src_list:
@@ -1230,11 +889,9 @@ def cmd_sync_remote2remote(args):
             output(u"exclude: %s" % key)
         if cfg.delete_removed:
             for key in dst_list:
-                output(u"delete: '%s'" % dst_list[key]['object_uri_str'])
+                output(u"delete: %s" % dst_list[key]['object_uri_str'])
         for key in src_list:
-            output(u"remote copy: '%s' -> '%s'" % (src_list[key]['object_uri_str'], src_list[key]['target_uri']))
-        for key in update_list:
-            output(u"remote copy: '%s' -> '%s'" % (update_list[key]['object_uri_str'], update_list[key]['target_uri']))
+            output(u"Sync: %s -> %s" % (src_list[key]['object_uri_str'], src_list[key]['target_uri']))
         warning(u"Exiting now because of --dry-run")
         return EX_OK
 
@@ -1250,215 +907,72 @@ def cmd_sync_remote2remote(args):
     # Delete items in destination that are not in source
     if cfg.delete_removed and not cfg.delete_after:
         subcmd_batch_del(remote_list = dst_list)
-        deleted_count = len(dst_list)
 
     def _upload(src_list, seq, src_count):
         file_list = src_list.keys()
         file_list.sort()
-        ret = EX_OK
-        total_nb_files = 0
-        total_size = 0
         for file in file_list:
             seq += 1
             item = src_list[file]
             src_uri = S3Uri(item['object_uri_str'])
             dst_uri = S3Uri(item['target_uri'])
-            src_size = item.get('size')
             seq_label = "[%d of %d]" % (seq, src_count)
             extra_headers = copy(cfg.extra_headers)
             try:
-                response = s3.object_copy(src_uri, dst_uri, extra_headers,
-                                          src_size=src_size,
-                                          extra_label=seq_label)
-                output(u"remote copy: '%s' -> '%s'  %s" %
-                       (src_uri, dst_uri, seq_label))
-                total_nb_files += 1
-                total_size += item.get(u'size', 0)
-            except (S3Error, S3UploadError) as exc:
-                ret = EX_PARTIAL
-                error(u"File '%s' could not be copied: %s", src_uri, exc)
-                if cfg.stop_on_error:
-                    raise
-        return ret, seq, total_nb_files, total_size
+                response = s3.object_copy(src_uri, dst_uri, extra_headers)
+                output("File %(src)s copied to %(dst)s" % { "src" : src_uri, "dst" : dst_uri })
+            except S3Error, e:
+                error("File %(src)s could not be copied: %(e)s" % { "src" : src_uri, "e" : e })
+        return seq
 
     # Perform the synchronization of files
     timestamp_start = time.time()
     seq = 0
-    ret, seq, nb_files, size = _upload(src_list, seq, src_count + update_count)
-    total_files_copied = nb_files
-    total_size_copied = size
-
-    status, seq, nb_files, size = _upload(update_list, seq, src_count + update_count)
-    if ret == EX_OK:
-        ret = status
-    total_files_copied += nb_files
-    total_size_copied += size
-
-    n_copied, bytes_saved, failed_copy_files = remote_copy(
-        s3, copy_pairs, destination_base, None, False)
-    total_files_copied += n_copied
-    total_size_copied += bytes_saved
+    seq = _upload(src_list, seq, src_count + update_count)
+    seq = _upload(update_list, seq, src_count + update_count)
+    n_copied, bytes_saved, failed_copy_files = remote_copy(s3, copy_pairs, destination_base)
 
     #process files not copied
-    debug("Process files that were not remotely copied")
-    failed_copy_count = len(failed_copy_files)
+    debug("Process files that was not remote copied")
+    failed_copy_count = len (failed_copy_files)
     for key in failed_copy_files:
         failed_copy_files[key]['target_uri'] = destination_base + key
-    status, seq, nb_files, size = _upload(failed_copy_files, seq, src_count + update_count + failed_copy_count)
-    if ret == EX_OK:
-        ret = status
-    total_files_copied += nb_files
-    total_size_copied += size
-
-    # Delete items in destination that are not in source
-    if cfg.delete_removed and cfg.delete_after:
-        subcmd_batch_del(remote_list = dst_list)
-        deleted_count = len(dst_list)
-
-    stats_info.files = orig_src_count
-    stats_info.size = remote_total_size
-    stats_info.files_copied = total_files_copied
-    stats_info.size_copied = total_size_copied
-    stats_info.files_deleted = deleted_count
+    seq = _upload(failed_copy_files, seq, src_count + update_count + failed_copy_count)
 
     total_elapsed = max(1.0, time.time() - timestamp_start)
-    outstr = "Done. Copied %d files in %0.1f seconds, %0.2f files/s." % (total_files_copied, total_elapsed, seq / total_elapsed)
-    if cfg.stats:
-        outstr += stats_info.format_output()
-        output(outstr)
-    elif seq > 0:
+    outstr = "Done. Copied %d files in %0.1f seconds, %0.2f files/s" % (seq, total_elapsed, seq/total_elapsed)
+    if seq > 0:
         output(outstr)
     else:
         info(outstr)
 
-    return ret
+    # Delete items in destination that are not in source
+    if cfg.delete_removed and cfg.delete_after:
+        subcmd_batch_del(remote_list = dst_list)
+    return EX_OK
 
 def cmd_sync_remote2local(args):
-    cfg = Config()
-    s3 = S3(cfg)
-
     def _do_deletes(local_list):
-        total_size = 0
         if cfg.max_delete > 0 and len(local_list) > cfg.max_delete:
             warning(u"delete: maximum requested number of deletes would be exceeded, none performed.")
-            return total_size
+            return
+        for key in local_list:
+            os.unlink(deunicodise(local_list[key]['full_name']))
+            output(u"deleted: %s" % local_list[key]['full_name'])
 
-        # Reverse used to delete children before parent folders
-        for key in reversed(local_list):
-            item = local_list[key]
-            full_path = item['full_name']
-            if item.get('is_dir', True):
-                os.rmdir(deunicodise(full_path))
-            else:
-                os.unlink(deunicodise(full_path))
-            output(u"delete: '%s'" % full_path)
-            total_size += item.get(u'size', 0)
-        return len(local_list), total_size
+    s3 = S3(Config())
 
     destination_base = args[-1]
-    source_args = args[:-1]
-    fetch_source_args = args[:-1]
-
-    if not destination_base.endswith(os.path.sep):
-        if fetch_source_args[0].endswith(u'/') or len(fetch_source_args) > 1:
-            raise ParameterError("Destination must be a directory and end with '/' when downloading multiple sources.")
-
-    stats_info = StatsInfo()
-
-    remote_list, src_exclude_list, remote_total_size = fetch_remote_list(fetch_source_args, recursive = True, require_attribs = True)
-
-
-    # - The source path is either like "/myPath/my_src_folder" and
-    # the user want to download this single folder and Optionally only delete
-    # things that have been removed inside this folder. For this case, we only
-    # have to look inside destination_base/my_src_folder and not at the root of
-    # destination_base.
-    # - Or like "/myPath/my_src_folder/" and the user want to have the sync
-    # with the content of this folder
-    destbase_with_source_list = set()
-    for source_arg in fetch_source_args:
-        if source_arg.endswith('/'):
-            if destination_base.endswith(os.path.sep):
-                destbase_with_source_list.add(destination_base)
-            else:
-                destbase_with_source_list.add(destination_base + os.path.sep)
-        else:
-            destbase_with_source_list.add(os.path.join(destination_base,
-                                                      os.path.basename(source_arg)))
-    # with_dirs is True, as we always want to compare source with the actual full local content
-    local_list, single_file_local, dst_exclude_list, local_total_size = fetch_local_list(
-        destbase_with_source_list, is_src=False, recursive=True, with_dirs=True
-    )
+    local_list, single_file_local, dst_exclude_list = fetch_local_list(destination_base, is_src = False, recursive = True)
+    remote_list, src_exclude_list = fetch_remote_list(args[:-1], recursive = True, require_attribs = True)
 
     local_count = len(local_list)
     remote_count = len(remote_list)
     orig_remote_count = remote_count
 
-    info(u"Found %d remote file objects, %d local files and directories" % (remote_count, local_count))
+    info(u"Found %d remote files, %d local files" % (remote_count, local_count))
 
     remote_list, local_list, update_list, copy_pairs = compare_filelists(remote_list, local_list, src_remote = True, dst_remote = False)
-
-    dir_cache = {}
-
-    def _set_local_filename(remote_list, destination_base, source_args, dir_cache):
-        if len(remote_list) == 0:
-            return
-
-        if destination_base.endswith(os.path.sep):
-            if not os.path.exists(deunicodise(destination_base)):
-                if not cfg.dry_run:
-                    os.makedirs(deunicodise(destination_base))
-            if not os.path.isdir(deunicodise(destination_base)):
-                raise ParameterError("Destination is not an existing directory")
-        elif len(remote_list) == 1 and \
-             source_args[0] == remote_list[next(iter(remote_list.keys()))].get(u'object_uri_str', ''):
-            if os.path.isdir(deunicodise(destination_base)):
-                raise ParameterError("Destination already exists and is a directory")
-            remote_list[next(iter(remote_list.keys()))]['local_filename'] = destination_base
-            return
-
-        if destination_base[-1] != os.path.sep:
-            destination_base += os.path.sep
-
-        for key in remote_list:
-            local_filename = destination_base + key
-            if os.path.sep != "/":
-                local_filename = os.path.sep.join(local_filename.split("/"))
-
-            item = remote_list[key]
-            item['local_filename'] = local_filename
-
-            # Create parent folders if needed
-            # Extract key dirname
-            key_dir_path = key.rsplit('/', 1)[0]
-            dst_dir = None
-            if key_dir_path not in dir_cache:
-                if cfg.dry_run:
-                    mkdir_ret = True
-                else:
-                    dst_dir = unicodise(os.path.dirname(deunicodise(local_filename)))
-                    mkdir_ret = Utils.mkdir_with_parents(dst_dir)
-                # Also add to cache, all the parent dirs
-                path = key_dir_path
-                while path and path not in dir_cache:
-                    dir_cache[path] = mkdir_ret
-                    last_slash_idx = path.rfind('/')
-                    if last_slash_idx in [-1, 0]:
-                        break
-                    path = path[:last_slash_idx]
-            if dir_cache[key_dir_path] == False:
-                if not dst_dir:
-                    dst_dir = unicodise(os.path.dirname(deunicodise(local_filename)))
-                if cfg.stop_on_error:
-                    error(u"Exiting now because of --stop-on-error")
-                    raise OSError("Download of '%s' failed (Reason: %s destination directory is not writable)" % (key, dst_dir))
-                error(u"Download of '%s' failed (Reason: %s destination directory is not writable)" % (key, dst_dir))
-                item['mark_failed'] = True
-                ret = EX_PARTIAL
-                continue
-
-    _set_local_filename(remote_list, destination_base, source_args, dir_cache)
-    _set_local_filename(update_list, destination_base, source_args, dir_cache)
 
     local_count = len(local_list)
     remote_count = len(remote_list)
@@ -1467,17 +981,37 @@ def cmd_sync_remote2local(args):
 
     info(u"Summary: %d remote files to download, %d local files to delete, %d local files to hardlink" % (remote_count + update_count, local_count, copy_pairs_count))
 
+    def _set_local_filename(remote_list, destination_base):
+        if len(remote_list) == 0:
+            return
+        if not os.path.isdir(deunicodise(destination_base)):
+            ## We were either given a file name (existing or not) or want STDOUT
+            if len(remote_list) > 1:
+                raise ParameterError("Destination must be a directory when downloading multiple sources.")
+            remote_list[remote_list.keys()[0]]['local_filename'] = destination_base
+        else:
+            if destination_base[-1] != os.path.sep:
+                destination_base += os.path.sep
+            for key in remote_list:
+                local_filename = destination_base + key
+                if os.path.sep != "/":
+                    local_filename = os.path.sep.join(local_filename.split("/"))
+                remote_list[key]['local_filename'] = local_filename
+
+    _set_local_filename(remote_list, destination_base)
+    _set_local_filename(update_list, destination_base)
+
     if cfg.dry_run:
         keys = filedicts_to_keys(src_exclude_list, dst_exclude_list)
         for key in keys:
             output(u"exclude: %s" % key)
         if cfg.delete_removed:
             for key in local_list:
-                output(u"delete: '%s'" % local_list[key]['full_name'])
+                output(u"delete: %s" % local_list[key]['full_name'])
         for key in remote_list:
-            output(u"download: '%s' -> '%s'" % (remote_list[key]['object_uri_str'], remote_list[key]['local_filename']))
+            output(u"download: %s -> %s" % (remote_list[key]['object_uri_str'], remote_list[key]['local_filename']))
         for key in update_list:
-            output(u"download: '%s' -> '%s'" % (update_list[key]['object_uri_str'], update_list[key]['local_filename']))
+            output(u"download: %s -> %s" % (update_list[key]['object_uri_str'], update_list[key]['local_filename']))
 
         warning(u"Exiting now because of --dry-run")
         return EX_OK
@@ -1492,400 +1026,266 @@ def cmd_sync_remote2local(args):
         cfg.delete_removed = False
 
     if cfg.delete_removed and not cfg.delete_after:
-        deleted_count, deleted_size = _do_deletes(local_list)
-    else:
-        deleted_count, deleted_size = (0, 0)
+        _do_deletes(local_list)
 
-    def _download(remote_list, seq, total, total_size):
-        original_umask = os.umask(0)
-        os.umask(original_umask)
+    def _download(remote_list, seq, total, total_size, dir_cache):
+        original_umask = os.umask(0);
+        os.umask(original_umask);
         file_list = remote_list.keys()
         file_list.sort()
-        ret = EX_OK
         for file in file_list:
             seq += 1
             item = remote_list[file]
             uri = S3Uri(item['object_uri_str'])
             dst_file = item['local_filename']
-            last_modified_ts = item['timestamp']
-            is_dir = item['is_dir']
+            is_empty_directory = dst_file.endswith('/')
             seq_label = "[%d of %d]" % (seq, total)
-
-            if item.get('mark_failed', False):
-                # Item is skipped because there was previously an issue with
-                # its destination directory.
-                continue
-
-            response = None
-            dst_files_b = deunicodise(dst_file)
             try:
-                chkptfname_b = ''
-                # ignore empty directory at S3:
-                if not is_dir:
-                    debug(u"dst_file=%s" % dst_file)
-                    # create temporary files (of type .s3cmd.XXXX.tmp) in the same directory
-                    # for downloading and then rename once downloaded
-                    # unicode provided to mkstemp argument
-                    chkptfd, chkptfname_b = tempfile.mkstemp(
-                        u".tmp", u".s3cmd.", os.path.dirname(dst_file)
-                    )
-                    with io.open(chkptfd, mode='wb') as dst_stream:
-                        dst_stream.stream_name = unicodise(chkptfname_b)
-                        debug(u"created chkptfname=%s" % dst_stream.stream_name)
-                        response = s3.object_get(uri, dst_stream, dst_file, extra_label = seq_label)
-
-                    # download completed, rename the file to destination
-                    if os.name == "nt":
-                        # Windows is really a bad OS. Rename can't overwrite an existing file
-                        try:
-                            os.unlink(dst_files_b)
-                        except OSError:
-                            pass
-                    os.rename(chkptfname_b, dst_files_b)
-                    debug(u"renamed chkptfname=%s to dst_file=%s"
-                          % (dst_stream.stream_name, dst_file))
-            except OSError as exc:
-                allow_partial = True
-
-                if exc.errno == errno.EISDIR:
-                    error(u"Download of '%s' failed (Reason: %s is a directory)"
-                          % (file, dst_file))
-                elif os.name != "nt" and exc.errno == errno.ETXTBSY:
-                    error(u"Download of '%s' failed (Reason: %s is currently open for execute, cannot be overwritten)"
-                          % (file, dst_file))
-                elif exc.errno == errno.EPERM or exc.errno == errno.EACCES:
-                    error(u"Download of '%s' failed (Reason: %s permission denied)"
-                          % (file, dst_file))
-                elif exc.errno == errno.EBUSY:
-                    error(u"Download of '%s' failed (Reason: %s is busy)" % (file, dst_file))
-                elif exc.errno == errno.EFBIG:
-                    error(u"Download of '%s' failed (Reason: %s is too big)" % (file, dst_file))
-                elif exc.errno == errno.ENAMETOOLONG:
-                    error(u"Download of '%s' failed (Reason: File Name is too long)" % file)
-
-                elif (exc.errno == errno.ENOSPC or (os.name != "nt" and exc.errno == errno.EDQUOT)):
-                    error(u"Download of '%s' failed (Reason: No space left)" % file)
-                    allow_partial = False
-                else:
-                    error(u"Download of '%s' failed (Reason: Unknown OsError %d)" % (file, exc.errno or 0))
-                    allow_partial = False
-
-                try:
-                    # Try to remove the temp file if it exists
-                    if chkptfname_b:
-                        os.unlink(chkptfname_b)
-                except Exception:
-                    pass
-
-                if allow_partial and not cfg.stop_on_error:
-                    ret = EX_PARTIAL
+                dst_dir = unicodise(os.path.dirname(deunicodise(dst_file)))
+                if not dir_cache.has_key(dst_dir):
+                    dir_cache[dst_dir] = Utils.mkdir_with_parents(dst_dir)
+                if dir_cache[dst_dir] == False:
+                    warning(u"%s: destination directory not writable: %s" % (file, dst_dir))
                     continue
 
-                ret = EX_OSFILE
-                if allow_partial:
-                    error(u"Exiting now because of --stop-on-error")
-                else:
-                    error(u"Exiting now because of fatal error")
-                raise
-            except S3DownloadError as exc:
-                error(u"Download of '%s' failed too many times (Last Reason: %s). "
-                      "This is usually a transient error, please try again "
-                      "later." % (file, exc))
                 try:
-                    os.unlink(chkptfname_b)
-                except Exception as sub_exc:
-                    warning(u"Error deleting temporary file %s (Reason: %s)",
-                            (dst_stream.stream_name, sub_exc))
-                if cfg.stop_on_error:
-                    ret = EX_DATAERR
-                    error(u"Exiting now because of --stop-on-error")
-                    raise
-                ret = EX_PARTIAL
-                continue
-            except S3Error as exc:
-                warning(u"Remote file '%s'. S3Error: %s" % (exc.resource, exc))
-                try:
-                    os.unlink(chkptfname_b)
-                except Exception as sub_exc:
-                    warning(u"Error deleting temporary file %s (Reason: %s)",
-                            (dst_stream.stream_name, sub_exc))
-                if cfg.stop_on_error:
-                    raise
-                ret = EX_PARTIAL
-                continue
-
-            try:
-                # set permissions on destination file
-                if not is_dir: # a normal file
-                    mode = 0o777 - original_umask
-                else:
-                    # an empty directory, make them readable/executable
-                    mode = 0o775
-                debug(u"mode=%s" % oct(mode))
-                os.chmod(dst_files_b, mode)
-            except:
-                raise
-
-            # We can't get metadata for directories from an object_get, so we have to
-            # request them explicitly
-            if is_dir and cfg.preserve_attrs:
-                try:
-                    response = s3.object_info(uri)
-                except S3Error as exc:
-                    error(u"Retrieving directory metadata for '%s' failed (Reason: %s)"
-                        % (dst_file, exc))
-                    if cfg.stop_on_error:
-                        error(u"Exiting now because of --stop-on-error")
-                        raise
-                    ret = EX_PARTIAL
-                    continue
-
-            try:
-                if response and 's3cmd-attrs' in response and cfg.preserve_attrs:
-                    attrs = response['s3cmd-attrs']
-                    attr_mode = attrs.get('mode')
-                    attr_mtime = attrs.get('mtime')
-                    attr_atime = attrs.get('atime')
-                    attr_uid = attrs.get('uid')
-                    attr_gid = attrs.get('gid')
-                    if attr_mode is not None:
-                        os.chmod(dst_files_b, int(attr_mode))
-                    if attr_mtime is not None or attr_atime is not None:
-                        default_time = int(time.time())
-                        mtime = attr_mtime is not None and int(attr_mtime) or default_time
-                        atime = attr_atime is not None and int(attr_atime) or default_time
-                        os.utime(dst_files_b, (atime, mtime))
-                    if attr_uid is not None and attr_gid is not None:
-                        uid = int(attr_uid)
-                        gid = int(attr_gid)
-                        try:
-                            os.lchown(dst_files_b, uid, gid)
-                        except Exception as exc:
-                            exc.failed_step = 'lchown'
-                            raise
-                else:
-                    if response and 'last-modified' in response['headers']:
-                        last_modified_ts = time.mktime(time.strptime(
-                            response["headers"]["last-modified"],
-                            "%a, %d %b %Y %H:%M:%S GMT"
-                        ))
-                    if last_modified_ts:
-                        os.utime(dst_files_b, (last_modified_ts, last_modified_ts))
-                        debug("set mtime to %s" % last_modified_ts)
-            except OSError as e:
-                ret = EX_PARTIAL
-                if e.errno == errno.EEXIST:
-                    warning(u"'%s' exists - not overwriting" % dst_file)
-                    continue
-                if e.errno in (errno.EPERM, errno.EACCES):
-                    if getattr(e, 'failed_step') == 'lchown':
-                        warning(u"Can't set owner/group: '%s' (%s)" % (dst_file, e.strerror))
+                    if not is_empty_directory: # ignore empty directory at S3:
+                        debug(u"dst_file=%s" % dst_file)
+                        # create temporary files (of type .s3cmd.XXXX.tmp) in the same directory
+                        # for downloading and then rename once downloaded
+                        chkptfd, chkptfname = tempfile.mkstemp(".tmp",".s3cmd.",os.path.dirname(deunicodise(dst_file)))
+                        chkptfname = unicodise(chkptfname)
+                        debug(u"created chkptfname=%s" % chkptfname)
+                        dst_stream = os.fdopen(chkptfd, "wb")
+                        response = s3.object_get(uri, dst_stream, extra_label = seq_label)
+                        dst_stream.close()
+                        # download completed, rename the file to destination
+                        os.rename(deunicodise(chkptfname), deunicodise(dst_file))
+                        debug(u"renamed chkptfname=%s to dst_file=%s" % (chkptfname, dst_file))
+                except OSError, e:
+                    if e.errno == errno.EISDIR:
+                        warning(u"%s is a directory - skipping over" % dst_file)
+                        continue
+                    elif e.errno == errno.ETXTBSY:
+                        warning(u"%s is currently open for execute, cannot be overwritten.  Skipping over." % dst_file)
+                        os.unlink(deunicodise(chkptfname))
+                        continue
                     else:
-                        warning(u"Attrs not writable: '%s' (%s)" % (dst_file, e.strerror))
-                    if cfg.stop_on_error:
-                        raise e
+                        raise
+                except S3DownloadError, e:
+                    error(u"%s: Skipping that file.  This is usually a transient error, please try again later." % e)
+                    os.unlink(deunicodise(chkptfname))
                     continue
-                raise e
-            except KeyboardInterrupt:
-                warning(u"Exiting after keyboard interrupt")
-                return
-            except Exception as e:
-                ret = EX_PARTIAL
-                error(u"%s: %s" % (file, e))
-                if cfg.stop_on_error:
-                    raise OSError(e)
-                continue
+                except S3Error, e:
+                    warning(u"Remote file %s S3Error: %s" % (e.resource, e))
+                    continue
 
-            if is_dir:
-                output(u"mkdir: '%s' -> '%s' %s" % (uri, dst_file, seq_label))
-            else:
-                speed_fmt = formatSize(response["speed"], human_readable = True, floating_point = True)
-                if not Config().progress_meter:
-                    output(u"download: '%s' -> '%s' (%d bytes in %0.1f seconds, %0.2f %sB/s) %s" %
-                        (uri, dst_file, response["size"], response["elapsed"], speed_fmt[0], speed_fmt[1],
-                        seq_label))
-                total_size += response["size"]
+                try:
+                    # set permissions on destination file
+                    if not is_empty_directory: # a normal file
+                        mode = 0777 - original_umask;
+                    else: # an empty directory, make them readable/executable
+                        mode = 0775
+                    debug(u"mode=%s" % oct(mode))
+                    os.chmod(deunicodise(dst_file), mode);
+                except:
+                    raise
+
+                # because we don't upload empty directories,
+                # we can continue the loop here, we won't be setting stat info.
+                # if we do start to upload empty directories, we'll have to reconsider this.
+                if is_empty_directory:
+                    continue
+
+                try:
+                    if response.has_key('s3cmd-attrs') and cfg.preserve_attrs:
+                        attrs = response['s3cmd-attrs']
+                        if attrs.has_key('mode'):
+                            os.chmod(deunicodise(dst_file), int(attrs['mode']))
+                        if attrs.has_key('mtime') or attrs.has_key('atime'):
+                            mtime = attrs.has_key('mtime') and int(attrs['mtime']) or int(time.time())
+                            atime = attrs.has_key('atime') and int(attrs['atime']) or int(time.time())
+                            os.utime(deunicodise(dst_file), (atime, mtime))
+                        if attrs.has_key('uid') and attrs.has_key('gid'):
+                            uid = int(attrs['uid'])
+                            gid = int(attrs['gid'])
+                            os.lchown(deunicodise(dst_file),uid,gid)
+                    elif response["headers"].has_key("last-modified"):
+                        last_modified = time.mktime(time.strptime(response["headers"]["last-modified"], "%a, %d %b %Y %H:%M:%S GMT"))
+                        os.utime(deunicodise(dst_file), (last_modified, last_modified))
+                        debug("set mtime to %s" % last_modified)
+                except OSError, e:
+                    try:
+                        dst_stream.close()
+                        os.remove(deunicodise(chkptfname))
+                    except: pass
+                    if e.errno == errno.EEXIST:
+                        warning(u"%s exists - not overwriting" % dst_file)
+                        continue
+                    if e.errno in (errno.EPERM, errno.EACCES):
+                        warning(u"%s not writable: %s" % (dst_file, e.strerror))
+                        continue
+                    raise e
+                except KeyboardInterrupt:
+                    try:
+                        dst_stream.close()
+                        os.remove(deunicodise(chkptfname))
+                    except: pass
+                    warning(u"Exiting after keyboard interrupt")
+                    return
+                except Exception, e:
+                    try:
+                        dst_stream.close()
+                        os.remove(deunicodise(chkptfname))
+                    except: pass
+                    error(u"%s: %s" % (file, e))
+                    continue
+                # We have to keep repeating this call because
+                # Python 2.4 doesn't support try/except/finally
+                # construction :-(
+                try:
+                    dst_stream.close()
+                    os.remove(deunicodise(chkptfname))
+                except: pass
+            except S3DownloadError, e:
+                error(u"%s: download failed too many times. Skipping that file.  This is usually a transient error, please try again later." % file)
+                continue
+            speed_fmt = formatSize(response["speed"], human_readable = True, floating_point = True)
+            if not Config().progress_meter:
+                output(u"File '%s' stored as '%s' (%d bytes in %0.1f seconds, %0.2f %sB/s) %s" %
+                    (uri, dst_file, response["size"], response["elapsed"], speed_fmt[0], speed_fmt[1],
+                    seq_label))
+            total_size += response["size"]
             if Config().delete_after_fetch:
                 s3.object_delete(uri)
                 output(u"File '%s' removed after syncing" % (uri))
-        return ret, seq, total_size
+        return seq, total_size
 
-    size_transferred = 0
+    total_size = 0
     total_elapsed = 0.0
     timestamp_start = time.time()
+    dir_cache = {}
     seq = 0
-    ret, seq, size_transferred = _download(remote_list, seq, remote_count + update_count, size_transferred)
-    remote_list = None
+    seq, total_size = _download(remote_list, seq, remote_count + update_count, total_size, dir_cache)
+    seq, total_size = _download(update_list, seq, remote_count + update_count, total_size, dir_cache)
 
-    status, seq, size_transferred = _download(update_list, seq, remote_count + update_count, size_transferred)
-    if ret == EX_OK:
-        ret = status
-    update_list = None
-
-    _set_local_filename(copy_pairs, destination_base, source_args, dir_cache)
-    n_copies, size_copies, failed_copy_list = local_copy(copy_pairs, destination_base)
-    copy_pairs = None
-    dir_cache = None
-
-    # Download files that failed during local_copy
-    status, seq, size_transferred = _download(failed_copy_list, seq, len(failed_copy_list) + remote_count + update_count, size_transferred)
-    if ret == EX_OK:
-        ret = status
-
-    if cfg.delete_removed and cfg.delete_after:
-        deleted_count, deleted_size = _do_deletes(local_list)
+    failed_copy_list = local_copy(copy_pairs, destination_base)
+    _set_local_filename(failed_copy_list, destination_base)
+    seq, total_size = _download(failed_copy_list, seq, len(failed_copy_list) + remote_count + update_count, total_size, dir_cache)
 
     total_elapsed = max(1.0, time.time() - timestamp_start)
-    speed_fmt = formatSize(size_transferred / total_elapsed, human_readable = True, floating_point = True)
-
-    stats_info.files = orig_remote_count
-    stats_info.size = remote_total_size
-    stats_info.files_transferred = len(failed_copy_list) + remote_count + update_count
-    stats_info.size_transferred = size_transferred
-    stats_info.files_copied = n_copies
-    stats_info.size_copied = size_copies
-    stats_info.files_deleted = deleted_count
-    stats_info.size_deleted = deleted_size
+    speed_fmt = formatSize(total_size/total_elapsed, human_readable = True, floating_point = True)
 
     # Only print out the result if any work has been done or
     # if the user asked for verbose output
-    outstr = "Done. Downloaded %d bytes in %0.1f seconds, %0.2f %sB/s." % (size_transferred, total_elapsed, speed_fmt[0], speed_fmt[1])
-    if cfg.stats:
-        outstr += stats_info.format_output()
-        output(outstr)
-    elif size_transferred > 0:
+    outstr = "Done. Downloaded %d bytes in %0.1f seconds, %0.2f %sB/s" % (total_size, total_elapsed, speed_fmt[0], speed_fmt[1])
+    if total_size > 0:
         output(outstr)
     else:
         info(outstr)
 
-    return ret
+    if cfg.delete_removed and cfg.delete_after:
+        _do_deletes(local_list)
+    return EX_OK
 
 def local_copy(copy_pairs, destination_base):
     # Do NOT hardlink local files by default, that'd be silly
     # For instance all empty files would become hardlinked together!
-    saved_bytes = 0
     failed_copy_list = FileDict()
-
-    if destination_base[-1] != os.path.sep:
-        destination_base += os.path.sep
-
-    for relative_file, src_obj in copy_pairs.items():
-        src_file = destination_base + src_obj['copy_src']
-        if os.path.sep != "/":
-            src_file = os.path.sep.join(src_file.split("/"))
-
-        dst_file = src_obj['local_filename']
+    for (src_obj, dst1, relative_file) in copy_pairs:
+        src_file = os.path.join(destination_base, dst1)
+        dst_file = os.path.join(destination_base, relative_file)
+        dst_dir = os.path.dirname(deunicodise(dst_file))
         try:
+            if not os.path.isdir(deunicodise(dst_dir)):
+                debug("MKDIR %s" % dst_dir)
+                os.makedirs(deunicodise(dst_dir))
             debug(u"Copying %s to %s" % (src_file, dst_file))
             shutil.copy2(deunicodise(src_file), deunicodise(dst_file))
-            saved_bytes += src_obj.get(u'size', 0)
-        except (IOError, OSError) as e:
-            warning(u'Unable to copy or hardlink files %s -> %s (Reason: %s)'
-                    % (src_file, dst_file, e))
+        except (IOError, OSError), e:
+            warning(u'Unable to hardlink or copy files %s -> %s: %s' % (src_file, dst_file, e))
             failed_copy_list[relative_file] = src_obj
-    return len(copy_pairs), saved_bytes, failed_copy_list
+    return failed_copy_list
 
-def remote_copy(s3, copy_pairs, destination_base, uploaded_objects_list=None,
-                metadata_update=False):
-    cfg = Config()
+def remote_copy(s3, copy_pairs, destination_base):
     saved_bytes = 0
     failed_copy_list = FileDict()
-    seq = 0
-    src_count = len(copy_pairs)
-    for relative_file, src_obj in copy_pairs.items():
-        copy_src_file = src_obj['copy_src']
-        src_md5 = src_obj['md5']
-
-        seq += 1
-        debug(u"Remote Copying from %s to %s" % (copy_src_file, relative_file))
-        src_uri = S3Uri(destination_base + copy_src_file)
-        dst_uri = S3Uri(destination_base + relative_file)
-        src_obj_size = src_obj.get(u'size', 0)
-        seq_label = "[%d of %d]" % (seq, src_count)
+    for (src_obj, dst1, dst2) in copy_pairs:
+        debug(u"Remote Copying from %s to %s" % (dst1, dst2))
+        dst1_uri = S3Uri(destination_base + dst1)
+        dst2_uri = S3Uri(destination_base + dst2)
         extra_headers = copy(cfg.extra_headers)
-        if metadata_update:
-            # source is a real local file with its own personal metadata
-            attr_header = _build_attr_header(src_obj, relative_file, src_md5)
-            debug(u"attr_header: %s" % attr_header)
-            extra_headers.update(attr_header)
-            extra_headers['content-type'] = \
-                s3.content_type(filename=src_obj['full_name'])
         try:
-            s3.object_copy(src_uri, dst_uri, extra_headers,
-                           src_size=src_obj_size,
-                           extra_label=seq_label)
-            output(u"remote copy: '%s' -> '%s'  %s"
-                   % (copy_src_file, relative_file, seq_label))
-            saved_bytes += src_obj_size
-            if uploaded_objects_list is not None:
-                uploaded_objects_list.append(relative_file)
-        except Exception:
-            warning(u"Unable to remote copy files '%s' -> '%s'" % (src_uri, dst_uri))
-            failed_copy_list[relative_file] = src_obj
+            s3.object_copy(dst1_uri, dst2_uri, extra_headers)
+            info = s3.object_info(dst2_uri)
+            saved_bytes = saved_bytes + long(info['headers']['content-length'])
+            output(u"remote copy: %s -> %s" % (dst1, dst2))
+        except:
+            warning(u'Unable to remote copy files %s -> %s' % (dst1_uri, dst2_uri))
+            failed_copy_list[dst2] = src_obj
     return (len(copy_pairs), saved_bytes, failed_copy_list)
 
-def _build_attr_header(src_obj, src_relative_name, md5=None):
-    cfg = Config()
+
+def _build_attr_header(local_list, src):
     attrs = {}
-    if cfg.preserve_attrs:
-        for attr in cfg.preserve_attrs_list:
-            val = None
-            if attr == 'uname':
-                try:
-                    val = Utils.urlencode_string(Utils.getpwuid_username(src_obj['uid']), unicode_output=True)
-                except (KeyError, TypeError):
-                    attr = "uid"
-                    val = src_obj.get('uid')
-                    if val:
-                        warning(u"%s: Owner username not known. Storing UID=%d instead." % (src_relative_name, val))
-            elif attr == 'gname':
-                try:
-                    val = Utils.urlencode_string(Utils.getgrgid_grpname(src_obj.get('gid')), unicode_output=True)
-                except (KeyError, TypeError):
-                    attr = "gid"
-                    val = src_obj.get('gid')
-                    if val:
-                        warning(u"%s: Owner groupname not known. Storing GID=%d instead." % (src_relative_name, val))
-            elif attr != "md5":
-                try:
-                    val = getattr(src_obj['sr'], 'st_' + attr)
-                except Exception:
-                    val = None
-            if val is not None:
-                attrs[attr] = val
+    for attr in cfg.preserve_attrs_list:
+        if attr == 'uname':
+            try:
+                val = Utils.getpwuid_username(local_list[src]['uid'])
+            except (KeyError, TypeError):
+                attr = "uid"
+                val = local_list[src].get('uid')
+                if val:
+                    warning(u"%s: Owner username not known. Storing UID=%d instead." % (src, val))
+        elif attr == 'gname':
+            try:
+                val = Utils.getgrgid_grpname(local_list[src].get('gid'))
+            except (KeyError, TypeError):
+                attr = "gid"
+                val = local_list[src].get('gid')
+                if val:
+                    warning(u"%s: Owner groupname not known. Storing GID=%d instead." % (src, val))
+        elif attr == 'md5':
+            try:
+                val = local_list.get_md5(src)
+            except IOError:
+                val = None
+        else:
+            try:
+                val = getattr(local_list[src]['sr'], 'st_' + attr)
+            except:
+                val = None
+        if val is not None:
+            attrs[attr] = val
 
-    if 'md5' in cfg.preserve_attrs_list and md5:
-        attrs['md5'] = md5
+    if 'md5' in attrs and attrs['md5'] is None:
+        del attrs['md5']
 
-    if attrs:
-        attr_str_list = []
-        for k in sorted(attrs.keys()):
-            attr_str_list.append(u"%s:%s" % (k, attrs[k]))
-        attr_header = {'x-amz-meta-s3cmd-attrs': u'/'.join(attr_str_list)}
-    else:
-        attr_header = {}
+    result = ""
+    for k in attrs: result += "%s:%s/" % (k, attrs[k])
+    return { 'x-amz-meta-s3cmd-attrs' : result[:-1] }
 
-    return attr_header
 
 def cmd_sync_local2remote(args):
-    cfg = Config()
-    s3 = S3(cfg)
-
-    def _single_process(source_args):
+    def _single_process(local_list):
+        any_child_failed = False
         for dest in destinations:
             ## Normalize URI to convert s3://bkt to s3://bkt/ (trailing slash)
             destination_base_uri = S3Uri(dest)
             if destination_base_uri.type != 's3':
                 raise ParameterError("Destination must be S3Uri. Got: %s" % destination_base_uri)
             destination_base = destination_base_uri.uri()
-        return _child(destination_base, source_args)
+            rc = _child(destination_base, local_list)
+            if rc:
+                any_child_failed = True
+        return any_child_failed
 
-    def _parent(source_args):
+    def _parent():
         # Now that we've done all the disk I/O to look at the local file system and
         # calculate the md5 for each file, fork for each destination to upload to them separately
         # and in parallel
         child_pids = []
-        ret = EX_OK
+        any_child_failed = False
 
         for dest in destinations:
             ## Normalize URI to convert s3://bkt to s3://bkt/ (trailing slash)
@@ -1895,19 +1295,20 @@ def cmd_sync_local2remote(args):
             destination_base = destination_base_uri.uri()
             child_pid = os.fork()
             if child_pid == 0:
-                os._exit(_child(destination_base, source_args))
+                _child(destination_base, local_list)
+                os._exit(0)
             else:
                 child_pids.append(child_pid)
 
         while len(child_pids):
             (pid, status) = os.wait()
             child_pids.remove(pid)
-            if ret == EX_OK:
-                ret = os.WEXITSTATUS(status)
+            if status:
+                any_child_failed = True
 
-        return ret
+        return any_child_failed
 
-    def _child(destination_base, source_args):
+    def _child(destination_base, local_list):
         def _set_remote_uri(local_list, destination_base, single_file_local):
             if len(local_list) > 0:
                 ## Populate 'remote_uri' only if we've got something to upload
@@ -1922,75 +1323,35 @@ def cmd_sync_local2remote(args):
         def _upload(local_list, seq, total, total_size):
             file_list = local_list.keys()
             file_list.sort()
-            ret = EX_OK
             for file in file_list:
                 seq += 1
                 item = local_list[file]
                 src = item['full_name']
-                try:
-                    src_md5 = local_list.get_md5(file)
-                except IOError:
-                    src_md5 = None
                 uri = S3Uri(item['remote_uri'])
                 seq_label = "[%d of %d]" % (seq, total)
                 extra_headers = copy(cfg.extra_headers)
                 try:
-                    attr_header = _build_attr_header(local_list[file],
-                                                     file, src_md5)
-                    debug(u"attr_header: %s" % attr_header)
-                    extra_headers.update(attr_header)
+                    if cfg.preserve_attrs:
+                        attr_header = _build_attr_header(local_list, file)
+                        debug(u"attr_header: %s" % attr_header)
+                        extra_headers.update(attr_header)
                     response = s3.object_put(src, uri, extra_headers, extra_label = seq_label)
-                except S3UploadError as exc:
-                    error(u"Upload of '%s' failed too many times (Last reason: %s)" % (item['full_name'], exc))
-                    if cfg.stop_on_error:
-                        ret = EX_DATAERR
-                        error(u"Exiting now because of --stop-on-error")
-                        raise
-                    ret = EX_PARTIAL
+                except InvalidFileError, e:
+                    warning(u"File can not be uploaded: %s" % e)
                     continue
-                except InvalidFileError as exc:
-                    error(u"Upload of '%s' is not possible (Reason: %s)" % (item['full_name'], exc))
-                    if cfg.stop_on_error:
-                        ret = EX_OSFILE
-                        error(u"Exiting now because of --stop-on-error")
-                        raise
-                    ret = EX_PARTIAL
+                except S3UploadError, e:
+                    error(u"%s: upload failed too many times. Skipping that file." % item['full_name'])
                     continue
                 speed_fmt = formatSize(response["speed"], human_readable = True, floating_point = True)
                 if not cfg.progress_meter:
-                    output(u"upload: '%s' -> '%s' (%d bytes in %0.1f seconds, %0.2f %sB/s) %s" %
+                    output(u"File '%s' stored as '%s' (%d bytes in %0.1f seconds, %0.2f %sB/s) %s" %
                         (item['full_name'], uri, response["size"], response["elapsed"],
                         speed_fmt[0], speed_fmt[1], seq_label))
                 total_size += response["size"]
                 uploaded_objects_list.append(uri.object())
-            return ret, seq, total_size
+            return seq, total_size
 
-
-        stats_info = StatsInfo()
-
-        local_list, single_file_local, src_exclude_list, local_total_size = fetch_local_list(
-            args[:-1], is_src=True, recursive=True, with_dirs=cfg.keep_dirs
-        )
-
-        # - The source path is either like "/myPath/my_src_folder" and
-        # the user want to upload this single folder and optionally only delete
-        # things that have been removed inside this folder. For this case,
-        # we only have to look inside destination_base/my_src_folder and not at
-        # the root of destination_base.
-        # - Or like "/myPath/my_src_folder/" and the user want to have the sync
-        # with the content of this folder
-        # Special case, "." for current folder.
-        destbase_with_source_list = set()
-        for source_arg in source_args:
-            if not source_arg.endswith('/') and os.path.basename(source_arg) != '.' \
-               and not single_file_local:
-                destbase_with_source_list.add(s3path.join(
-                    destination_base, os.path.basename(source_arg)
-                ))
-            else:
-                destbase_with_source_list.add(destination_base)
-
-        remote_list, dst_exclude_list, remote_total_size = fetch_remote_list(destbase_with_source_list, recursive = True, require_attribs = True)
+        remote_list, dst_exclude_list = fetch_remote_list(destination_base, recursive = True, require_attribs = True)
 
         local_count = len(local_list)
         orig_local_count = local_count
@@ -2023,14 +1384,14 @@ def cmd_sync_local2remote(args):
             for key in keys:
                 output(u"exclude: %s" % key)
             for key in local_list:
-                output(u"upload: '%s' -> '%s'" % (local_list[key]['full_name'], local_list[key]['remote_uri']))
+                output(u"upload: %s -> %s" % (local_list[key]['full_name'], local_list[key]['remote_uri']))
             for key in update_list:
-                output(u"upload: '%s' -> '%s'" % (update_list[key]['full_name'], update_list[key]['remote_uri']))
-            for relative_file, item in copy_pairs.items():
-                output(u"remote copy: '%s' -> '%s'" % (item['copy_src'], relative_file))
+                output(u"upload: %s -> %s" % (update_list[key]['full_name'], update_list[key]['remote_uri']))
+            for (src_obj, dst1, dst2) in copy_pairs:
+                output(u"remote copy: %s -> %s" % (dst1, dst2))
             if cfg.delete_removed:
                 for key in remote_list:
-                    output(u"delete: '%s'" % remote_list[key]['object_uri_str'])
+                    output(u"delete: %s" % remote_list[key]['object_uri_str'])
 
             warning(u"Exiting now because of --dry-run")
             return EX_OK
@@ -2047,55 +1408,34 @@ def cmd_sync_local2remote(args):
         if cfg.delete_removed and not cfg.delete_after and remote_list:
             subcmd_batch_del(remote_list = remote_list)
 
-        size_transferred = 0
+        total_size = 0
         total_elapsed = 0.0
         timestamp_start = time.time()
-        ret, n, size_transferred = _upload(local_list, 0, upload_count, size_transferred)
-        status, n, size_transferred = _upload(update_list, n, upload_count, size_transferred)
-        if ret == EX_OK:
-            ret = status
-        # uploaded_objects_list reference is passed so it can be filled with
-        # destination object of successful copies so that they can be
-        # invalidated by cf
-        n_copies, saved_bytes, failed_copy_files  = remote_copy(
-            s3, copy_pairs, destination_base, uploaded_objects_list, True)
+        n, total_size = _upload(local_list, 0, upload_count, total_size)
+        n, total_size = _upload(update_list, n, upload_count, total_size)
+        n_copies, saved_bytes, failed_copy_files  = remote_copy(s3, copy_pairs, destination_base)
 
         #upload file that could not be copied
-        debug("Process files that were not remotely copied")
+        debug("Process files that was not remote copied")
         failed_copy_count = len(failed_copy_files)
         _set_remote_uri(failed_copy_files, destination_base, single_file_local)
-        status, n, size_transferred = _upload(failed_copy_files, n, upload_count + failed_copy_count, size_transferred)
-        if ret == EX_OK:
-            ret = status
+        n, total_size = _upload(failed_copy_files, n, upload_count + failed_copy_count, total_size)
 
         if cfg.delete_removed and cfg.delete_after and remote_list:
             subcmd_batch_del(remote_list = remote_list)
         total_elapsed = max(1.0, time.time() - timestamp_start)
-        total_speed = total_elapsed and size_transferred / total_elapsed or 0.0
+        total_speed = total_elapsed and total_size/total_elapsed or 0.0
         speed_fmt = formatSize(total_speed, human_readable = True, floating_point = True)
-
-
-        stats_info.files = orig_local_count
-        stats_info.size = local_total_size
-        stats_info.files_transferred = upload_count + failed_copy_count
-        stats_info.size_transferred = size_transferred
-        stats_info.files_copied = n_copies
-        stats_info.size_copied = saved_bytes
-        stats_info.files_deleted = remote_count
-
 
         # Only print out the result if any work has been done or
         # if the user asked for verbose output
-        outstr = "Done. Uploaded %d bytes in %0.1f seconds, %0.2f %sB/s." % (size_transferred, total_elapsed, speed_fmt[0], speed_fmt[1])
-        if cfg.stats:
-            outstr += stats_info.format_output()
-            output(outstr)
-        elif size_transferred + saved_bytes > 0:
+        outstr = "Done. Uploaded %d bytes in %0.1f seconds, %0.2f %sB/s. Copied %d files saving %d bytes transfer." % (total_size, total_elapsed, speed_fmt[0], speed_fmt[1], n_copies, saved_bytes)
+        if total_size + saved_bytes > 0:
             output(outstr)
         else:
             info(outstr)
 
-        return ret
+        return EX_OK
 
     def _invalidate_on_cf(destination_base_uri):
         cf = CloudFront(cfg)
@@ -2107,13 +1447,14 @@ def cmd_sync_local2remote(args):
               if len(default_index_file) < 1:
                   default_index_file = None
 
-        results = cf.InvalidateObjects(destination_base_uri, uploaded_objects_list, default_index_file, cfg.invalidate_default_index_on_cf, cfg.invalidate_default_index_root_on_cf)
-        for result in results:
-            if result['status'] == 201:
-                output(u"Created invalidation request for %d paths" % len(uploaded_objects_list))
-                output(u"Check progress with: s3cmd cfinvalinfo cf://%s/%s" % (result['dist_id'], result['request_id']))
+        result = cf.InvalidateObjects(destination_base_uri, uploaded_objects_list, default_index_file, cfg.invalidate_default_index_on_cf, cfg.invalidate_default_index_root_on_cf)
+        if result['status'] == 201:
+            output("Created invalidation request for %d paths" % len(uploaded_objects_list))
+            output("Check progress with: s3cmd cfinvalinfo cf://%s/%s" % (result['dist_id'], result['request_id']))
+
 
     # main execution
+    s3 = S3(cfg)
     uploaded_objects_list = []
 
     if cfg.encrypt:
@@ -2122,16 +1463,14 @@ def cmd_sync_local2remote(args):
         error(u"or disable encryption with --no-encrypt parameter.")
         sys.exit(EX_USAGE)
 
-    for arg in args[:-1]:
-        if not os.path.exists(deunicodise(arg)):
-            raise ParameterError("Invalid source: '%s' is not an existing file or directory" % arg)
+    local_list, single_file_local, src_exclude_list = fetch_local_list(args[:-1], is_src = True, recursive = True)
 
     destinations = [args[-1]]
     if cfg.additional_destinations:
         destinations = destinations + cfg.additional_destinations
 
     if 'fork' not in os.__all__ or len(destinations) < 2:
-        ret = _single_process(args[:-1])
+        any_child_failed = _single_process(local_list)
         destination_base_uri = S3Uri(destinations[-1])
         if cfg.invalidate_on_cf:
             if len(uploaded_objects_list) == 0:
@@ -2139,29 +1478,21 @@ def cmd_sync_local2remote(args):
             else:
                 _invalidate_on_cf(destination_base_uri)
     else:
-        ret = _parent(args[:-1])
+        any_child_failed = _parent()
         if cfg.invalidate_on_cf:
             error(u"You cannot use both --cf-invalidate and --add-destination.")
             return(EX_USAGE)
 
-    return ret
+    if any_child_failed:
+        return EX_SOFTWARE
+    else:
+        return EX_OK
 
 def cmd_sync(args):
-    cfg = Config()
     if (len(args) < 2):
-        syntax_msg = ''
-        commands_list = get_commands_list()
-        for cmd in commands_list:
-            if cmd.get('cmd') == 'sync':
-                syntax_msg = cmd.get('param', '')
-                break
-        raise ParameterError("Too few parameters! Expected: %s" % syntax_msg)
+        raise ParameterError("Too few parameters! Expected: %s" % commands['sync']['param'])
     if cfg.delay_updates:
         warning(u"`delay-updates` is obsolete.")
-
-    for arg in args:
-        if arg == u'-':
-            raise ParameterError("Stdin or stdout ('-') can't be used for a source or a destination with the sync command.")
 
     if S3Uri(args[0]).type == "file" and S3Uri(args[-1]).type == "s3":
         return cmd_sync_local2remote(args)
@@ -2171,34 +1502,7 @@ def cmd_sync(args):
         return cmd_sync_remote2remote(args)
     raise ParameterError("Invalid source/destination: '%s'" % "' '".join(args))
 
-def cmd_getacl(args):
-    cfg = Config()
-    s3 = S3(cfg)
-    uri = S3Uri(args[0])
-    
-    if uri.type != "s3" or not uri.has_bucket():
-        raise ParameterError("Expecting S3 URI instead of '%s'" % args[0])
-    
-    acl = s3.get_acl(uri)
-    acl_grant_list = acl.getGrantList()
-    owner = acl.getOwner()
-    if uri.has_object():
-        uri_type = "(object)"
-    else:
-        uri_type = "(bucket)"
-    output(u"%s %s:" % (uri, uri_type))
-    if not owner['nick']:
-        output(u"   Owner:     %s" % (owner['id']))
-    else:
-        output(u"   Owner:     %s (Nick: %s)" % (owner['id'], owner['nick']))
-    for grant in acl_grant_list:
-        output(u"   ACL:       %s: %s" % (grant['grantee'], grant['permission']))
-    if acl.isAnonRead():
-        output(u"   URL:       %s" % uri.public_url())
-    return EX_OK
-        
 def cmd_setacl(args):
-    cfg = Config()
     s3 = S3(cfg)
 
     set_to_acl = cfg.acl_public and "Public" or "Private"
@@ -2218,7 +1522,7 @@ def cmd_setacl(args):
             else:
                 args.append(arg)
 
-    remote_list, exclude_list, _ = fetch_remote_list(args)
+    remote_list, exclude_list = fetch_remote_list(args)
 
     remote_count = len(remote_list)
 
@@ -2228,7 +1532,7 @@ def cmd_setacl(args):
         for key in exclude_list:
             output(u"exclude: %s" % key)
         for key in remote_list:
-            output(u"setacl: '%s'" % remote_list[key]['object_uri_str'])
+            output(u"setacl: %s" % remote_list[key]['object_uri_str'])
 
         warning(u"Exiting now because of --dry-run")
         return EX_OK
@@ -2241,128 +1545,13 @@ def cmd_setacl(args):
         update_acl(s3, uri, seq_label)
     return EX_OK
 
-def cmd_setobjectlegalhold(args):
-    cfg = Config()
-    s3 = S3(cfg)
-    legal_hold_status = args[0]
-    uri = S3Uri(args[1])
-
-    if legal_hold_status not in ["ON", "OFF"]:
-        raise ParameterError("Incorrect status")
-
-    if cfg.dry_run:
-        return EX_OK
-
-    response = s3.set_object_legal_hold(uri, legal_hold_status)
-
-    debug(u"response - %s" % response['status'])
-    if response['status'] == 204:
-        output(u"%s: Legal Hold updated" % uri)
-    return EX_OK
-
-def cmd_setobjectretention(args):
-    cfg = Config()
-    s3 = S3(cfg)
-    mode = args[0]
-    retain_until_date = args[1]
-    uri = S3Uri(args[2])
-
-    if mode not in ["COMPLIANCE", "GOVERNANCE"]:
-        raise ParameterError("Incorrect mode")
-
-    try:
-        datetime.datetime.strptime(retain_until_date, '%Y-%m-%dT%H:%M:%SZ')
-    except ValueError:
-        raise ParameterError("Incorrect data format, should be YYYY-MM-DDTHH:MM:SSZ")
-
-    if cfg.dry_run:
-        return EX_OK
-
-    response = s3.set_object_retention(uri, mode, retain_until_date)
-
-    debug(u"response - %s" % response['status'])
-    if response['status'] == 204:
-        output(u"%s: Retention updated" % uri)
-
-def cmd_setversioning(args):
-    cfg = Config()
-    s3 = S3(cfg)
-    bucket_uri = S3Uri(args[0])
-    if bucket_uri.object():
-        raise ParameterError("Only bucket name is required for [setversioning] command")
-    status = args[1]
-    if status not in ["enable", "disable"]:
-        raise ParameterError("Must be 'enable' or 'disable'. Got: %s" % status)
-
-    enabled = True if status == "enable" else False
-    response = s3.set_versioning(bucket_uri, enabled)
-
-    debug(u"response - %s" % response['status'])
-    if response['status'] == 200:
-        output(u"%s: Versioning status updated" % bucket_uri)
-    return EX_OK
-
-def cmd_setownership(args):
-    cfg = Config()
-    s3 = S3(cfg)
-    bucket_uri = S3Uri(args[0])
-    if bucket_uri.object():
-        raise ParameterError("Only bucket name is required for [setownership] command")
-
-    valid_values = {x.lower():x for x in [
-        'BucketOwnerPreferred', 'BucketOwnerEnforced', 'ObjectWriter'
-    ]}
-    value = valid_values.get(args[1].lower())
-    if not value:
-        choices = " or ".join(['%s' % x for x in valid_values.keys()])
-        raise ParameterError("Must be %s. Got: %s" % (choices, args[1]))
-
-    response = s3.set_bucket_ownership(bucket_uri, value)
-
-    debug(u"response - %s" % response['status'])
-    if response['status'] == 200:
-        output(u"%s: Bucket Object Ownership updated" % bucket_uri)
-    return EX_OK
-
-def cmd_setblockpublicaccess(args):
-    cfg = Config()
-    s3 = S3(cfg)
-    bucket_uri = S3Uri(args[0])
-    if bucket_uri.object():
-        raise ParameterError("Only bucket name is required for [setblockpublicaccess] command")
-
-    valid_values = {x.lower():x for x in [
-        'BlockPublicAcls', 'IgnorePublicAcls', 'BlockPublicPolicy', 'RestrictPublicBuckets'
-    ]}
-    flags = {}
-    raw_flags = args[1].split(',')
-    for raw_value in raw_flags:
-        if not raw_value:
-            continue
-        value = valid_values.get(raw_value.lower())
-        if not value:
-            choices = " or ".join(['%s' % x for x in valid_values.keys()])
-            raise ParameterError("Must be %s. Got: %s" % (choices, raw_value))
-        flags[value] = True
-
-    response = s3.set_bucket_public_access_block(bucket_uri, flags)
-
-    debug(u"response - %s" % response['status'])
-    if response['status'] == 200:
-        output(u"%s: Block Public Access updated" % bucket_uri)
-    return EX_OK
-
 def cmd_setpolicy(args):
-    cfg = Config()
     s3 = S3(cfg)
     uri = S3Uri(args[1])
     policy_file = args[0]
+    policy = open(deunicodise(policy_file), 'r').read()
 
-    with open(deunicodise(policy_file), 'r') as fp:
-        policy = fp.read()
-
-    if cfg.dry_run:
-        return EX_OK
+    if cfg.dry_run: return EX_OK
 
     response = s3.set_policy(uri, policy)
 
@@ -2372,34 +1561,7 @@ def cmd_setpolicy(args):
         output(u"%s: Policy updated" % uri)
     return EX_OK
 
-def cmd_getpolicy(args):
-    cfg = Config()
-    s3 = S3(cfg)
-    uri = S3Uri(args[0])
-
-    if uri.type != "s3" or not uri.has_bucket():
-        raise ParameterError("Expecting S3 URI instead of '%s'" % args[0])
-
-    try:
-        policy = s3.get_policy(uri)
-        output(u"   Policy:    %s" % policy)
-    except S3Error as exc:
-        # Ignore the exception and don't fail the info
-        # if the server doesn't support setting ACLs
-        if exc.status == 403:
-            output(u"   Policy:    Not available: GetPolicy permission is needed to read the policy")
-            return EX_ACCESSDENIED
-        elif exc.status == 405:
-            output(u"   Policy:    Not available: Only the bucket owner can read the policy")
-            return EX_ACCESSDENIED
-        elif exc.status not in [404, 501]:
-            raise exc
-        else:
-            output(u"   Policy:    none")
-    return EX_OK
-
 def cmd_delpolicy(args):
-    cfg = Config()
     s3 = S3(cfg)
     uri = S3Uri(args[0])
     if cfg.dry_run: return EX_OK
@@ -2411,41 +1573,7 @@ def cmd_delpolicy(args):
     output(u"%s: Policy deleted" % uri)
     return EX_OK
 
-def cmd_setcors(args):
-    cfg = Config()
-    s3 = S3(cfg)
-    uri = S3Uri(args[1])
-    cors_file = args[0]
-
-    with open(deunicodise(cors_file), 'r') as fp:
-        cors = fp.read()
-
-    if cfg.dry_run:
-        return EX_OK
-
-    response = s3.set_cors(uri, cors)
-
-    #if retsponse['status'] == 200:
-    debug(u"response - %s" % response['status'])
-    if response['status'] == 204:
-        output(u"%s: CORS updated" % uri)
-    return EX_OK
-
-def cmd_delcors(args):
-    cfg = Config()
-    s3 = S3(cfg)
-    uri = S3Uri(args[0])
-    if cfg.dry_run: return EX_OK
-
-    response = s3.delete_cors(uri)
-
-    #if retsponse['status'] == 200:
-    debug(u"response - %s" % response['status'])
-    output(u"%s: CORS deleted" % uri)
-    return EX_OK
-
 def cmd_set_payer(args):
-    cfg = Config()
     s3 = S3(cfg)
     uri = S3Uri(args[0])
 
@@ -2460,16 +1588,12 @@ def cmd_set_payer(args):
         return EX_CONFLICT
 
 def cmd_setlifecycle(args):
-    cfg = Config()
     s3 = S3(cfg)
     uri = S3Uri(args[1])
     lifecycle_policy_file = args[0]
+    lifecycle_policy = open(deunicodise(lifecycle_policy_file), 'r').read()
 
-    with open(deunicodise(lifecycle_policy_file), 'r') as fp:
-        lifecycle_policy = fp.read()
-
-    if cfg.dry_run:
-        return EX_OK
+    if cfg.dry_run: return EX_OK
 
     response = s3.set_lifecycle_policy(uri, lifecycle_policy)
 
@@ -2478,18 +1602,7 @@ def cmd_setlifecycle(args):
         output(u"%s: Lifecycle Policy updated" % uri)
     return EX_OK
 
-def cmd_getlifecycle(args):
-    cfg = Config()
-    s3 = S3(cfg)
-    uri = S3Uri(args[0])
-
-    response = s3.get_lifecycle_policy(uri)
-
-    output(u"%s" % getPrettyFromXml(response['data']))
-    return EX_OK
-
 def cmd_dellifecycle(args):
-    cfg = Config()
     s3 = S3(cfg)
     uri = S3Uri(args[0])
     if cfg.dry_run: return EX_OK
@@ -2500,120 +1613,30 @@ def cmd_dellifecycle(args):
     output(u"%s: Lifecycle Policy deleted" % uri)
     return EX_OK
 
-def cmd_setnotification(args):
-    s3 = S3(Config())
-    uri = S3Uri(args[1])
-    notification_policy_file = args[0]
-
-    with open(deunicodise(notification_policy_file), 'r') as fp:
-        notification_policy = fp.read()
-
-    response = s3.set_notification_policy(uri, notification_policy)
-
-    debug(u"response - %s" % response['status'])
-    if response['status'] == 200:
-        output(u"%s: Notification Policy updated" % uri)
-    return EX_OK
-
-def cmd_getnotification(args):
-    s3 = S3(Config())
-    uri = S3Uri(args[0])
-
-    response = s3.get_notification_policy(uri)
-
-    output(getPrettyFromXml(response['data']))
-    return EX_OK
-
-def cmd_delnotification(args):
-    s3 = S3(Config())
-    uri = S3Uri(args[0])
-
-    response = s3.delete_notification_policy(uri)
-
-    debug(u"response - %s" % response['status'])
-    output(u"%s: Notification Policy deleted" % uri)
-    return EX_OK
-
-def cmd_settagging(args):
-    s3 = S3(Config())
-    uri = S3Uri(args[0])
-    tag_set_string = args[1]
-
-    tagsets = []
-    for tagset in tag_set_string.split("&"):
-        keyval = tagset.split("=", 1)
-        key = keyval[0]
-        if not key:
-            raise ParameterError("Tag key should not be empty")
-        value = len(keyval) > 1 and keyval[1] or ""
-        tagsets.append((key, value))
-
-    debug(tagsets)
-    response = s3.set_tagging(uri, tagsets)
-
-    debug(u"response - %s" % response['status'])
-    if response['status'] in [200, 204]:
-        output(u"%s: Tagging updated" % uri)
-    return EX_OK
-
-def cmd_gettagging(args):
-    s3 = S3(Config())
-    uri = S3Uri(args[0])
-
-    tagsets = s3.get_tagging(uri)
-    if uri.has_object():
-        output(u"%s (object):" % uri)
-    else:
-        output(u"%s (bucket):" % uri)
-    debug(tagsets)
-    for tag in tagsets:
-        try:
-            output(u"\t%s:\t%s" % (
-                tag['Key'],
-                tag['Value']))
-        except KeyError:
-            pass
-    return EX_OK
-
-def cmd_deltagging(args):
-    s3 = S3(Config())
-    uri = S3Uri(args[0])
-
-    response = s3.delete_tagging(uri)
-
-    debug(u"response - %s" % response['status'])
-    output(u"%s: Tagging deleted" % uri)
-    return EX_OK
-
 def cmd_multipart(args):
-    cfg = Config()
     s3 = S3(cfg)
     uri = S3Uri(args[0])
 
     #id = ''
     #if(len(args) > 1): id = args[1]
 
-    upload_list = s3.get_multipart(uri)
+    response = s3.get_multipart(uri)
+    debug(u"response - %s" % response['status'])
     output(u"%s" % uri)
-    debug(upload_list)
+    tree = getTreeFromXml(response['data'])
+    debug(parseNodes(tree))
     output(u"Initiated\tPath\tId")
-    for mpupload in upload_list:
+    for mpupload in parseNodes(tree):
         try:
-            output(u"%s\t%s\t%s" % (
-                mpupload['Initiated'],
-                "s3://" + uri.bucket() + "/" + mpupload['Key'],
-                mpupload['UploadId']))
+            output("%s\t%s\t%s" % (mpupload['Initiated'], "s3://" + uri.bucket() + "/" + mpupload['Key'], mpupload['UploadId']))
         except KeyError:
             pass
     return EX_OK
 
 def cmd_abort_multipart(args):
-    '''{"cmd":"abortmp",   "label":"abort a multipart upload", "param":"s3://BUCKET/OBJECT Id", "func":cmd_abort_multipart, "argc":2},'''
-    cfg = Config()
+    '''{"cmd":"abortmp",   "label":"abort a multipart upload", "param":"s3://BUCKET Id", "func":cmd_abort_multipart, "argc":2},'''
     s3 = S3(cfg)
     uri = S3Uri(args[0])
-    if not uri.object():
-        raise ParameterError(u"Expecting S3 URI with a filename: %s" % uri.uri())
     id = args[1]
     response = s3.abort_multipart(uri, id)
     debug(u"response - %s" % response['status'])
@@ -2622,25 +1645,22 @@ def cmd_abort_multipart(args):
 
 def cmd_list_multipart(args):
     '''{"cmd":"abortmp",   "label":"list a multipart upload", "param":"s3://BUCKET Id", "func":cmd_list_multipart, "argc":2},'''
-    cfg = Config()
     s3 = S3(cfg)
     uri = S3Uri(args[0])
     id = args[1]
 
-    part_list = s3.list_multipart(uri, id)
+    response = s3.list_multipart(uri, id)
+    debug(u"response - %s" % response['status'])
+    tree = getTreeFromXml(response['data'])
     output(u"LastModified\t\t\tPartNumber\tETag\tSize")
-    for mpupload in part_list:
+    for mpupload in parseNodes(tree):
         try:
-            output(u"%s\t%s\t%s\t%s" % (mpupload['LastModified'],
-                                        mpupload['PartNumber'],
-                                        mpupload['ETag'],
-                                        mpupload['Size']))
-        except KeyError:
+            output("%s\t%s\t%s\t%s" % (mpupload['LastModified'], mpupload['PartNumber'], mpupload['ETag'], mpupload['Size']))
+        except:
             pass
     return EX_OK
 
 def cmd_accesslog(args):
-    cfg = Config()
     s3 = S3(cfg)
     bucket_uri = S3Uri(args.pop())
     if bucket_uri.object():
@@ -2664,9 +1684,9 @@ def cmd_accesslog(args):
 
 def cmd_sign(args):
     string_to_sign = args.pop()
-    debug(u"string-to-sign: %r" % string_to_sign)
-    signature = sign_string_v2(encode_to_s3(string_to_sign))
-    output(u"Signature: %s" % decode_from_s3(signature))
+    debug("string-to-sign: %r" % string_to_sign)
+    signature = Crypto.sign_string_v2(string_to_sign)
+    output("Signature: %s" % signature)
     return EX_OK
 
 def cmd_signurl(args):
@@ -2675,7 +1695,7 @@ def cmd_signurl(args):
     if url_to_sign.type != 's3':
         raise ParameterError("Must be S3Uri. Got: %s" % url_to_sign)
     debug("url to sign: %r" % url_to_sign)
-    signed_url = sign_url_v2(url_to_sign, expiry)
+    signed_url = Crypto.sign_url_v2(url_to_sign, expiry)
     output(signed_url)
     return EX_OK
 
@@ -2690,7 +1710,7 @@ def cmd_fixbucket(args):
         # From: http://effbot.org/zone/re-sub.htm#unescape-html
         def _unescape_fixup(m):
             text = m.group(0)
-            if not 'apos' in htmlentitydefs.name2codepoint:
+            if not htmlentitydefs.name2codepoint.has_key('apos'):
                 htmlentitydefs.name2codepoint['apos'] = ord("'")
             if text[:2] == "&#":
                 # character reference
@@ -2709,9 +1729,8 @@ def cmd_fixbucket(args):
                     pass
             return text # leave as is
             text = text.encode('ascii', 'xmlcharrefreplace')
-        return re.sub(r"&#?\w+;", _unescape_fixup, text)
+        return re.sub("&#?\w+;", _unescape_fixup, text)
 
-    cfg = Config()
     cfg.urlencoding_mode = "fixbucket"
     s3 = S3(cfg)
 
@@ -2721,9 +1740,8 @@ def cmd_fixbucket(args):
         if culprit.type != "s3":
             raise ParameterError("Expecting S3Uri instead of: %s" % arg)
         response = s3.bucket_list_noparse(culprit.bucket(), culprit.object(), recursive = True)
-        r_xent = re.compile(r"&#x[\da-fA-F]+;")
-        data = decode_from_s3(response['data'])
-        keys = re.findall("<Key>(.*?)</Key>", data, re.MULTILINE | re.UNICODE)
+        r_xent = re.compile("&#x[\da-fA-F]+;")
+        keys = re.findall("<Key>(.*?)</Key>", response['data'], re.MULTILINE | re.UNICODE)
         debug("Keys: %r" % keys)
         for key in keys:
             if r_xent.search(key):
@@ -2735,25 +1753,22 @@ def cmd_fixbucket(args):
                 debug("Step 3:  ... then to %s" % key_new)
                 src = S3Uri("s3://%s/%s" % (culprit.bucket(), key_bin))
                 dst = S3Uri("s3://%s/%s" % (culprit.bucket(), key_new))
-                if cfg.dry_run:
-                    output(u"[--dry-run] File %r would be renamed to %s" % (key_bin, key_new))
-                    continue
                 try:
                     resp_move = s3.object_move(src, dst)
                     if resp_move['status'] == 200:
-                        output(u"File '%r' renamed to '%s'" % (key_bin, key_new))
+                        output("File %r renamed to %s" % (key_bin, key_new))
                         count += 1
                     else:
-                        error(u"Something went wrong for: %r" % key)
-                        error(u"Please report the problem to s3tools-bugs@lists.sourceforge.net")
+                        error("Something went wrong for: %r" % key)
+                        error("Please report the problem to s3tools-bugs@lists.sourceforge.net")
                 except S3Error:
-                    error(u"Something went wrong for: %r" % key)
-                    error(u"Please report the problem to s3tools-bugs@lists.sourceforge.net")
+                    error("Something went wrong for: %r" % key)
+                    error("Please report the problem to s3tools-bugs@lists.sourceforge.net")
 
     if count > 0:
-        warning(u"Fixed %d files' names. Their ACL were reset to Private." % count)
-        warning(u"Use 's3cmd setacl --acl-public s3://...' to make")
-        warning(u"them publicly readable if required.")
+        warning("Fixed %d files' names. Their ACL were reset to Private." % count)
+        warning("Use 's3cmd setacl --acl-public s3://...' to make")
+        warning("them publicly readable if required.")
     return EX_OK
 
 def resolve_list(lst, args):
@@ -2763,19 +1778,18 @@ def resolve_list(lst, args):
     return retval
 
 def gpg_command(command, passphrase = ""):
-    debug(u"GPG command: " + " ".join(command))
+    debug("GPG command: " + " ".join(command))
     command = [deunicodise(cmd_entry) for cmd_entry in command]
     p = subprocess.Popen(command, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.STDOUT,
                          close_fds = True)
-    p_stdout, p_stderr = p.communicate(deunicodise(passphrase + "\n"))
-    debug(u"GPG output:")
-    for line in unicodise(p_stdout).split("\n"):
-        debug(u"GPG: " + line)
+    p_stdout, p_stderr = p.communicate(deunicodise(passphrase) + "\n")
+    debug("GPG output:")
+    for line in p_stdout.split("\n"):
+        debug("GPG: " + line)
     p_exitcode = p.wait()
     return p_exitcode
 
 def gpg_encrypt(filename):
-    cfg = Config()
     tmp_filename = Utils.mktmpfile()
     args = {
         "gpg_command" : cfg.gpg_command,
@@ -2789,7 +1803,6 @@ def gpg_encrypt(filename):
     return (code, tmp_filename, "gpg")
 
 def gpg_decrypt(filename, gpgenc_header = "", in_place = True):
-    cfg = Config()
     tmp_filename = Utils.mktmpfile(filename)
     args = {
         "gpg_command" : cfg.gpg_command,
@@ -2813,8 +1826,6 @@ def run_configure(config_file, args):
         ("access_key", "Access Key", "Access key and Secret key are your identifiers for Amazon S3. Leave them empty for using the env variables."),
         ("secret_key", "Secret Key"),
         ("bucket_location", "Default Region"),
-        ("host_base", "S3 Endpoint", "Use \"s3.amazonaws.com\" for S3 Endpoint and not modify it to the target Amazon S3."),
-        ("host_bucket", "DNS-style bucket+hostname:port template for accessing a bucket", "Use \"%(bucket)s.s3.amazonaws.com\" to the target Amazon S3. \"%(bucket)s\" and \"%(location)s\" vars can be used\nif the target S3 system supports dns based buckets."),
         ("gpg_passphrase", "Encryption password", "Encryption password is used to protect your files from reading\nby unauthorized persons while in transfer to S3"),
         ("gpg_command", "Path to GPG program"),
         ("use_https", "Use HTTPS protocol", "When using secure HTTPS protocol all communication with Amazon S3\nservers is protected from 3rd party eavesdropping. This method is\nslower than plain HTTP, and can only be proxied with Python 2.7 or newer"),
@@ -2823,26 +1834,16 @@ def run_configure(config_file, args):
         ]
     ## Option-specfic defaults
     if getattr(cfg, "gpg_command") == "":
-        setattr(cfg, "gpg_command", which("gpg"))
+        setattr(cfg, "gpg_command", find_executable("gpg"))
 
     if getattr(cfg, "proxy_host") == "" and os.getenv("http_proxy"):
-        autodetected_encoding = locale.getpreferredencoding() or "UTF-8"
-        re_match=re.match(r"(http://)?([^:]+):(\d+)",
-                          unicodise_s(os.getenv("http_proxy"), autodetected_encoding))
+        re_match=re.match("(http://)?([^:]+):(\d+)", os.getenv("http_proxy"))
         if re_match:
             setattr(cfg, "proxy_host", re_match.groups()[1])
             setattr(cfg, "proxy_port", re_match.groups()[2])
 
     try:
-        # Support for python3
-        # raw_input only exists in py2 and was renamed to input in py3
-        global input
-        input = raw_input
-    except NameError:
-        pass
-
-    try:
-        while True:
+        while 1:
             output(u"\nEnter new values or accept defaults in brackets with Enter.")
             output(u"Refer to user manual for detailed description of all options.")
             for option in options:
@@ -2867,7 +1868,7 @@ def run_configure(config_file, args):
                 if len(option) >= 3:
                     output(u"\n%s" % option[2])
 
-                val = unicodise_s(input(prompt + ": "))
+                val = raw_input(prompt + ": ")
                 if val != "":
                     if type(getattr(cfg, option[0])) is bool:
                         # Turn 'Yes' into True, everything else into False
@@ -2876,7 +1877,7 @@ def run_configure(config_file, args):
             output(u"\nNew settings:")
             for option in options:
                 output(u"  %s: %s" % (option[1], getattr(cfg, option[0])))
-            val = input("\nTest access with supplied credentials? [Y/n] ")
+            val = raw_input("\nTest access with supplied credentials? [Y/n] ")
             if val.lower().startswith("y") or val == "":
                 try:
                     # Default, we try to list 'all' buckets which requires
@@ -2906,90 +1907,87 @@ def run_configure(config_file, args):
                         if not os.path.isfile(deunicodise(getattr(cfg, "gpg_command"))):
                             raise Exception("GPG program not found")
                         filename = Utils.mktmpfile()
-                        with open(deunicodise(filename), "w") as fp:
-                            fp.write(os.sys.copyright)
+                        f = open(deunicodise(filename), "w")
+                        f.write(os.sys.copyright)
+                        f.close()
                         ret_enc = gpg_encrypt(filename)
                         ret_dec = gpg_decrypt(ret_enc[1], ret_enc[2], False)
                         hash = [
-                            hash_file_md5(filename),
-                            hash_file_md5(ret_enc[1]),
-                            hash_file_md5(ret_dec[1]),
+                            Utils.hash_file_md5(filename),
+                            Utils.hash_file_md5(ret_enc[1]),
+                            Utils.hash_file_md5(ret_dec[1]),
                         ]
                         os.unlink(deunicodise(filename))
                         os.unlink(deunicodise(ret_enc[1]))
                         os.unlink(deunicodise(ret_dec[1]))
                         if hash[0] == hash[2] and hash[0] != hash[1]:
-                            output(u"Success. Encryption and decryption worked fine :-)")
+                            output ("Success. Encryption and decryption worked fine :-)")
                         else:
                             raise Exception("Encryption verification error.")
 
-                except S3Error as e:
+                except S3Error, e:
                     error(u"Test failed: %s" % (e))
                     if e.code == "AccessDenied":
                         error(u"Are you sure your keys have s3:ListAllMyBuckets permissions?")
-                    val = input("\nRetry configuration? [Y/n] ")
+                    val = raw_input("\nRetry configuration? [Y/n] ")
                     if val.lower().startswith("y") or val == "":
                         continue
-                except Exception as e:
+                except Exception, e:
                     error(u"Test failed: %s" % (e))
-                    val = input("\nRetry configuration? [Y/n] ")
+                    val = raw_input("\nRetry configuration? [Y/n] ")
                     if val.lower().startswith("y") or val == "":
                         continue
 
 
-            val = input("\nSave settings? [y/N] ")
+            val = raw_input("\nSave settings? [y/N] ")
             if val.lower().startswith("y"):
                 break
-            val = input("Retry configuration? [Y/n] ")
+            val = raw_input("Retry configuration? [Y/n] ")
             if val.lower().startswith("n"):
                 raise EOFError()
 
         ## Overwrite existing config file, make it user-readable only
-        old_mask = os.umask(0o077)
+        old_mask = os.umask(0077)
         try:
             os.remove(deunicodise(config_file))
-        except OSError as e:
+        except OSError, e:
             if e.errno != errno.ENOENT:
                 raise
-        try:
-            with io.open(deunicodise(config_file), "w", encoding=cfg.encoding) as fp:
-                cfg.dump_config(fp)
-        finally:
-            os.umask(old_mask)
+        f = open(config_file, "w")
+        os.umask(old_mask)
+        cfg.dump_config(f)
+        f.close()
         output(u"Configuration saved to '%s'" % config_file)
 
     except (EOFError, KeyboardInterrupt):
         output(u"\nConfiguration aborted. Changes were NOT saved.")
         return
 
-    except IOError as e:
+    except IOError, e:
         error(u"Writing config file failed: %s: %s" % (config_file, e.strerror))
         sys.exit(EX_IOERR)
 
 def process_patterns_from_file(fname, patterns_list):
     try:
-        with open(deunicodise(fname), "rt") as fn:
-            for pattern in fn:
-                pattern = unicodise(pattern).strip()
-                if re.match("^#", pattern) or re.match(r"^\s*$", pattern):
-                    continue
-                debug(u"%s: adding rule: %s" % (fname, pattern))
-                patterns_list.append(pattern)
-    except IOError as e:
+        fn = open(deunicodise(fname), "rt")
+    except IOError, e:
         error(e)
         sys.exit(EX_IOERR)
+    for pattern in fn:
+        pattern = pattern.strip()
+        if re.match("^#", pattern) or re.match("^\s*$", pattern):
+            continue
+        debug(u"%s: adding rule: %s" % (fname, pattern))
+        patterns_list.append(pattern)
 
     return patterns_list
 
 def process_patterns(patterns_list, patterns_from, is_glob, option_txt = ""):
-    r"""
+    """
     process_patterns(patterns, patterns_from, is_glob, option_txt = "")
     Process --exclude / --include GLOB and REGEXP patterns.
     'option_txt' is 'exclude' / 'include' / 'rexclude' / 'rinclude'
     Returns: patterns_compiled, patterns_text
-    Note: process_patterns_from_file will ignore lines starting with # as these
-    are comments. To target escape the initial #, to use it in a file name, one
-    can use: "[#]" (for exclude) or "\#" (for rexclude).
     """
 
     patterns_compiled = []
@@ -3019,34 +2017,23 @@ def get_commands_list():
     {"cmd":"mb", "label":"Make bucket", "param":"s3://BUCKET", "func":cmd_bucket_create, "argc":1},
     {"cmd":"rb", "label":"Remove bucket", "param":"s3://BUCKET", "func":cmd_bucket_delete, "argc":1},
     {"cmd":"ls", "label":"List objects or buckets", "param":"[s3://BUCKET[/PREFIX]]", "func":cmd_ls, "argc":0},
-    {"cmd":"la", "label":"List all objects in all buckets", "param":"", "func":cmd_all_buckets_list_all_content, "argc":0},
+    {"cmd":"la", "label":"List all object in all buckets", "param":"", "func":cmd_all_buckets_list_all_content, "argc":0},
     {"cmd":"put", "label":"Put file into bucket", "param":"FILE [FILE...] s3://BUCKET[/PREFIX]", "func":cmd_object_put, "argc":2},
     {"cmd":"get", "label":"Get file from bucket", "param":"s3://BUCKET/OBJECT LOCAL_FILE", "func":cmd_object_get, "argc":1},
     {"cmd":"del", "label":"Delete file from bucket", "param":"s3://BUCKET/OBJECT", "func":cmd_object_del, "argc":1},
     {"cmd":"rm", "label":"Delete file from bucket (alias for del)", "param":"s3://BUCKET/OBJECT", "func":cmd_object_del, "argc":1},
     #{"cmd":"mkdir", "label":"Make a virtual S3 directory", "param":"s3://BUCKET/path/to/dir", "func":cmd_mkdir, "argc":1},
     {"cmd":"restore", "label":"Restore file from Glacier storage", "param":"s3://BUCKET/OBJECT", "func":cmd_object_restore, "argc":1},
-    {"cmd":"sync", "label":"Synchronize a directory tree to S3 (checks files freshness using size and md5 checksum, unless overridden by options, see below)", "param":"LOCAL_DIR s3://BUCKET[/PREFIX] or s3://BUCKET[/PREFIX] LOCAL_DIR or s3://BUCKET[/PREFIX] s3://BUCKET[/PREFIX]", "func":cmd_sync, "argc":2},
+    {"cmd":"sync", "label":"Synchronize a directory tree to S3 (checks files freshness using size and md5 checksum, unless overridden by options, see below)", "param":"LOCAL_DIR s3://BUCKET[/PREFIX] or s3://BUCKET[/PREFIX] LOCAL_DIR", "func":cmd_sync, "argc":2},
     {"cmd":"du", "label":"Disk usage by buckets", "param":"[s3://BUCKET[/PREFIX]]", "func":cmd_du, "argc":0},
     {"cmd":"info", "label":"Get various information about Buckets or Files", "param":"s3://BUCKET[/OBJECT]", "func":cmd_info, "argc":1},
     {"cmd":"cp", "label":"Copy object", "param":"s3://BUCKET1/OBJECT1 s3://BUCKET2[/OBJECT2]", "func":cmd_cp, "argc":2},
     {"cmd":"modify", "label":"Modify object metadata", "param":"s3://BUCKET1/OBJECT", "func":cmd_modify, "argc":1},
     {"cmd":"mv", "label":"Move object", "param":"s3://BUCKET1/OBJECT1 s3://BUCKET2[/OBJECT2]", "func":cmd_mv, "argc":2},
-    {"cmd":"getacl", "label":"List Access control list for Bucket or Files", "param":"s3://BUCKET[/OBJECT]", "func":cmd_getacl, "argc":1},
     {"cmd":"setacl", "label":"Modify Access control list for Bucket or Files", "param":"s3://BUCKET[/OBJECT]", "func":cmd_setacl, "argc":1},
-    {"cmd":"setversioning", "label":"Modify Bucket Versioning", "param":"s3://BUCKET enable|disable", "func":cmd_setversioning, "argc":2},
-    {"cmd":"setownership", "label":"Modify Bucket Object Ownership", "param":"s3://BUCKET BucketOwnerPreferred|BucketOwnerEnforced|ObjectWriter", "func":cmd_setownership, "argc":2},
-    {"cmd":"setblockpublicaccess", "label":"Modify Block Public Access rules", "param":"s3://BUCKET BlockPublicAcls,IgnorePublicAcls,BlockPublicPolicy,RestrictPublicBuckets", "func":cmd_setblockpublicaccess, "argc":2},
-
-    {"cmd":"setobjectlegalhold", "label":"Modify Object Legal Hold", "param":"STATUS s3://BUCKET/OBJECT", "func":cmd_setobjectlegalhold, "argc":2},
-    {"cmd":"setobjectretention", "label":"Modify Object Retention", "param":"MODE RETAIN_UNTIL_DATE s3://BUCKET/OBJECT", "func":cmd_setobjectretention, "argc":3},
 
     {"cmd":"setpolicy", "label":"Modify Bucket Policy", "param":"FILE s3://BUCKET", "func":cmd_setpolicy, "argc":2},
-    {"cmd":"getpolicy", "label":"Get Bucket Policy", "param":"FILE s3://BUCKET", "func":cmd_getpolicy, "argc":1},
     {"cmd":"delpolicy", "label":"Delete Bucket Policy", "param":"s3://BUCKET", "func":cmd_delpolicy, "argc":1},
-    {"cmd":"setcors", "label":"Modify Bucket CORS", "param":"FILE s3://BUCKET", "func":cmd_setcors, "argc":2},
-    {"cmd":"delcors", "label":"Delete Bucket CORS", "param":"s3://BUCKET", "func":cmd_delcors, "argc":1},
-
     {"cmd":"payer",     "label":"Modify Bucket Requester Pays policy", "param":"s3://BUCKET", "func":cmd_set_payer, "argc":1},
     {"cmd":"multipart", "label":"Show multipart uploads", "param":"s3://BUCKET [Id]", "func":cmd_multipart, "argc":1},
     {"cmd":"abortmp",   "label":"Abort a multipart upload", "param":"s3://BUCKET/OBJECT Id", "func":cmd_abort_multipart, "argc":2},
@@ -3058,11 +2045,6 @@ def get_commands_list():
     {"cmd":"signurl", "label":"Sign an S3 URL to provide limited public access with expiry", "param":"s3://BUCKET/OBJECT <expiry_epoch|+expiry_offset>", "func":cmd_signurl, "argc":2},
     {"cmd":"fixbucket", "label":"Fix invalid file names in a bucket", "param":"s3://BUCKET[/PREFIX]", "func":cmd_fixbucket, "argc":1},
 
-    ## Tagging commands
-    {"cmd":"settagging", "label":"Modify tagging for Bucket or Files", "param":"s3://BUCKET[/OBJECT] \"KEY=VALUE[&KEY=VALUE ...]\"", "func":cmd_settagging, "argc":2},
-    {"cmd":"gettagging", "label":"Get tagging for Bucket or Files",    "param":"s3://BUCKET[/OBJECT]", "func":cmd_gettagging, "argc":1},
-    {"cmd":"deltagging", "label":"Delete tagging for Bucket or Files", "param":"s3://BUCKET[/OBJECT]", "func":cmd_deltagging, "argc":1},
-
     ## Website commands
     {"cmd":"ws-create", "label":"Create Website from bucket", "param":"s3://BUCKET", "func":cmd_website_create, "argc":1},
     {"cmd":"ws-delete", "label":"Delete Website", "param":"s3://BUCKET", "func":cmd_website_delete, "argc":1},
@@ -3071,13 +2053,7 @@ def get_commands_list():
     ## Lifecycle commands
     {"cmd":"expire", "label":"Set or delete expiration rule for the bucket", "param":"s3://BUCKET", "func":cmd_expiration_set, "argc":1},
     {"cmd":"setlifecycle", "label":"Upload a lifecycle policy for the bucket", "param":"FILE s3://BUCKET", "func":cmd_setlifecycle, "argc":2},
-    {"cmd":"getlifecycle", "label":"Get a lifecycle policy for the bucket",    "param":"s3://BUCKET", "func":cmd_getlifecycle, "argc":1},
     {"cmd":"dellifecycle", "label":"Remove a lifecycle policy for the bucket", "param":"s3://BUCKET", "func":cmd_dellifecycle, "argc":1},
-
-    ## Notification commands
-    {"cmd":"setnotification", "label":"Upload a notification policy for the bucket", "param":"FILE s3://BUCKET", "func":cmd_setnotification, "argc":2},
-    {"cmd":"getnotification", "label":"Get a notification policy for the bucket",    "param":"s3://BUCKET", "func":cmd_getnotification, "argc":1},
-    {"cmd":"delnotification", "label":"Remove a notification policy for the bucket", "param":"s3://BUCKET", "func":cmd_delnotification, "argc":1},
 
     ## CloudFront commands
     {"cmd":"cflist", "label":"List CloudFront distribution points", "param":"", "func":CfCmd.info, "argc":0},
@@ -3085,7 +2061,7 @@ def get_commands_list():
     {"cmd":"cfcreate", "label":"Create CloudFront distribution point", "param":"s3://BUCKET", "func":CfCmd.create, "argc":1},
     {"cmd":"cfdelete", "label":"Delete CloudFront distribution point", "param":"cf://DIST_ID", "func":CfCmd.delete, "argc":1},
     {"cmd":"cfmodify", "label":"Change CloudFront distribution point parameters", "param":"cf://DIST_ID", "func":CfCmd.modify, "argc":1},
-    {"cmd":"cfinval", "label":"Invalidate CloudFront objects", "param":"s3://BUCKET/OBJECT [s3://BUCKET/OBJECT ...]", "func":CfCmd.invalidate, "argc":1},
+    #{"cmd":"cfinval", "label":"Invalidate CloudFront objects", "param":"s3://BUCKET/OBJECT [s3://BUCKET/OBJECT ...]", "func":CfCmd.invalidate, "argc":1},
     {"cmd":"cfinvalinfo", "label":"Display CloudFront invalidation request(s) status", "param":"cf://DIST_ID[/INVAL_ID]", "func":CfCmd.invalinfo, "argc":1},
     ]
 
@@ -3095,8 +2071,8 @@ def format_commands(progname, commands_list):
         help += "  %s\n      %s %s %s\n" % (cmd["label"], progname, cmd["cmd"], cmd["param"])
     return help
 
+
 def update_acl(s3, uri, seq_label=""):
-    cfg = Config()
     something_changed = False
     acl = s3.get_acl(uri)
     debug(u"acl: %s - %r" % (uri, acl.grantees))
@@ -3106,12 +2082,11 @@ def update_acl(s3, uri, seq_label=""):
         else:
             acl.grantAnonRead()
             something_changed = True
-    elif cfg.acl_public == False:  # we explicitly check for False, because it could be None
-        if not acl.isAnonRead() and not acl.isAnonWrite():
+    elif cfg.acl_public == False:  # we explicitely check for False, because it could be None
+        if not acl.isAnonRead():
             info(u"%s: already Private, skipping %s" % (uri, seq_label))
         else:
             acl.revokeAnonRead()
-            acl.revokeAnonWrite()
             something_changed = True
 
     # update acl with arguments
@@ -3138,26 +2113,24 @@ def update_acl(s3, uri, seq_label=""):
             output(u"%s: ACL updated" % uri)
 
 class OptionMimeType(Option):
-    def check_mimetype(self, opt, value):
-        if re.compile(r"^[a-z0-9]+/[a-z0-9+\.-]+(;.*)?$", re.IGNORECASE).match(value):
+    def check_mimetype(option, opt, value):
+        if re.compile("^[a-z0-9]+/[a-z0-9+\.-]+(;.*)?$", re.IGNORECASE).match(value):
             return value
         raise OptionValueError("option %s: invalid MIME-Type format: %r" % (opt, value))
 
 class OptionS3ACL(Option):
-    def check_s3acl(self, opt, value):
+    def check_s3acl(option, opt, value):
         permissions = ('read', 'write', 'read_acp', 'write_acp', 'full_control', 'all')
         try:
-            permission, grantee = re.compile(r"^(\w+):(.+)$", re.IGNORECASE).match(value).groups()
+            permission, grantee = re.compile("^(\w+):(.+)$", re.IGNORECASE).match(value).groups()
             if not permission or not grantee:
-                raise OptionValueError("option %s: invalid S3 ACL format: %r" % (opt, value))
+                raise
             if permission in permissions:
                 return { 'name' : grantee, 'permission' : permission.upper() }
             else:
                 raise OptionValueError("option %s: invalid S3 ACL permission: %s (valid values: %s)" %
                     (opt, permission, ", ".join(permissions)))
-        except OptionValueError:
-            raise
-        except Exception:
+        except:
             raise OptionValueError("option %s: invalid S3 ACL format: %r" % (opt, value))
 
 class OptionAll(OptionMimeType, OptionS3ACL):
@@ -3174,34 +2147,29 @@ class MyHelpFormatter(IndentedHelpFormatter):
             return ""
 
 def main():
-    cfg = Config()
+    global cfg
+
     commands_list = get_commands_list()
     commands = {}
 
     ## Populate "commands" from "commands_list"
     for cmd in commands_list:
-        if 'cmd' in cmd:
-            commands[cmd['cmd']] = cmd
+        if cmd.has_key("cmd"):
+            commands[cmd["cmd"]] = cmd
 
     optparser = OptionParser(option_class=OptionAll, formatter=MyHelpFormatter())
     #optparser.disable_interspersed_args()
 
-    autodetected_encoding = locale.getpreferredencoding() or "UTF-8"
-
     config_file = None
     if os.getenv("S3CMD_CONFIG"):
-        config_file = unicodise_s(os.getenv("S3CMD_CONFIG"),
-                                  autodetected_encoding)
+        config_file = os.getenv("S3CMD_CONFIG")
     elif os.name == "nt" and os.getenv("USERPROFILE"):
-        config_file = os.path.join(
-            unicodise_s(os.getenv("USERPROFILE"), autodetected_encoding),
-            os.getenv("APPDATA")
-               and unicodise_s(os.getenv("APPDATA"), autodetected_encoding)
-               or 'Application Data',
-            "s3cmd.ini")
+        config_file = os.path.join(os.getenv("USERPROFILE").decode('mbcs'), os.getenv("APPDATA").decode('mbcs') or 'Application Data', "s3cmd.ini")
     else:
         from os.path import expanduser
         config_file = os.path.join(expanduser("~"), ".s3cfg")
+
+    autodetected_encoding = locale.getpreferredencoding() or "UTF-8"
 
     optparser.set_defaults(config = config_file)
 
@@ -3210,17 +2178,16 @@ def main():
     optparser.add_option(      "--dump-config", dest="dump_config", action="store_true", help="Dump current configuration after parsing config files and command line options and exit.")
     optparser.add_option(      "--access_key", dest="access_key", help="AWS Access Key")
     optparser.add_option(      "--secret_key", dest="secret_key", help="AWS Secret Key")
-    optparser.add_option(      "--access_token", dest="access_token", help="AWS Access Token")
 
     optparser.add_option("-n", "--dry-run", dest="dry_run", action="store_true", help="Only show what should be uploaded or downloaded but don't actually do it. May still perform S3 requests to get bucket listings and other information though (only for file transfer commands)")
 
-    optparser.add_option("-s", "--ssl", dest="use_https", action="store_true", help="Use HTTPS connection when communicating with S3. (default)")
-    optparser.add_option(      "--no-ssl", dest="use_https", action="store_false", help="Don't use HTTPS.")
+    optparser.add_option("-s", "--ssl", dest="use_https", action="store_true", help="Use HTTPS connection when communicating with S3.")
+    optparser.add_option(      "--no-ssl", dest="use_https", action="store_false", help="Don't use HTTPS. (default)")
     optparser.add_option("-e", "--encrypt", dest="encrypt", action="store_true", help="Encrypt files before uploading to S3.")
     optparser.add_option(      "--no-encrypt", dest="encrypt", action="store_false", help="Don't encrypt files.")
     optparser.add_option("-f", "--force", dest="force", action="store_true", help="Force overwrite and other dangerous operations.")
     optparser.add_option(      "--continue", dest="get_continue", action="store_true", help="Continue getting a partially downloaded file (only for [get] command).")
-    optparser.add_option(      "--continue-put", dest="put_continue", action="store_true", help="Continue uploading partially uploaded files or multipart upload parts.  Restarts parts/files that don't have matching size and md5.  Skips files/parts that do.  Note: md5sum checks are not always sufficient to check (part) file equality.  Enable this at your own risk.")
+    optparser.add_option(      "--continue-put", dest="put_continue", action="store_true", help="Continue uploading partially uploaded files or multipart upload parts.  Restarts/parts files that don't have matching size and md5.  Skips files/parts that do.  Note: md5sum checks are not always sufficient to check (part) file equality.  Enable this at your own risk.")
     optparser.add_option(      "--upload-id", dest="upload_id", help="UploadId for Multipart Upload, in case you want continue an existing upload (equivalent to --continue-put) and there are multiple partial uploads.  Use s3cmd multipart [URI] to see what UploadIds are associated with the given URI.")
     optparser.add_option(      "--skip-existing", dest="skip_existing", action="store_true", help="Skip over files that exist at the destination (only for [get] and [sync] commands).")
     optparser.add_option("-r", "--recursive", dest="recursive", action="store_true", help="Recursive upload, download or removal.")
@@ -3229,22 +2196,19 @@ def main():
     optparser.add_option("-P", "--acl-public", dest="acl_public", action="store_true", help="Store objects with ACL allowing read for anyone.")
     optparser.add_option(      "--acl-private", dest="acl_public", action="store_false", help="Store objects with default ACL allowing access for you only.")
     optparser.add_option(      "--acl-grant", dest="acl_grants", type="s3acl", action="append", metavar="PERMISSION:EMAIL or USER_CANONICAL_ID", help="Grant stated permission to a given amazon user. Permission is one of: read, write, read_acp, write_acp, full_control, all")
-    optparser.add_option(      "--acl-revoke", dest="acl_revokes", type="s3acl", action="append", metavar="PERMISSION:USER_CANONICAL_ID", help="Revoke stated permission for a given amazon user. Permission is one of: read, write, read_acp, write_acp, full_control, all")
+    optparser.add_option(      "--acl-revoke", dest="acl_revokes", type="s3acl", action="append", metavar="PERMISSION:USER_CANONICAL_ID", help="Revoke stated permission for a given amazon user. Permission is one of: read, write, read_acp, wr     ite_acp, full_control, all")
 
-    optparser.add_option("-D", "--restore-days", dest="restore_days", action="store", help="Number of days to keep restored file available (only for 'restore' command). Default is 1 day.", metavar="NUM")
-    optparser.add_option(      "--restore-priority", dest="restore_priority", action="store", choices=['standard', 'expedited', 'bulk'], help="Priority for restoring files from S3 Glacier (only for 'restore' command). Choices available: bulk, standard, expedited")
+    optparser.add_option("-D",  "--restore-days", dest="restore_days", action="store", help="Number of days to keep restored file available (only for 'restore' command).", metavar="NUM")
 
-    optparser.add_option(      "--delete-removed", dest="delete_removed", action="store_true", help="Delete destination objects with no corresponding source file [sync]")
-    optparser.add_option(      "--no-delete-removed", dest="delete_removed", action="store_false", help="Don't delete destination objects [sync]")
-    optparser.add_option(      "--delete-after", dest="delete_after", action="store_true", help="Perform deletes AFTER new uploads when delete-removed is enabled [sync]")
+    optparser.add_option(      "--delete-removed", dest="delete_removed", action="store_true", help="Delete remote objects with no corresponding local file [sync]")
+    optparser.add_option(      "--no-delete-removed", dest="delete_removed", action="store_false", help="Don't delete remote objects.")
+    optparser.add_option(      "--delete-after", dest="delete_after", action="store_true", help="Perform deletes after new uploads [sync]")
     optparser.add_option(      "--delay-updates", dest="delay_updates", action="store_true", help="*OBSOLETE* Put all updated files into place at end [sync]")  # OBSOLETE
     optparser.add_option(      "--max-delete", dest="max_delete", action="store", help="Do not delete more than NUM files. [del] and [sync]", metavar="NUM")
-    optparser.add_option(      "--limit", dest="limit", action="store", help="Limit number of objects returned in the response body (only for [ls] and [la] commands)", metavar="NUM")
     optparser.add_option(      "--add-destination", dest="additional_destinations", action="append", help="Additional destination for parallel uploads, in addition to last arg.  May be repeated.")
     optparser.add_option(      "--delete-after-fetch", dest="delete_after_fetch", action="store_true", help="Delete remote objects after fetching to local file (only for [get] and [sync] commands).")
     optparser.add_option("-p", "--preserve", dest="preserve_attrs", action="store_true", help="Preserve filesystem attributes (mode, ownership, timestamps). Default for [sync] command.")
     optparser.add_option(      "--no-preserve", dest="preserve_attrs", action="store_false", help="Don't store FS attributes")
-    optparser.add_option(      "--keep-dirs", dest="keep_dirs", action="store_true", help="Preserve all local directories as remote objects including empty directories. Experimental feature.")
     optparser.add_option(      "--exclude", dest="exclude", action="append", metavar="GLOB", help="Filenames and paths matching GLOB will be excluded from sync")
     optparser.add_option(      "--exclude-from", dest="exclude_from", action="append", metavar="FILE", help="Read --exclude GLOBs from FILE")
     optparser.add_option(      "--rexclude", dest="rexclude", action="append", metavar="REGEXP", help="Filenames and paths matching REGEXP (regular expression) will be excluded from sync")
@@ -3253,14 +2217,13 @@ def main():
     optparser.add_option(      "--include-from", dest="include_from", action="append", metavar="FILE", help="Read --include GLOBs from FILE")
     optparser.add_option(      "--rinclude", dest="rinclude", action="append", metavar="REGEXP", help="Same as --include but uses REGEXP (regular expression) instead of GLOB")
     optparser.add_option(      "--rinclude-from", dest="rinclude_from", action="append", metavar="FILE", help="Read --rinclude REGEXPs from FILE")
+    optparser.add_option(      "--ignore-failed-copy", dest="ignore_failed_copy", action="store_true", help="Don't exit unsuccessfully because of missing keys")
 
     optparser.add_option(      "--files-from", dest="files_from", action="append", metavar="FILE", help="Read list of source-file names from FILE. Use - to read from stdin.")
     optparser.add_option(      "--region", "--bucket-location", metavar="REGION", dest="bucket_location", help="Region to create bucket in. As of now the regions are: us-east-1, us-west-1, us-west-2, eu-west-1, eu-central-1, ap-northeast-1, ap-southeast-1, ap-southeast-2, sa-east-1")
-    optparser.add_option(      "--host", metavar="HOSTNAME", dest="host_base", help="HOSTNAME:PORT for S3 endpoint (default: %s, alternatives such as s3-eu-west-1.amazonaws.com). You should also set --host-bucket." % (cfg.host_base))
-    optparser.add_option(      "--host-bucket", dest="host_bucket", help="DNS-style bucket+hostname:port template for accessing a bucket (default: %s)" % (cfg.host_bucket))
     optparser.add_option(      "--reduced-redundancy", "--rr", dest="reduced_redundancy", action="store_true", help="Store object with 'Reduced redundancy'. Lower per-GB price. [put, cp, mv]")
     optparser.add_option(      "--no-reduced-redundancy", "--no-rr", dest="reduced_redundancy", action="store_false", help="Store object without 'Reduced redundancy'. Higher per-GB price. [put, cp, mv]")
-    optparser.add_option(      "--storage-class", dest="storage_class", action="store", metavar="CLASS", help="Store object with specified CLASS (STANDARD, STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING, GLACIER or DEEP_ARCHIVE). [put, cp, mv]")
+
     optparser.add_option(      "--access-logging-target-prefix", dest="log_target_prefix", help="Target prefix for access logs (S3 URI) (for [cfmodify] and [accesslog] commands)")
     optparser.add_option(      "--no-access-logging", dest="log_target_prefix", action="store_false", help="Disable access logging (for [cfmodify] and [accesslog] commands)")
 
@@ -3274,7 +2237,6 @@ def main():
     optparser.add_option(      "--remove-header", dest="remove_headers", action="append", metavar="NAME", help="Remove a given HTTP header.  Can be used multiple times.  For instance, remove 'Expires' or 'Cache-Control' headers (or both) using this option. [modify]")
 
     optparser.add_option(      "--server-side-encryption", dest="server_side_encryption", action="store_true", help="Specifies that server-side encryption will be used when putting objects. [put, sync, cp, modify]")
-    optparser.add_option(      "--server-side-encryption-kms-id", dest="kms_key", action="store", help="Specifies the key id used for server-side encryption with AWS KMS-Managed Keys (SSE-KMS) when putting objects. [put, sync, cp, modify]")
 
     optparser.add_option(      "--encoding", dest="encoding", metavar="ENCODING", help="Override autodetected terminal and filesystem encoding (character set). Autodetected: %s" % autodetected_encoding)
     optparser.add_option(      "--add-encoding-exts", dest="add_encoding_exts", metavar="EXTENSIONs", help="Add encoding to these comma delimited extensions i.e. (css,js,html) when uploading to S3 )")
@@ -3284,9 +2246,6 @@ def main():
     optparser.add_option(      "--multipart-chunk-size-mb", dest="multipart_chunk_size_mb", type="int", action="store", metavar="SIZE", help="Size of each chunk of a multipart upload. Files bigger than SIZE are automatically uploaded as multithreaded-multipart, smaller files are uploaded using the traditional method. SIZE is in Mega-Bytes, default chunk size is 15MB, minimum allowed chunk size is 5MB, maximum is 5GB.")
 
     optparser.add_option(      "--list-md5", dest="list_md5", action="store_true", help="Include MD5 sums in bucket listings (only for 'ls' command).")
-
-    optparser.add_option(      "--list-allow-unordered", dest="list_allow_unordered", action="store_true", help="Not an AWS standard. Allow the listing results to be returned in unsorted order. This may be faster when listing very large buckets.")
-
     optparser.add_option("-H", "--human-readable-sizes", dest="human_readable_sizes", action="store_true", help="Print sizes in human readable form (eg 1kB instead of 1234).")
 
     optparser.add_option(      "--ws-index", dest="website_index", action="store", help="Name of index-document (only for [ws-create] command)")
@@ -3296,13 +2255,10 @@ def main():
     optparser.add_option(      "--expiry-days", dest="expiry_days", action="store", help="Indicates the number of days after object creation the expiration rule takes effect. (only for [expire] command)")
     optparser.add_option(      "--expiry-prefix", dest="expiry_prefix", action="store", help="Identifying one or more objects with the prefix to which the expiration rule applies. (only for [expire] command)")
 
-    optparser.add_option(      "--skip-destination-validation", dest="skip_destination_validation", action="store_true", help="Skips validation of Amazon SQS, Amazon SNS, and AWS Lambda destinations when applying notification configuration. (only for [setnotification] command)")
-
     optparser.add_option(      "--progress", dest="progress_meter", action="store_true", help="Display progress meter (default on TTY).")
     optparser.add_option(      "--no-progress", dest="progress_meter", action="store_false", help="Don't display progress meter (default on non-TTY).")
-    optparser.add_option(      "--stats", dest="stats", action="store_true", help="Give some file-transfer stats.")
     optparser.add_option(      "--enable", dest="enable", action="store_true", help="Enable given CloudFront distribution (only for [cfmodify] command)")
-    optparser.add_option(      "--disable", dest="enable", action="store_false", help="Disable given CloudFront distribution (only for [cfmodify] command)")
+    optparser.add_option(      "--disable", dest="enable", action="store_false", help="Enable given CloudFront distribution (only for [cfmodify] command)")
     optparser.add_option(      "--cf-invalidate", dest="invalidate_on_cf", action="store_true", help="Invalidate the uploaded filed in CloudFront. Also see [cfinval] command.")
     # joseprio: adding options to invalidate the default index and the default
     # index root
@@ -3319,21 +2275,12 @@ def main():
     optparser.add_option(      "--cache-file", dest="cache_file", action="store", default="",  metavar="FILE", help="Cache FILE containing local source MD5 values")
     optparser.add_option("-q", "--quiet", dest="quiet", action="store_true", default=False, help="Silence output on stdout")
     optparser.add_option(      "--ca-certs", dest="ca_certs_file", action="store", default=None, help="Path to SSL CA certificate FILE (instead of system default)")
-    optparser.add_option(      "--ssl-cert", dest="ssl_client_cert_file", action="store", default=None, help="Path to client own SSL certificate CRT_FILE")
-    optparser.add_option(      "--ssl-key", dest="ssl_client_key_file", action="store", default=None, help="Path to client own SSL certificate private key KEY_FILE")
     optparser.add_option(      "--check-certificate", dest="check_ssl_certificate", action="store_true", help="Check SSL certificate validity")
-    optparser.add_option(      "--no-check-certificate", dest="check_ssl_certificate", action="store_false", help="Do not check SSL certificate validity")
-    optparser.add_option(      "--check-hostname", dest="check_ssl_hostname", action="store_true", help="Check SSL certificate hostname validity")
-    optparser.add_option(      "--no-check-hostname", dest="check_ssl_hostname", action="store_false", help="Do not check SSL certificate hostname validity")
+    optparser.add_option(      "--no-check-certificate", dest="check_ssl_certificate", action="store_false", help="Check SSL certificate validity")
     optparser.add_option(      "--signature-v2", dest="signature_v2", action="store_true", help="Use AWS Signature version 2 instead of newer signature methods. Helpful for S3-like systems that don't have AWS Signature v4 yet.")
     optparser.add_option(      "--limit-rate", dest="limitrate", action="store", type="string", help="Limit the upload or download speed to amount bytes per second.  Amount may be expressed in bytes, kilobytes with the k suffix, or megabytes with the m suffix")
-    optparser.add_option(      "--no-connection-pooling", dest="connection_pooling", action="store_false", help="Disable connection reuse")
     optparser.add_option(      "--requester-pays", dest="requester_pays", action="store_true", help="Set the REQUESTER PAYS flag for operations")
     optparser.add_option("-l", "--long-listing", dest="long_listing", action="store_true", help="Produce long listing [ls]")
-    optparser.add_option(      "--stop-on-error", dest="stop_on_error", action="store_true", help="stop if error in transfer")
-    optparser.add_option(      "--max-retries", dest="max_retries", action="store", help="Maximum number of times to retry a failed request before giving up. Default is 5", metavar="NUM")
-    optparser.add_option(      "--content-disposition", dest="content_disposition", action="store", help="Provide a Content-Disposition for signed URLs, e.g., \"inline; filename=myvideo.mp4\"")
-    optparser.add_option(      "--content-type", dest="content_type", action="store", help="Provide a Content-Type for signed URLs, e.g., \"video/mp4\"")
 
     optparser.set_usage(optparser.usage + " COMMAND [parameters]")
     optparser.set_description('S3cmd is a tool for managing objects in '+
@@ -3354,11 +2301,11 @@ def main():
     if options.show_version:
         output(u"s3cmd version %s" % PkgInfo.version)
         sys.exit(EX_OK)
-    debug(u"s3cmd version %s" % PkgInfo.version)
 
     if options.quiet:
         try:
             f = open("/dev/null", "w")
+            sys.stdout.close()
             sys.stdout = f
         except IOError:
             warning(u"Unable to open /dev/null: --quiet disabled.")
@@ -3369,10 +2316,8 @@ def main():
         sys.exit(EX_CONFIG)
 
     try:
-        cfg = Config(options.config, options.access_key, options.secret_key, options.access_token)
-    except ValueError as exc:
-        raise ParameterError(unicode(exc))
-    except IOError as e:
+        cfg = Config(options.config, options.access_key, options.secret_key)
+    except IOError, e:
         if options.run_configure:
             cfg = Config()
         else:
@@ -3385,6 +2330,11 @@ def main():
     if options.verbosity is not None:
         cfg.verbosity = options.verbosity
     logging.root.setLevel(cfg.verbosity)
+
+    ## Default to --progress on TTY devices, --no-progress elsewhere
+    ## Can be overridden by actual --(no-)progress parameter
+    cfg.update_option('progress_meter', sys.stdout.isatty())
+
     ## Unsupported features on Win32 platform
     if os.name == "nt":
         if cfg.preserve_attrs:
@@ -3398,18 +2348,15 @@ def main():
     if options.add_header:
         for hdr in options.add_header:
             try:
-                key, val = unicodise_s(hdr).split(":", 1)
+                key, val = hdr.split(":", 1)
             except ValueError:
-                raise ParameterError("Invalid header format: %s" % unicodise_s(hdr))
-            # key char restrictions of the http headers name specification
-            key_inval = re.sub(r"[a-zA-Z0-9\-.!#$%&*+^_|]", "", key)
+                raise ParameterError("Invalid header format: %s" % hdr)
+            key_inval = re.sub("[a-zA-Z0-9-.]", "", key)
             if key_inval:
                 key_inval = key_inval.replace(" ", "<space>")
                 key_inval = key_inval.replace("\t", "<tab>")
-                raise ParameterError("Invalid character(s) in header name '%s'"
-                                     ": \"%s\"" % (key, key_inval))
-            debug(u"Updating Config.Config extra_headers[%s] -> %s" %
-                  (key.strip().lower(), val.strip()))
+                raise ParameterError("Invalid character(s) in header name '%s': \"%s\"" % (key, key_inval))
+            debug(u"Updating Config.Config extra_headers[%s] -> %s" % (key.strip().lower(), val.strip()))
             cfg.extra_headers[key.strip().lower()] = val.strip()
 
     # Process --remove-header
@@ -3427,33 +2374,30 @@ def main():
 
     ## Process --(no-)check-md5
     if options.check_md5 == False:
-        if "md5" in cfg.sync_checks:
+        try:
             cfg.sync_checks.remove("md5")
-        if "md5" in cfg.preserve_attrs_list:
             cfg.preserve_attrs_list.remove("md5")
-    elif options.check_md5 == True:
-        if "md5" not in cfg.sync_checks:
+        except Exception:
+            pass
+    if options.check_md5 == True:
+        if cfg.sync_checks.count("md5") == 0:
             cfg.sync_checks.append("md5")
-        if "md5" not in cfg.preserve_attrs_list:
+        if cfg.preserve_attrs_list.count("md5") == 0:
             cfg.preserve_attrs_list.append("md5")
 
     ## Update Config with other parameters
     for option in cfg.option_list():
         try:
-            value = getattr(options, option)
-            if value != None:
-                if type(value) == type(b''):
-                    value = unicodise_s(value)
-                debug(u"Updating Config.Config %s -> %s" % (option, value))
-                cfg.update_option(option, value)
+            if getattr(options, option) != None:
+                debug(u"Updating Config.Config %s -> %s" % (option, getattr(options, option)))
+                cfg.update_option(option, getattr(options, option))
         except AttributeError:
             ## Some Config() options are not settable from command line
             pass
 
     ## Special handling for tri-state options (True, False, None)
     cfg.update_option("enable", options.enable)
-    if options.acl_public is not None:
-        cfg.update_option("acl_public", options.acl_public)
+    cfg.update_option("acl_public", options.acl_public)
 
     ## Check multipart chunk constraints
     if cfg.multipart_chunk_size_mb < MultiPartUpload.MIN_CHUNK_SIZE_MB:
@@ -3462,7 +2406,7 @@ def main():
         raise ParameterError("Chunk size %d MB is too large, must be <= %d MB. Please adjust --multipart-chunk-size-mb" % (cfg.multipart_chunk_size_mb, MultiPartUpload.MAX_CHUNK_SIZE_MB))
 
     ## If an UploadId was provided, set put_continue True
-    if options.upload_id:
+    if options.upload_id is not None:
         cfg.upload_id = options.upload_id
         cfg.put_continue = True
 
@@ -3478,13 +2422,9 @@ def main():
     ## Update CloudFront options if some were set
     for option in CfCmd.options.option_list():
         try:
-            value = getattr(options, option)
-            if value != None:
-                if type(value) == type(b''):
-                    value = unicodise_s(value)
-            if value != None:
-                debug(u"Updating CloudFront.Cmd %s -> %s" % (option, value))
-                CfCmd.options.update_option(option, value)
+            if getattr(options, option) != None:
+                debug(u"Updating CloudFront.Cmd %s -> %s" % (option, getattr(options, option)))
+                CfCmd.options.update_option(option, getattr(options, option))
         except AttributeError:
             ## Some CloudFront.Cmd.Options() options are not settable from command line
             pass
@@ -3495,21 +2435,8 @@ def main():
         cfg.files_from = options.files_from
 
     ## Set output and filesystem encoding for printing out filenames.
-    try:
-        # Support for python3
-        # That don't need codecs if output is the
-        # encoding of the system, but just in case, still use it.
-        # For that, we need to use directly the binary buffer
-        # of stdout/stderr
-        sys.stdout = codecs.getwriter(cfg.encoding)(sys.stdout.buffer, "replace")
-        sys.stderr = codecs.getwriter(cfg.encoding)(sys.stderr.buffer, "replace")
-        # getwriter with create an "IObuffer" that have not the encoding attribute
-        # better to add it to not break some functions like "input".
-        sys.stdout.encoding = cfg.encoding
-        sys.stderr.encoding = cfg.encoding
-    except AttributeError:
-        sys.stdout = codecs.getwriter(cfg.encoding)(sys.stdout, "replace")
-        sys.stderr = codecs.getwriter(cfg.encoding)(sys.stderr, "replace")
+    sys.stdout = codecs.getwriter(cfg.encoding)(sys.stdout, "replace")
+    sys.stderr = codecs.getwriter(cfg.encoding)(sys.stderr, "replace")
 
     ## Process --exclude and --exclude-from
     patterns_list, patterns_textual = process_patterns(options.exclude, options.exclude_from, is_glob = True, option_txt = "exclude")
@@ -3548,16 +2475,6 @@ def main():
         run_configure(options.config, args)
         sys.exit(EX_OK)
 
-    ## set config if stop_on_error is set
-    if options.stop_on_error:
-        cfg.stop_on_error = options.stop_on_error
-
-    if options.content_disposition:
-        cfg.content_disposition = options.content_disposition
-
-    if options.content_type:
-        cfg.content_type = options.content_type
-
     if len(args) < 1:
         optparser.print_help()
         sys.exit(EX_USAGE)
@@ -3572,8 +2489,8 @@ def main():
         ## avoid catching all KeyError exceptions
         ## from inner functions.
         cmd_func = commands[command]["func"]
-    except KeyError as e:
-        error(u"Invalid command: %s", command)
+    except KeyError, e:
+        error(u"Invalid command: %s" % e)
         sys.exit(EX_USAGE)
 
     if len(args) < commands[command]["argc"]:
@@ -3585,73 +2502,61 @@ def main():
         rc = EX_GENERAL
     return rc
 
-def report_exception(e, msg=u''):
-        alert_header = u"""
+def report_exception(e, msg=''):
+        sys.stderr.write(u"""
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     An unexpected error has occurred.
   Please try reproducing the error using
   the latest s3cmd code from the git master
   branch found at:
     https://github.com/s3tools/s3cmd
-  and have a look at the known issues list:
-    https://github.com/s3tools/s3cmd/wiki/Common-known-issues-and-their-solutions-(FAQ)
   If the error persists, please report the
-  %s (removing any private
+  following lines (removing any private
   info as necessary) to:
-   s3tools-bugs@lists.sourceforge.net%s
+   s3tools-bugs@lists.sourceforge.net
+%s
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-"""
-        sys.stderr.write(alert_header % (u"following lines", u"\n\n" + msg))
-        tb = traceback.format_exc()
+""" % msg)
+        tb = traceback.format_exc(sys.exc_info())
         try:
             s = u' '.join([unicodise(a) for a in sys.argv])
         except NameError:
-            # Error happened before Utils module was yet imported to provide
-            # unicodise
-            try:
-                s = u' '.join([(a) for a in sys.argv])
-            except UnicodeDecodeError:
-                s = u'[encoding safe] ' + u' '.join([('%r'%a) for a in sys.argv])
+            s = u' '.join([(a) for a in sys.argv])
         sys.stderr.write(u"Invoked as: %s\n" % s)
 
         e_class = str(e.__class__)
         e_class = e_class[e_class.rfind(".")+1 : -2]
-        try:
-            sys.stderr.write(u"Problem: %s: %s\n" % (e_class, e))
-        except UnicodeDecodeError:
-            sys.stderr.write(u"Problem: [encoding safe] %r: %r\n"
-                             % (e_class, e))
+        sys.stderr.write(u"Problem: %s: %s\n" % (e_class, e))
         try:
             sys.stderr.write(u"S3cmd:   %s\n" % PkgInfo.version)
         except NameError:
-            sys.stderr.write(u"S3cmd:   unknown version."
-                             "Module import problem?\n")
+            sys.stderr.write(u"S3cmd:   unknown version. Module import problem?\n")
         sys.stderr.write(u"python:   %s\n" % sys.version)
-        try:
-            sys.stderr.write(u"environment LANG=%s\n"
-                             % unicodise_s(os.getenv("LANG", "NOTSET"),
-                                           'ascii'))
-        except NameError:
-            # Error happened before Utils module was yet imported to provide
-            # unicodise
-            sys.stderr.write(u"environment LANG=%s\n"
-                             % os.getenv("LANG", "NOTSET"))
+        sys.stderr.write(u"environment LANG=%s\n" % os.getenv("LANG"))
         sys.stderr.write(u"\n")
-        if type(tb) == unicode:
-            sys.stderr.write(tb)
-        else:
-            sys.stderr.write(unicode(tb, errors="replace"))
+        sys.stderr.write(unicode(tb, errors="replace"))
 
         if type(e) == ImportError:
             sys.stderr.write("\n")
             sys.stderr.write("Your sys.path contains these entries:\n")
             for path in sys.path:
                 sys.stderr.write(u"\t%s\n" % path)
-            sys.stderr.write("Now the question is where have the s3cmd modules"
-                             " been installed?\n")
+            sys.stderr.write("Now the question is where have the s3cmd modules been installed?\n")
 
-        sys.stderr.write(alert_header % (u"above lines", u""))
+        sys.stderr.write("""
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    An unexpected error has occurred.
+  Please try reproducing the error using
+  the latest s3cmd code from the git master
+  branch found at:
+    https://github.com/s3tools/s3cmd
+  If the error persists, please report the
+  above lines (removing any private
+  info as necessary) to:
+   s3tools-bugs@lists.sourceforge.net
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+""")
 
 if __name__ == '__main__':
     try:
@@ -3667,12 +2572,9 @@ if __name__ == '__main__':
         from S3.FileDict import FileDict
         from S3.S3Uri import S3Uri
         from S3 import Utils
-        from S3.BaseUtils import (formatDateTime, getPrettyFromXml,
-                                  encode_to_s3, decode_from_s3, s3path)
-        from S3.Crypto import hash_file_md5, sign_string_v2, sign_url_v2
-        from S3.Utils import (formatSize, unicodise_safe, unicodise_s,
-                              unicodise, deunicodise, replace_nonprintables)
-        from S3.Progress import Progress, StatsInfo
+        from S3 import Crypto
+        from S3.Utils import *
+        from S3.Progress import Progress
         from S3.CloudFront import Cmd as CfCmd
         from S3.CloudFront import CloudFront
         from S3.FileLists import *
@@ -3686,68 +2588,38 @@ if __name__ == '__main__':
         rc = main()
         sys.exit(rc)
 
-    except ImportError as e:
+    except ImportError, e:
         report_exception(e)
         sys.exit(EX_GENERAL)
 
-    except (ParameterError, InvalidFileError) as e:
+    except (ParameterError, InvalidFileError), e:
         error(u"Parameter problem: %s" % e)
         sys.exit(EX_USAGE)
 
-    except (S3DownloadError, S3UploadError, S3RequestError) as e:
+    except (S3DownloadError, S3UploadError, S3RequestError), e:
         error(u"S3 Temporary Error: %s.  Please try again later." % e)
         sys.exit(EX_TEMPFAIL)
 
-    except S3Error as e:
+    except S3Error, e:
         error(u"S3 error: %s" % e)
         sys.exit(e.get_error_code())
 
-    except (S3Exception, S3ResponseError, CloudFrontError) as e:
+    except (S3Exception, S3ResponseError, CloudFrontError), e:
         report_exception(e)
         sys.exit(EX_SOFTWARE)
 
-    except SystemExit as e:
+    except SystemExit, e:
         sys.exit(e.code)
 
     except KeyboardInterrupt:
         sys.stderr.write("See ya!\n")
         sys.exit(EX_BREAK)
 
-    except (S3SSLError, S3SSLCertificateError) as e:
-        # SSLError is a subtype of IOError
-        error("SSL certificate verification failure: %s" % e)
-        sys.exit(EX_ACCESSDENIED)
-
-    except ConnectionRefusedError as e:
-        error("Could not connect to server: %s" % e)
-        sys.exit(EX_CONNECTIONREFUSED)
-        # typically encountered error is:
-        # ERROR: [Errno 111] Connection refused
-
-    except socket.gaierror as e:
-        # gaierror is a subset of IOError
-        # typically encountered error is:
-        # gaierror: [Errno -2] Name or service not known
-        error(e)
-        error("Connection Error: Error resolving a server hostname.\n"
-              "Please check the servers address specified in 'host_base', 'host_bucket', 'cloudfront_host', 'website_endpoint'")
-        sys.exit(EX_IOERR)
-
-    except IOError as e:
-        if e.errno in (errno.ECONNREFUSED, errno.EHOSTUNREACH):
-            # Python2 does not have ConnectionRefusedError
-            error("Could not connect to server: %s" % e)
-            sys.exit(EX_CONNECTIONREFUSED)
-
-        if e.errno == errno.EPIPE:
-            # Fail silently on SIGPIPE. This likely means we wrote to a closed
-            # pipe and user does not care for any more output.
-            sys.exit(EX_IOERR)
-
+    except IOError, e:
         report_exception(e)
         sys.exit(EX_IOERR)
 
-    except OSError as e:
+    except OSError, e:
         error(e)
         sys.exit(EX_OSERR)
 
@@ -3762,8 +2634,8 @@ The solutions to this are:
         sys.stderr.write(msg)
         sys.exit(EX_OSERR)
 
-    except UnicodeEncodeError as e:
-        lang = unicodise_s(os.getenv("LANG", "NOTSET"), 'ascii')
+    except UnicodeEncodeError, e:
+        lang = os.getenv("LANG")
         msg = """
 You have encountered a UnicodeEncodeError.  Your environment
 variable LANG=%s may not specify a Unicode encoding (e.g. UTF-8).
@@ -3773,7 +2645,7 @@ invoking s3cmd.
         report_exception(e, msg)
         sys.exit(EX_GENERAL)
 
-    except Exception as e:
+    except Exception, e:
         report_exception(e)
         sys.exit(EX_GENERAL)
 

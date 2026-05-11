@@ -1,5 +1,4 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/bash
 
 # dump-tables-mysql.sh
 # Descr: Dump MySQL table data into separate SQL files for a specified database.
@@ -11,31 +10,26 @@ set -euo pipefail
 #  * Output files are compressed and saved in the current working dir, unless DIR is
 #    specified on command-line.
 
-usage() {
-    echo "Usage: $(basename "$0") <DB_HOST> <DB_USER> <DB_NAME> [<DIR>]" >&2
-}
-
-[ $# -lt 3 ] && usage && exit 1
+[ $# -lt 3 ] && echo "Usage: $(basename $0) <DB_HOST> <DB_USER> <DB_NAME> [<DIR>]" && exit 1
 
 DB_host=$1
 DB_user=$2
 DB=$3
-DIR=${4:-.}
+DIR=$4
 
-mkdir -p "$DIR"
+[ -n "$DIR" ] || DIR=.
+test -d $DIR || mkdir -p $DIR
 
 echo -n "DB password: "
-read -r -s DB_pass
+read -s DB_pass
 echo
 echo "Dumping tables into separate SQL command files for database '$DB' into dir=$DIR"
 
 tbl_count=0
 
-while IFS= read -r t; do
-    [ -n "$t" ] || continue
+for t in $(mysql -NBA -h $DB_host -u $DB_user -p$DB_pass -D $DB -e 'show tables') 
+do 
     echo "DUMPING TABLE: $t"
-    mysqldump -h "$DB_host" -u "$DB_user" -p"$DB_pass" "$DB" "$t" | gzip > "$DIR/$t.sql.gz"
+    mysqldump -h $DB_host -u $DB_user -p$DB_pass $DB $t | gzip > $DIR/$t.sql.gz
     (( tbl_count++ ))
-done < <(mysql -NBA -h "$DB_host" -u "$DB_user" -p"$DB_pass" -D "$DB" -e 'show tables')
-
-echo "$tbl_count tables dumped from database '$DB'"
+done

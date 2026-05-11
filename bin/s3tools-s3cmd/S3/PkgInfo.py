@@ -1,17 +1,13 @@
 # -*- coding: utf-8 -*-
 
-## --------------------------------------------------------------------
 ## Amazon S3 manager
-##
-## Authors   : Michal Ludvig <michal@logix.cz> (https://www.logix.cz/michal)
-##             Florent Viard <florent@sodria.com> (https://www.sodria.com)
-## Copyright : TGRMN Software, Sodria SAS and contributors
-## License   : GPL Version 2
-## Website   : https://s3tools.org
-## --------------------------------------------------------------------
+## Author: Michal Ludvig <michal@logix.cz>
+##         http://www.logix.cz/michal
+## License: GPL Version 2
+## Copyright: TGRMN Software and contributors
 
 package = "s3cmd"
-version = "2.4.0-dev"
+version = "1.5.2"
 url = "http://s3tools.org"
 license = "GNU GPL v2+"
 short_description = "Command line tool for managing Amazon S3 and CloudFront services"

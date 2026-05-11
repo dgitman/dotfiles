@@ -19,6 +19,8 @@ Personal macOS dotfiles and bootstrap helpers.
 ./scripts/install.sh
 ```
 
+The installer also ensures `~/.local/bin` is first on `PATH` and refreshes symlink shims in `~/.local/bin` that point into `~/dotfiles/bin`.
+
 To bootstrap Homebrew and install all packages from the Brewfile:
 
 ```sh

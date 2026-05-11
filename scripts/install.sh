@@ -30,6 +30,47 @@ if ! grep -Fqx 'export PATH="$HOME/.local/bin:$PATH"' "$HOME/.zprofile" 2>/dev/n
   printf 'updated %s to include ~/.local/bin on PATH\n' "$HOME/.zprofile"
 fi
 
+rebuild_local_bin_shims() {
+  local shim_dir="$HOME/.local/bin"
+  local src_dir="$ROOT/bin"
+
+  mkdir -p "$shim_dir"
+
+  # Remove only symlinks in ~/.local/bin that point into this dotfiles checkout.
+  local link
+  local target
+  for link in "$shim_dir"/*; do
+    [ -L "$link" ] || continue
+    target="$(readlink "$link" || true)"
+    case "$target" in
+      "$src_dir"/*) rm -f -- "$link" ;;
+    esac
+  done
+
+  # Create symlink shims for top-level executable files (and top-level symlinks) in dotfiles/bin.
+  local f
+  local base
+  for f in "$src_dir"/*; do
+    base="$(basename "$f")"
+    case "$base" in
+      README.md|__pycache__) continue ;;
+    esac
+
+    if [ -L "$f" ]; then
+      ln -sf -- "$f" "$shim_dir/$base"
+      continue
+    fi
+
+    if [ -f "$f" ] && [ -x "$f" ]; then
+      ln -sf -- "$f" "$shim_dir/$base"
+    fi
+  done
+
+  printf 'rebuilt shims in %s from %s\n' "$shim_dir" "$src_dir"
+}
+
+rebuild_local_bin_shims
+
 mkdir -p "$HOME/.ssh"
 chmod 700 "$HOME/.ssh"
 link_file "$ROOT/ssh/config" "$HOME/.ssh/config"

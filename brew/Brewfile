@@ -10,7 +10,9 @@ brew 'c-ares' # Asynchronous DNS library
 brew 'ca-certificates' # Mozilla CA certificate store
 brew 'cask' # Emacs dependency management
 brew 'certifi' # Mozilla CA bundle for Python
+brew 'cffi' # C Foreign Function Interface for Python
 brew 'coreutils' # GNU File, Shell, and Text utilities
+brew 'cryptography' # Cryptographic recipes and primitives for Python
 brew 'dav1d' # AV1 decoder targeted to be small and fast
 brew 'deno' # Secure runtime for JavaScript and TypeScript
 brew 'emacs' # GNU Emacs text editor
@@ -18,6 +20,7 @@ brew 'exiftool' # Perl lib for reading and writing EXIF metadata
 brew 'fdupes' # Identify or delete duplicate files
 brew 'ffmpeg' # Play, record, convert, and stream select audio and video codecs
 brew 'fmt' # Open-source formatting library for C++
+brew 'gallery-dl' # Command-line downloader for image-hosting site galleries and collections
 brew 'gettext' # GNU internationalization (i18n) and localization (l10n) library
 brew 'gh' # GitHub command-line tool
 brew 'git' # Distributed revision control system
@@ -71,6 +74,7 @@ brew 'pinentry-mac' # Pinentry for GPG on Mac
 brew 'pipx' # Execute binaries from Python packages in isolated environments
 brew 'pkgconf' # Package compiler and linker metadata toolkit
 brew 'pv' # Monitor data's progress through a pipe
+brew 'pycparser' # C parser in Python
 brew 'python@3.13' # Interpreted, interactive, object-oriented programming language
 brew 'python@3.14' # Interpreted, interactive, object-oriented programming language
 brew 'rbenv' # Ruby version manager

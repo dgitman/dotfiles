@@ -12,6 +12,9 @@ network_access = true
 [projects."/"]
 trust_level = "trusted"
 
+[projects."/Users/dgitman/Developer/gmail-takeout-mbox-to-ai"]
+trust_level = "trusted"
+
 [plugins."google-calendar@openai-curated"]
 enabled = true
 
@@ -69,6 +72,12 @@ preventSleepWhileRunning = true
 keepRemoteControlAwakeWhilePluggedIn = true
 git-show-sidebar-pr-icons = false
 conversationDetailMode = "STEPS_PROSE"
+
+[desktop.open-in-target-preferences]
+global = "fileManager"
+
+[desktop.open-in-target-preferences.perPath]
+"/Users/dgitman/Developer/gmail-takeout-mbox-to-ai" = "fileManager"
 
 [features]
 js_repl = false

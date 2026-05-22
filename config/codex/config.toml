@@ -1,10 +1,16 @@
 model = "gpt-5.5"
 model_reasoning_effort = "medium"
-approval_policy = "on-failure"
-sandbox_mode = "workspace-write"
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
 
 [sandbox_workspace_write]
 network_access = true
+
+# Machine-specific [projects."..."] trust stanzas are intentionally omitted.
+# Codex repopulates them as you trust each project. Only the root fallback is
+# tracked so a fresh machine starts with a sane default.
+[projects."/"]
+trust_level = "trusted"
 
 [plugins."google-calendar@openai-curated"]
 enabled = true
@@ -30,7 +36,10 @@ enabled = true
 [plugins."computer-use@openai-bundled"]
 enabled = true
 
-[plugins."browser-use@openai-bundled"]
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."chrome@openai-bundled"]
 enabled = true
 
 [plugins."documents@openai-primary-runtime"]
@@ -48,8 +57,18 @@ enabled = true
 [plugins."hubspot@openai-curated"]
 enabled = true
 
-[plugins."chrome@openai-bundled"]
-enabled = true
-
 [mcp_servers.clay-inc-clay-mcp]
 url = "https://mcp.clay.earth/mcp"
+
+[desktop]
+ambient-suggestions-enabled = true
+sansFontSize = 14
+codeFontSize = 13
+mac-menu-bar-enabled = false
+preventSleepWhileRunning = true
+keepRemoteControlAwakeWhilePluggedIn = true
+git-show-sidebar-pr-icons = false
+conversationDetailMode = "STEPS_PROSE"
+
+[features]
+js_repl = false

@@ -10,7 +10,10 @@ for plist in "$ROOT/launchd/"*.plist; do
   target="$HOME/Library/LaunchAgents/$plist_name"
 
   cp "$plist" "$target"
-  launchctl bootout "gui/$UID" "$target" >/dev/null 2>&1 || true
-  launchctl bootstrap "gui/$UID" "$target"
+  # unload handles both old (launchctl load) and new (bootstrap) registrations;
+  # bootstrap alone fails with I/O error 5 if the agent was previously loaded
+  # via the older API.
+  launchctl unload "$target" 2>/dev/null || true
+  launchctl load -w "$target"
   printf 'installed %s\n' "$target"
 done

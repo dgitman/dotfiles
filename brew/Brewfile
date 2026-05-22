@@ -107,7 +107,8 @@ brew 'zstd' # Zstandard is a real-time compression algorithm
 tap 'homebrew/cask'
 cask '1password' # Password manager that keeps all passwords secure behind one password
 cask '1password-cli' # Command-line interface for 1Password
-cask 'antigravity' # AI Coding Agent IDE
+cask 'antigravity' # Agent orchestration platform
+cask 'antigravity-ide' # AI Coding Agent IDE
 cask 'appcleaner' # Application uninstaller
 cask 'bartender' # Menu bar icon organiser
 cask 'chatgpt' # OpenAI's official ChatGPT desktop app
@@ -187,7 +188,7 @@ brew 'wpscan' # Black box WordPress vulnerability scanner
 
 # App Store applications
 mas '1Password for Safari (8.12.12)', id: 1569813296
-mas 'Amazon Kindle (7.58)', id: 302584613
+mas 'Amazon Kindle (7.59)', id: 302584613
 mas 'AwardWallet (3.6.15)', id: 1473828829
 mas 'Awesome Screenshot & Recorder (2.3.1)', id: 1531282066
 mas 'Clay for Safari (2026.1)', id: 6745995785

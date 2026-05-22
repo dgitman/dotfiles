@@ -2,14 +2,15 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-PLIST_NAME="com.dgitman.dotfiles.autosync.plist"
-SOURCE="$ROOT/launchd/$PLIST_NAME"
-TARGET="$HOME/Library/LaunchAgents/$PLIST_NAME"
 
 mkdir -p "$HOME/Library/LaunchAgents" "$ROOT/logs"
-cp "$SOURCE" "$TARGET"
 
-launchctl bootout "gui/$UID" "$TARGET" >/dev/null 2>&1 || true
-launchctl bootstrap "gui/$UID" "$TARGET"
+for plist in "$ROOT/launchd/"*.plist; do
+  plist_name="$(basename "$plist")"
+  target="$HOME/Library/LaunchAgents/$plist_name"
 
-printf 'installed %s\n' "$TARGET"
+  cp "$plist" "$target"
+  launchctl bootout "gui/$UID" "$target" >/dev/null 2>&1 || true
+  launchctl bootstrap "gui/$UID" "$target"
+  printf 'installed %s\n' "$target"
+done

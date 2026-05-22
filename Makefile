@@ -27,7 +27,7 @@ store:          ## Store supported local credential files in 1Password
 hooks:          ## Install pre-commit and pre-push Git hooks
 	./scripts/install-git-hooks.sh
 
-launchd:        ## Install the hourly auto-sync launchd job
+launchd:        ## Install all launchd agents (hourly auto-sync + daily check)
 	./scripts/install-launchagent.sh
 
 help:           ## Show this help

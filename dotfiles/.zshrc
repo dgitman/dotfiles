@@ -36,3 +36,6 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # Added by Antigravity
 export PATH="/Users/dgitman/.antigravity/antigravity/bin:$PATH"
+
+# Added by Antigravity IDE
+export PATH="/Users/dgitman/.antigravity-ide/antigravity-ide/bin:$PATH"

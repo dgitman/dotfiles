@@ -15,6 +15,9 @@ trust_level = "trusted"
 [projects."/Users/dgitman/Developer/gmail-takeout-mbox-to-ai"]
 trust_level = "trusted"
 
+[projects."/Users/dgitman/Documents/Codex/2026-05-11/check-my-daughter-shira-s-public"]
+trust_level = "trusted"
+
 [plugins."google-calendar@openai-curated"]
 enabled = true
 

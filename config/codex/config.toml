@@ -20,6 +20,9 @@ trust_level = "trusted"
 [projects."/Users/dgitman/Documents/Codex/2026-05-11/check-my-daughter-shira-s-public"]
 trust_level = "trusted"
 
+[projects."/Users/dgitman/Documents/Codex/2026-05-24/files-mentioned-by-the-user-low"]
+trust_level = "trusted"
+
 [plugins."google-calendar@openai-curated"]
 enabled = true
 
@@ -69,9 +72,8 @@ enabled = true
 url = "https://mcp.clay.earth/mcp"
 
 [mcp_servers.node_repl]
-args = []
 command = "/Applications/Codex.app/Contents/Resources/node_repl"
-startup_timeout_sec = 120
+startup_timeout_sec = 120.0
 
 [mcp_servers.node_repl.env]
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
@@ -85,6 +87,10 @@ NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "167fdf579477181fba1773c1efb067b00c5a
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/dgitman/.codex"
 NODE_REPL_UNTRUSTED_ENV_ALLOWLIST = "BROWSER_USE_MARKETPLACE_NAME"
 SKY_CUA_SERVICE_PATH = "/Users/dgitman/.codex/.tmp/bundled-marketplaces/openai-bundled/plugins/computer-use/Codex Computer Use.app"
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["@playwright/mcp@latest"]
 
 [desktop]
 ambient-suggestions-enabled = true

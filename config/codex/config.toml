@@ -101,6 +101,21 @@ SKY_CUA_SERVICE_PATH = "/Users/dgitman/.codex/.tmp/bundled-marketplaces/openai-b
 command = "npx"
 args = ["-y", "@playwright/mcp@latest", "--headless"]
 
+[mcp_servers.playwright.tools.browser_resize]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_navigate]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_evaluate]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_fill_form]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_click]
+approval_mode = "approve"
+
 [desktop]
 ambient-suggestions-enabled = true
 sansFontSize = 14

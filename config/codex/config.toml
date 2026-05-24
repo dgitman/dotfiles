@@ -2,7 +2,6 @@ model = "gpt-5.5"
 model_reasoning_effort = "medium"
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
-
 notify = ["/Users/dgitman/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
 [sandbox_workspace_write]
@@ -21,6 +20,15 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/Users/dgitman/Documents/Codex/2026-05-24/files-mentioned-by-the-user-low"]
+trust_level = "trusted"
+
+[projects."/Users/dgitman/Documents/Codex/2026-05-24/i-want-to-set-up-an"]
+trust_level = "trusted"
+
+[projects."/Users/dgitman/Documents/Codex/2026-05-24/check-the-nc-ecourts-register-of"]
+trust_level = "trusted"
+
+[projects."/Users/dgitman/Documents/Codex/2026-05-24/use-the-playwright-mcp-server-to"]
 trust_level = "trusted"
 
 [plugins."google-calendar@openai-curated"]
@@ -47,12 +55,6 @@ enabled = true
 [plugins."computer-use@openai-bundled"]
 enabled = true
 
-[plugins."browser@openai-bundled"]
-enabled = true
-
-[plugins."chrome@openai-bundled"]
-enabled = true
-
 [plugins."documents@openai-primary-runtime"]
 enabled = true
 
@@ -68,12 +70,19 @@ enabled = true
 [plugins."hubspot@openai-curated"]
 enabled = true
 
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."chrome@openai-bundled"]
+enabled = true
+
 [mcp_servers.clay-inc-clay-mcp]
-url = "https://mcp.clay.earth/mcp"
+url = "https://clay.earth"
 
 [mcp_servers.node_repl]
+args = []
 command = "/Applications/Codex.app/Contents/Resources/node_repl"
-startup_timeout_sec = 120.0
+startup_timeout_sec = 120
 
 [mcp_servers.node_repl.env]
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
@@ -90,7 +99,7 @@ SKY_CUA_SERVICE_PATH = "/Users/dgitman/.codex/.tmp/bundled-marketplaces/openai-b
 
 [mcp_servers.playwright]
 command = "npx"
-args = ["@playwright/mcp@latest"]
+args = ["-y", "@playwright/mcp@latest", "--headless"]
 
 [desktop]
 ambient-suggestions-enabled = true
@@ -112,6 +121,6 @@ global = "fileManager"
 js_repl = false
 
 [marketplaces.openai-bundled]
-last_updated = "2026-05-23T13:32:45Z"
+last_updated = "2026-05-24T16:54:31Z"
 source_type = "local"
 source = "/Users/dgitman/.codex/.tmp/bundled-marketplaces/openai-bundled"

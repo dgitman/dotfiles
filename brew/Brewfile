@@ -177,6 +177,7 @@ tap 'adoptopenjdk/openjdk'
 tap 'buo/cask-upgrade'
 
 tap 'darrylmorley/whatcable'
+cask 'whatcable' # Menu bar app for USB-C cable diagnostics
 
 tap 'jostasik/tap'
 

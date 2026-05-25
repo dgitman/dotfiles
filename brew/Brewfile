@@ -176,6 +176,8 @@ tap 'adoptopenjdk/openjdk'
 
 tap 'buo/cask-upgrade'
 
+tap 'darrylmorley/whatcable'
+
 tap 'jostasik/tap'
 
 tap 'rcmdnk/file'

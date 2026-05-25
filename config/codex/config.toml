@@ -1,37 +1,23 @@
 model = "gpt-5.5"
 model_reasoning_effort = "medium"
 approval_policy = "never"
-sandbox_mode = "danger-full-access"
+sandbox_mode = "workspace-write"
 notify = ["/Users/dgitman/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
 [sandbox_workspace_write]
+writable_roots = [
+  "/Users/dgitman/Developer/",
+  "/Users/dgitman/.codex/automations/",
+  "/Users/dgitman/dotfiles/",
+  "/Users/dgitman/dotfiles/.git/"
+]
+
 network_access = true
 
 # Machine-specific [projects."..."] trust stanzas are intentionally omitted.
 # Codex repopulates them as you trust each project. Only the root fallback is
 # tracked so a fresh machine starts with a sane default.
 [projects."/"]
-trust_level = "trusted"
-
-[projects."/Users/dgitman/Developer/gmail-takeout-mbox-to-ai"]
-trust_level = "trusted"
-
-[projects."/Users/dgitman/Documents/Codex/2026-05-11/check-my-daughter-shira-s-public"]
-trust_level = "trusted"
-
-[projects."/Users/dgitman/Documents/Codex/2026-05-24/files-mentioned-by-the-user-low"]
-trust_level = "trusted"
-
-[projects."/Users/dgitman/Documents/Codex/2026-05-24/i-want-to-set-up-an"]
-trust_level = "trusted"
-
-[projects."/Users/dgitman/Documents/Codex/2026-05-24/check-the-nc-ecourts-register-of"]
-trust_level = "trusted"
-
-[projects."/Users/dgitman/Documents/Codex/2026-05-24/use-the-playwright-mcp-server-to"]
-trust_level = "trusted"
-
-[projects."/Users/dgitman/.codex/automations/frontier-gowild-rdu-to-bos-fare-watch"]
 trust_level = "trusted"
 
 [plugins."google-calendar@openai-curated"]
@@ -119,6 +105,9 @@ approval_mode = "approve"
 [mcp_servers.playwright.tools.browser_click]
 approval_mode = "approve"
 
+[mcp_servers.playwright.tools.browser_tabs]
+approval_mode = "approve"
+
 [desktop]
 ambient-suggestions-enabled = true
 sansFontSize = 14
@@ -139,6 +128,6 @@ global = "fileManager"
 js_repl = false
 
 [marketplaces.openai-bundled]
-last_updated = "2026-05-24T17:01:34Z"
+last_updated = "2026-05-25T14:12:33Z"
 source_type = "local"
 source = "/Users/dgitman/.codex/.tmp/bundled-marketplaces/openai-bundled"

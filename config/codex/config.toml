@@ -8,6 +8,8 @@ notify = ["/Users/dgitman/.codex/computer-use/Codex Computer Use.app/Contents/Sh
 writable_roots = [
   "/Users/dgitman/Developer/",
   "/Users/dgitman/.codex/automations/",
+  "/Users/dgitman/.npm/",
+  "/Users/dgitman/Library/Caches/ms-playwright/",
   "/Users/dgitman/dotfiles/",
   "/Users/dgitman/dotfiles/.git/"
 ]
@@ -18,6 +20,9 @@ network_access = true
 # Codex repopulates them as you trust each project. Only the root fallback is
 # tracked so a fresh machine starts with a sane default.
 [projects."/"]
+trust_level = "trusted"
+
+[projects."/Users/dgitman/Documents/Codex/2026-05-25/all-my-previous-codex-chats-are"]
 trust_level = "trusted"
 
 [plugins."google-calendar@openai-curated"]
@@ -128,6 +133,6 @@ global = "fileManager"
 js_repl = false
 
 [marketplaces.openai-bundled]
-last_updated = "2026-05-25T14:12:33Z"
+last_updated = "2026-05-25T14:28:27Z"
 source_type = "local"
 source = "/Users/dgitman/.codex/.tmp/bundled-marketplaces/openai-bundled"

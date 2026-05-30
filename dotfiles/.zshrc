@@ -39,3 +39,5 @@ export PATH="/Users/dgitman/.antigravity/antigravity/bin:$PATH"
 
 # Added by Antigravity IDE
 export PATH="/Users/dgitman/.antigravity-ide/antigravity-ide/bin:$PATH"
+
+export CODEX_HOME="$HOME/.codex"

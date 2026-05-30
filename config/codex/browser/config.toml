@@ -1,1 +1,1 @@
-approval_mode = "never_ask"
+approval_mode = "always_ask"

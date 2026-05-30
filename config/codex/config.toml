@@ -1,6 +1,6 @@
 model = "gpt-5.5"
 model_reasoning_effort = "medium"
-approval_policy = "never"
+approval_policy = "on-request"
 sandbox_mode = "danger-full-access"
 notify = ["/Users/dgitman/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 network_access = true
@@ -15,6 +15,30 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/Users/dgitman/.codex/automations/frontier-gowild-rdu-to-bos-fare-watch"]
+trust_level = "trusted"
+
+[projects."/Users/dgitman/Documents/Codex/2026-05-27/i-d-like-a-scheduled-job"]
+trust_level = "trusted"
+
+[projects."/Users/dgitman/Documents/Codex/2026-05-27/files-mentioned-by-the-user-df1049c9"]
+trust_level = "trusted"
+
+[projects."/Users/dgitman/Documents/Codex/2026-05-27/i-want-to-set-up-an"]
+trust_level = "trusted"
+
+[projects."/Users/dgitman/Documents/Town of Apex"]
+trust_level = "trusted"
+
+[projects."/Users/dgitman/Documents/Shira"]
+trust_level = "trusted"
+
+[projects."/Users/dgitman/Documents/SysAdmin"]
+trust_level = "trusted"
+
+[projects."/Users/dgitman/Documents/Divorce"]
+trust_level = "trusted"
+
+[projects."/Users/dgitman/Documents/Travel"]
 trust_level = "trusted"
 
 [plugins."google-calendar@openai-curated"]
@@ -56,10 +80,22 @@ enabled = true
 [plugins."hubspot@openai-curated"]
 enabled = true
 
+[plugins."zoom@openai-curated"]
+enabled = true
+
+[plugins."docusign@openai-curated"]
+enabled = true
+
 [plugins."browser@openai-bundled"]
 enabled = true
 
 [plugins."chrome@openai-bundled"]
+enabled = true
+
+[plugins."outlook-email@openai-curated"]
+enabled = true
+
+[plugins."calendly@openai-curated"]
 enabled = true
 
 [mcp_servers.clay-inc-clay-mcp]
@@ -71,17 +107,18 @@ command = "/Applications/Codex.app/Contents/Resources/node_repl"
 startup_timeout_sec = 120
 
 [mcp_servers.node_repl.env]
-BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
-BROWSER_USE_MARKETPLACE_NAME = "openai-bundled"
-CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
-CODEX_HOME = "/Users/dgitman/.codex"
 NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
 NODE_REPL_NODE_MODULE_DIRS = ""
 NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/node"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "167fdf579477181fba1773c1efb067b00c5a64fe85dafb50a2001bde198dc739"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/dgitman/.codex"
-NODE_REPL_UNTRUSTED_ENV_ALLOWLIST = "BROWSER_USE_MARKETPLACE_NAME"
-SKY_CUA_SERVICE_PATH = "/Users/dgitman/.codex/.tmp/bundled-marketplaces/openai-bundled/plugins/computer-use/Codex Computer Use.app"
+CODEX_HOME = "/Users/dgitman/.codex"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "0b0d41e7a14a4903d2f95b0b3f427ed796b12c8edca2fa392a03df43997075ae"
+BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
+NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
+BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
+SKY_CUA_SERVICE_PATH = "/Users/dgitman/.codex/plugins/cache/openai-bundled/computer-use/1.0.799/Codex Computer Use.app"
+CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
 
 [mcp_servers.playwright]
 command = "npx"
@@ -114,6 +151,7 @@ preventSleepWhileRunning = true
 keepRemoteControlAwakeWhilePluggedIn = true
 git-show-sidebar-pr-icons = false
 conversationDetailMode = "STEPS_PROSE"
+browser-annotation-screenshots-mode = "always"
 
 [desktop.open-in-target-preferences]
 global = "fileManager"
@@ -125,6 +163,11 @@ global = "fileManager"
 js_repl = false
 
 [marketplaces.openai-bundled]
-last_updated = "2026-05-25T16:01:56Z"
+last_updated = "2026-05-30T17:09:27Z"
 source_type = "local"
 source = "/Users/dgitman/.codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-05-27T23:06:23Z"
+source_type = "local"
+source = "/Users/dgitman/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"

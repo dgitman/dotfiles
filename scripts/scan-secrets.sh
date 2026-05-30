@@ -4,6 +4,13 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
+# Locate rg -- prefer PATH, fall back to common Homebrew location
+RG="$(command -v rg 2>/dev/null || echo /opt/homebrew/bin/rg)"
+if [ ! -x "$RG" ]; then
+  printf 'scan-secrets: rg not found. Install with: brew install ripgrep\n' >&2
+  exit 1
+fi
+
 PATTERN='-----BEGIN [A-Z ]*PRIVATE KEY-----|gh[pousr]_[A-Za-z0-9_]{36,}|github_pat_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35}|xox[baprs]-[0-9A-Za-z-]{10,}'
 EXCLUDES=(
   --glob '!.git/**'
@@ -49,7 +56,7 @@ scan_content() {
   local tmp
   tmp="$(mktemp)"
 
-  rg --hidden --no-ignore --line-number --ignore-case --regexp "$PATTERN" "${EXCLUDES[@]}" . | filter_allowed_matches >"$tmp" || true
+  $RG --hidden --no-ignore --line-number --ignore-case --regexp "$PATTERN" "${EXCLUDES[@]}" . | filter_allowed_matches >"$tmp" || true
 
   if [ -s "$tmp" ]; then
     cat "$tmp"

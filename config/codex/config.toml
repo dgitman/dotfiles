@@ -86,16 +86,16 @@ enabled = true
 [plugins."docusign@openai-curated"]
 enabled = true
 
-[plugins."browser@openai-bundled"]
-enabled = true
-
-[plugins."chrome@openai-bundled"]
-enabled = true
-
 [plugins."outlook-email@openai-curated"]
 enabled = true
 
 [plugins."calendly@openai-curated"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."chrome@openai-bundled"]
 enabled = true
 
 [mcp_servers.clay-inc-clay-mcp]
@@ -163,7 +163,7 @@ global = "fileManager"
 js_repl = false
 
 [marketplaces.openai-bundled]
-last_updated = "2026-05-30T17:09:27Z"
+last_updated = "2026-05-31T13:43:05Z"
 source_type = "local"
 source = "/Users/dgitman/.codex/.tmp/bundled-marketplaces/openai-bundled"
 

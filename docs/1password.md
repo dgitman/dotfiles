@@ -8,7 +8,7 @@ Create a local env file from the tracked template:
 
 ```sh
 mkdir -p ~/.config/op
-cp /Users/dgitman/Developer/dotfiles/config/op/env.example ~/.config/op/dotfiles.env
+cp ~/dotfiles/config/op/env.example ~/.config/op/dotfiles.env
 ```
 
 Edit `~/.config/op/dotfiles.env` so each variable points at the right 1Password item and field:
@@ -25,19 +25,19 @@ The local `~/.config/op/dotfiles.env` file is intentionally ignored. It may cont
 Run a command with secrets injected:
 
 ```sh
-/Users/dgitman/Developer/dotfiles/scripts/with-secrets.sh some-command
+make op-run CMD='some-command'
 ```
 
 Open a shell with secrets loaded:
 
 ```sh
-/Users/dgitman/Developer/dotfiles/scripts/with-secrets.sh
+make op-shell
 ```
 
 Use a different env file if needed:
 
 ```sh
-DOTFILES_OP_ENV=~/.config/op/work.env /Users/dgitman/Developer/dotfiles/scripts/with-secrets.sh some-command
+make op-run OP_ENV_FILE=~/.config/op/work.env CMD='some-command'
 ```
 
 ## Restoring Local Config Files
@@ -47,13 +47,13 @@ Some tools store useful config in credential-bearing files that should not be co
 From a terminal where `op` is signed in, store supported local credential files in 1Password and update the local references:
 
 ```sh
-/Users/dgitman/Developer/dotfiles/scripts/store-op-files.sh
+make store
 ```
 
 Create the local file-reference env file from the tracked template:
 
 ```sh
-cp /Users/dgitman/Developer/dotfiles/config/op/files.example ~/.config/op/dotfiles-files.env
+cp ~/dotfiles/config/op/files.example ~/.config/op/dotfiles-files.env
 ```
 
 Edit `~/.config/op/dotfiles-files.env` so each variable points at the right 1Password item and field:
@@ -66,7 +66,7 @@ CODEX_AUTH_JSON="op://Private/Codex auth.json/notesPlain"
 Then restore any configured files:
 
 ```sh
-/Users/dgitman/Developer/dotfiles/scripts/restore-op-files.sh
+make restore
 ```
 
 Supported restore targets:

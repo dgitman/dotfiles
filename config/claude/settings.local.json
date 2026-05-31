@@ -18,7 +18,6 @@
       "Bash(git -C $HOME/.config/brewfile show HEAD:Brewfile)",
       "Bash(git -C $HOME/.config/brewfile status)",
       "Bash(echo \"exit: $?\")",
-      "Bash(chmod +x ~/Developer/dotfiles/brew/*.py)",
       "Bash(xargs ls -la)",
       "Bash(launchctl list *)",
       "Bash(grep -v \"^\\\\./$\\\\|^\\\\.\\\\.$\")",

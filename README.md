@@ -32,14 +32,7 @@ make restore
 
 ## What Bootstrap Does
 
-`make bootstrap` runs:
-
-```sh
-./scripts/install.sh
-brew bundle install --file brew/Brewfile
-```
-
-That links dotfiles into the right places and installs the apps/tools listed in `brew/Brewfile`.
+`make bootstrap` links dotfiles into the right places and installs the apps/tools listed in `brew/Brewfile`.
 
 ## Common Commands
 
@@ -52,6 +45,8 @@ make check             # Verify links/templates without changing anything
 make brew-update       # Manually regenerate brew/Brewfile
 make restore           # Restore private files from 1Password references
 make store             # Store supported private files in 1Password
+make op-shell          # Open a shell with 1Password env secrets loaded
+make op-run CMD='...'  # Run one command with 1Password env secrets loaded
 make secrets           # Scan current files for leaked secrets
 make secrets-history   # Scan Git history for leaked secrets
 make hooks             # Install local Git hooks

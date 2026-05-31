@@ -10,21 +10,20 @@ if type brew &>/dev/null; then
   autoload -Uz compinit
   compinit
 
-  if [ -f "$brew_prefix/etc/brew-wrap" ]; then
-    source "$brew_prefix/etc/brew-wrap"
+  brew() {
+    command brew "$@"
+    local status=$?
 
-    _post_brewfile_update() {
-      local brewfile_dir="${HOMEBREW_BREWFILE%/*}"
+    if [ "$status" -eq 0 ]; then
+      case "${1:-}" in
+        install|uninstall|remove|rm|reinstall|tap|untap)
+          make -C "$HOME/dotfiles" brew-update
+          ;;
+      esac
+    fi
 
-      git -C "$brewfile_dir" add Brewfile
-      if git -C "$brewfile_dir" diff --cached --quiet; then
-        return
-      fi
-
-      git -C "$brewfile_dir" commit -m "Brewfile update"
-      git -C "$brewfile_dir" push
-    }
-  fi
+    return "$status"
+  }
 fi
 
 

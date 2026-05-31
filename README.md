@@ -49,6 +49,7 @@ Run these from `~/dotfiles`.
 make bootstrap         # Link dotfiles and install Homebrew packages
 make install           # Link dotfiles only
 make check             # Verify links/templates without changing anything
+make brew-update       # Manually regenerate brew/Brewfile
 make restore           # Restore private files from 1Password references
 make store             # Store supported private files in 1Password
 make secrets           # Scan current files for leaked secrets
@@ -57,13 +58,7 @@ make hooks             # Install local Git hooks
 make launchd           # Install scheduled dotfiles jobs
 ```
 
-After install and a terminal restart, this shortcut is also available:
-
-```sh
-brewfile-update        # Regenerate brew/Brewfile, commit it, and push
-```
-
-Use `brewfile-update` after installing or removing apps with Homebrew.
+In zsh, `brew install`, `brew uninstall`, `brew remove`, `brew rm`, `brew reinstall`, `brew tap`, and `brew untap` automatically run `make brew-update` after they succeed. The hourly auto-sync job commits and pushes the updated `brew/Brewfile`.
 
 ## What's included
 

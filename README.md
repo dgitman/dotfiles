@@ -4,7 +4,15 @@ Personal macOS dotfiles and bootstrap helpers.
 
 ## Fresh Mac
 
-Install Homebrew first. Then clone this repo and run `make bootstrap` from the `~/dotfiles` directory:
+Install Homebrew first using the official installer from [brew.sh](https://brew.sh/):
+
+```sh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+When the installer finishes, follow any shell setup instructions it prints so the `brew` command is on your `PATH`.
+
+Then clone this repo and run `make bootstrap` from the `~/dotfiles` directory:
 
 ```sh
 git clone git@github.com:dgitman/dotfiles.git ~/dotfiles

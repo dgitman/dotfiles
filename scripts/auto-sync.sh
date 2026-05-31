@@ -16,7 +16,7 @@ log() {
   printf '[%s] %s\n' "$(timestamp)" "$*" >>"$LOG_FILE"
 }
 
-if ! "$ROOT/scripts/scan-secrets.sh" >> "$LOG_FILE" 2>&1; then
+if ! gitleaks dir . --redact --no-banner >> "$LOG_FILE" 2>&1; then
   log "aborting: secret scan failed"
   exit 1
 fi

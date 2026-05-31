@@ -1,4 +1,8 @@
-.PHONY: install check secrets secrets-history brew-update brew-cleanup restore store hooks launchd
+.PHONY: bootstrap install check secrets secrets-history brew-update restore store hooks launchd
+
+bootstrap:      ## Install dotfiles and Homebrew packages from the Brewfile
+	./scripts/install.sh
+	brew bundle install --file brew/Brewfile
 
 install:        ## Symlink all dotfiles into place (backs up existing files)
 	./scripts/install.sh
@@ -7,16 +11,13 @@ check:          ## Validate all declared symlinks/templates without making chang
 	./scripts/install.sh --check
 
 secrets:        ## Scan working tree for accidentally committed secrets
-	./scripts/scan-secrets.sh
+	gitleaks dir . --redact --no-banner
 
 secrets-history: ## Scan full git history for secrets
-	./scripts/scan-secrets.sh --history
+	gitleaks git . --redact --no-banner
 
 brew-update:    ## Regenerate Brewfile from current machine and push
-	python3 brew/update.py
-
-brew-cleanup:   ## Preview packages installed locally but absent from Brewfile
-	python3 brew/cleanup_preview.py
+	./bin/brewfile-update
 
 restore:        ## Restore 1Password-backed credential files to their live paths
 	./scripts/restore-op-files.sh

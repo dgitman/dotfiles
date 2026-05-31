@@ -1,0 +1,19 @@
+title = "dotfiles gitleaks config"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "dotfiles-credential-path"
+description = "Credential-bearing dotfiles paths must not be tracked"
+path = '''(^|/)config/(gh/hosts\.yml|gcloud/(access_tokens\.db|credentials\.db|default_configs\.db|legacy_credentials/.*|logs/.*|virtenv/.*)|op/(dotfiles|dotfiles-files)\.env)$'''
+tags = ["dotfiles", "credentials"]
+
+[[allowlists]]
+description = "Generated logs and vendored upstream examples"
+paths = [
+  '''^logs/''',
+  '''^bin/duplicity-backup/duplicity-backup\.conf\.example$''',
+  '''^bin/s3tools-s3cmd/\.ci\.s3cfg$''',
+  '''^bin/s3tools-s3cmd/\.github/workflows/test\.yml$''',
+]

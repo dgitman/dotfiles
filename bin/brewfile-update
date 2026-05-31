@@ -5,9 +5,10 @@ import subprocess
 from pathlib import Path
 
 
-SCRIPT_DIR = Path(__file__).resolve().parent
-BREWFILE_PATH = SCRIPT_DIR / "Brewfile"
-# Brewfile may be a symlink; resolve to the actual file for git operations
+ROOT = Path(__file__).resolve().parents[1]
+BREW_DIR = ROOT / "brew"
+BREWFILE_PATH = BREW_DIR / "Brewfile"
+# Brewfile may be a symlink; resolve to the actual file for git operations.
 BREWFILE_REAL = BREWFILE_PATH.resolve()
 SKIP_VSCODE_EXTENSIONS = {
     # VS Code now ships Copilot Chat as a built-in extension. Homebrew Bundle
@@ -43,7 +44,7 @@ def remove_unsupported_vscode_extensions() -> None:
 
 
 def main() -> None:
-    run("brew", "bundle", "dump", "--describe", "--file", str(BREWFILE_REAL), "-f", cwd=SCRIPT_DIR)
+    run("brew", "bundle", "dump", "--describe", "--file", str(BREWFILE_REAL), "-f", cwd=BREW_DIR)
     remove_unsupported_vscode_extensions()
     run("git", "add", str(BREWFILE_REAL.relative_to(GIT_DIR)), cwd=GIT_DIR)
 

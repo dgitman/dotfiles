@@ -35,7 +35,7 @@
       "Bash(awk '{print $NF}')",
       "Bash(git -C ~/dotfiles ls-files)",
       "Bash(detect-secrets --version)",
-      "Bash(bash scripts/scan-secrets.sh)",
+      "Bash(gitleaks *)",
       "Bash(python3 -c ' *)",
       "WebSearch",
       "WebFetch(domain:www.google.com)"

@@ -2,6 +2,26 @@
 
 Personal macOS dotfiles and bootstrap helpers.
 
+## Fresh Mac
+
+Install Homebrew first. Then clone this repo and run `make bootstrap` from the `~/dotfiles` directory:
+
+```sh
+git clone git@github.com:dgitman/dotfiles.git ~/dotfiles
+cd ~/dotfiles
+make bootstrap
+```
+
+`make bootstrap` links the dotfiles into place and installs all packages from `brew/Brewfile`.
+
+If you also want to restore private credential-bearing files from 1Password, stay in `~/dotfiles` and run:
+
+```sh
+make restore
+```
+
+Restart your terminal after bootstrap finishes.
+
 ## What's included
 
 - Zsh shell setup
@@ -16,50 +36,37 @@ Personal macOS dotfiles and bootstrap helpers.
 ## Install
 
 ```sh
-./scripts/install.sh
+make bootstrap
+```
+
+This links the dotfiles into place and installs all packages from `brew/Brewfile`.
+
+To link dotfiles without installing Homebrew packages:
+
+```sh
+make install
 ```
 
 The installer also ensures `~/.local/bin` is first on `PATH` and points `~/.local/bin` at `~/dotfiles/bin`.
 
-To bootstrap Homebrew and install all packages from the Brewfile:
-
-```sh
-brew/install_apps_via_homebrew.py
-```
-
 To update the Brewfile from the current machine and push it:
 
 ```sh
-brew/update.py
+brewfile-update
 ```
 
-To preview packages installed locally but not in the Brewfile:
-
-```sh
-brew/cleanup_preview.py
-```
-
-After running `./scripts/install.sh` (and restarting your terminal), these are also available as `mac-bootstrap`, `brewfile-update`, and `brewfile-cleanup-preview`.
+After running `./scripts/install.sh` (and restarting your terminal), `brewfile-update` is also available as a shortcut for updating and pushing the Brewfile.
 
 To restore local credential-bearing files from 1Password references:
 
 ```sh
-./scripts/restore-op-files.sh
+make restore
 ```
 
 To store supported local credential files in 1Password and update the local references:
 
 ```sh
-./scripts/store-op-files.sh
-```
-
-
-## Submodules
-
-Some tools under `bin/` are vendored as Git submodules. After cloning this repo, initialize them with:
-
-```sh
-git submodule update --init --recursive
+make store
 ```
 
 ## Secret checks
@@ -67,8 +74,8 @@ git submodule update --init --recursive
 Run a local secret scan before making the repository public or pushing changes:
 
 ```sh
-./scripts/scan-secrets.sh
-./scripts/scan-secrets.sh --history
+make secrets
+make secrets-history
 ```
 
 Install Git hooks that run the scanner before commits and pushes:
@@ -77,7 +84,7 @@ Install Git hooks that run the scanner before commits and pushes:
 ./scripts/install-git-hooks.sh
 ```
 
-The hourly auto-sync job also runs this scan before it commits or pushes. The scanner blocks common private keys, GitHub tokens, OpenAI keys, AWS keys, Google API keys, Slack tokens, and simple `password`, `token`, `secret`, or `api_key` assignments.
+The hourly auto-sync job also runs this scan before it commits or pushes. Gitleaks blocks common private keys, service tokens, cloud credentials, and other high-risk secrets. This repo's `.gitleaks.toml` also blocks credential-bearing dotfile paths such as local GitHub, Google Cloud, and 1Password env files.
 
 ## Automatic sync
 

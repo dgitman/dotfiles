@@ -108,6 +108,8 @@ brew "gh"
 brew "git"
 # Quickly rewrite git repository history
 brew "git-filter-repo"
+# Audit git repos for secrets
+brew "gitleaks"
 # C port of the HdrHistogram
 brew "hdrhistogram_c"
 # Text-based UI library
@@ -346,7 +348,6 @@ mas "Wayback Machine", id: 1472432422
 vscode "anthropic.claude-code"
 vscode "charliermarsh.ruff"
 vscode "esbenp.prettier-vscode"
-vscode "github.copilot-chat"
 vscode "github.vscode-github-actions"
 vscode "ms-azuretools.vscode-containers"
 vscode "ms-python.debugpy"

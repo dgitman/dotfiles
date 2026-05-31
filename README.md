@@ -1,18 +1,20 @@
 # Mac dotfiles
 
-Personal macOS dotfiles and bootstrap helpers.
+Personal macOS dotfiles, app settings, Homebrew package list, and setup helpers.
 
-## Fresh Mac
+## Fresh Mac Setup
 
-Install Homebrew first using the official installer from [brew.sh](https://brew.sh/):
+Run these commands from Terminal on a fresh Mac.
+
+1. Install Homebrew using the official installer from [brew.sh](https://brew.sh/):
 
 ```sh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-When the installer finishes, follow any shell setup instructions it prints so the `brew` command is on your `PATH`.
+2. Follow any shell setup instructions the Homebrew installer prints so `brew` is on your `PATH`.
 
-Then clone this repo and run `make bootstrap` from the `~/dotfiles` directory:
+3. Clone this repo and bootstrap from `~/dotfiles`:
 
 ```sh
 git clone git@github.com:dgitman/dotfiles.git ~/dotfiles
@@ -20,15 +22,48 @@ cd ~/dotfiles
 make bootstrap
 ```
 
-`make bootstrap` links the dotfiles into place and installs all packages from `brew/Brewfile`.
-
-If you also want to restore private credential-bearing files from 1Password, stay in `~/dotfiles` and run:
+4. Optional: restore private credential-bearing files from 1Password:
 
 ```sh
 make restore
 ```
 
-Restart your terminal after bootstrap finishes.
+5. Restart your terminal.
+
+## What Bootstrap Does
+
+`make bootstrap` runs:
+
+```sh
+./scripts/install.sh
+brew bundle install --file brew/Brewfile
+```
+
+That links dotfiles into the right places and installs the apps/tools listed in `brew/Brewfile`.
+
+## Common Commands
+
+Run these from `~/dotfiles`.
+
+```sh
+make bootstrap         # Link dotfiles and install Homebrew packages
+make install           # Link dotfiles only
+make check             # Verify links/templates without changing anything
+make restore           # Restore private files from 1Password references
+make store             # Store supported private files in 1Password
+make secrets           # Scan current files for leaked secrets
+make secrets-history   # Scan Git history for leaked secrets
+make hooks             # Install local Git hooks
+make launchd           # Install scheduled dotfiles jobs
+```
+
+After install and a terminal restart, this shortcut is also available:
+
+```sh
+brewfile-update        # Regenerate brew/Brewfile, commit it, and push
+```
+
+Use `brewfile-update` after installing or removing apps with Homebrew.
 
 ## What's included
 
@@ -41,68 +76,25 @@ Restart your terminal after bootstrap finishes.
 - Optional 1Password-backed restore helper for credential-bearing local config files
 - A small install script that backs up existing files before linking these dotfiles
 
-## Install
+## Credentials And Secrets
 
-```sh
-make bootstrap
-```
+Private credentials should live in 1Password, not in this repo.
 
-This links the dotfiles into place and installs all packages from `brew/Brewfile`.
+- Store `op://...` references, examples, and templates in Git.
+- Do not store raw tokens, OAuth JSON, private keys, database credentials, or shell history.
+- Use `make restore` to rebuild supported private local files from 1Password.
+- Use `make store` to update supported 1Password-backed files.
 
-To link dotfiles without installing Homebrew packages:
+Secret scanning uses `gitleaks`. The Git hooks and the hourly auto-sync job run it before committing or pushing. This repo's `.gitleaks.toml` also blocks credential-bearing dotfile paths such as local GitHub, Google Cloud, and 1Password env files.
 
-```sh
-make install
-```
+## Automatic Sync
 
-The installer also ensures `~/.local/bin` is first on `PATH` and points `~/.local/bin` at `~/dotfiles/bin`.
+`make launchd` installs scheduled macOS jobs:
 
-To update the Brewfile from the current machine and push it:
+- hourly auto-sync for this repo
+- daily dotfiles check
 
-```sh
-brewfile-update
-```
-
-After running `./scripts/install.sh` (and restarting your terminal), `brewfile-update` is also available as a shortcut for updating and pushing the Brewfile.
-
-To restore local credential-bearing files from 1Password references:
-
-```sh
-make restore
-```
-
-To store supported local credential files in 1Password and update the local references:
-
-```sh
-make store
-```
-
-## Secret checks
-
-Run a local secret scan before making the repository public or pushing changes:
-
-```sh
-make secrets
-make secrets-history
-```
-
-Install Git hooks that run the scanner before commits and pushes:
-
-```sh
-./scripts/install-git-hooks.sh
-```
-
-The hourly auto-sync job also runs this scan before it commits or pushes. Gitleaks blocks common private keys, service tokens, cloud credentials, and other high-risk secrets. This repo's `.gitleaks.toml` also blocks credential-bearing dotfile paths such as local GitHub, Google Cloud, and 1Password env files.
-
-## Automatic sync
-
-Install the hourly auto-sync job:
-
-```sh
-./scripts/install-launchagent.sh
-```
-
-The job commits changes in this repository with `Update dotfiles`, pulls with rebase, and pushes `main` to `origin`. Logs are written under `logs/`, which is intentionally ignored.
+The auto-sync job commits changes with `Update dotfiles`, pulls with rebase, and pushes `main` to `origin`. Logs are written under `logs/`, which is intentionally ignored.
 
 ## Layout
 
@@ -111,7 +103,7 @@ dotfiles/   Home-directory shell dotfiles
 git/        Git dotfiles
 ssh/        SSH client configuration
 brew/       Homebrew bundle
-bin/        Personal scripts (see `bin/README.md`)
+bin/        Commands exposed through ~/.local/bin
 config/     Safe app configuration, editor settings, runtime settings, and 1Password reference templates
 docs/       Notes for credential restoration and secret handling
 launchd/    macOS scheduled job
@@ -121,4 +113,6 @@ scripts/    Setup helpers
 
 ## Notes
 
-The install script creates timestamped backups for files it replaces. Secrets, private keys, shell histories, and local machine state are intentionally ignored.
+The install script creates timestamped backups for files it replaces. It also keeps `~/.local/bin` first on `PATH` and points it at `~/dotfiles/bin`.
+
+Secrets, private keys, shell histories, and local machine state are intentionally ignored.

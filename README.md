@@ -53,7 +53,7 @@ make hooks             # Install local Git hooks
 make launchd           # Install scheduled dotfiles jobs
 ```
 
-In zsh, `brew install`, `brew uninstall`, `brew remove`, `brew rm`, `brew reinstall`, `brew tap`, and `brew untap` automatically run `make brew-update` after they succeed. The hourly auto-sync job commits and pushes the updated `brew/Brewfile`.
+In zsh, `brew install`, `brew uninstall`, `brew remove`, `brew rm`, `brew reinstall`, `brew tap`, and `brew untap` automatically run `make brew-update` after they succeed. The daily auto-sync job commits and pushes the updated `brew/Brewfile`.
 
 ## What's included
 
@@ -75,13 +75,13 @@ Private credentials should live in 1Password, not in this repo.
 - Use `make restore` to rebuild supported private local files from 1Password.
 - Use `make store` to update supported 1Password-backed files.
 
-Secret scanning uses `gitleaks`. The Git hooks and the hourly auto-sync job run it before committing or pushing. This repo's `.gitleaks.toml` also blocks credential-bearing dotfile paths such as local GitHub, Google Cloud, and 1Password env files.
+Secret scanning uses `gitleaks`. The Git hooks and the daily auto-sync job run it before committing or pushing. This repo's `.gitleaks.toml` also blocks credential-bearing dotfile paths such as local GitHub, Google Cloud, and 1Password env files.
 
 ## Automatic Sync
 
 `make launchd` installs scheduled macOS jobs:
 
-- hourly auto-sync for this repo
+- daily auto-sync for this repo
 - daily dotfiles check
 
 The auto-sync job commits changes with `Update dotfiles`, pulls with rebase, and pushes `main` to `origin`. Logs are written under `logs/`, which is intentionally ignored.

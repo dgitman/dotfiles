@@ -40,7 +40,7 @@ hooks:          ## Install pre-commit and pre-push Git hooks
 	ln -sf "$(PWD)/hooks/pre-push" .git/hooks/pre-push
 	@printf 'installed dotfiles Git hooks\n'
 
-launchd:        ## Install all launchd agents (hourly auto-sync + daily check)
+launchd:        ## Install all launchd agents (daily auto-sync + daily check)
 	mkdir -p "$(HOME)/Library/LaunchAgents" logs
 	@for plist in launchd/*.plist; do \
 		plist_name="$$(basename "$$plist")"; \

@@ -62,6 +62,8 @@ brew "p11-kit"
 brew "unbound"
 # GNU Transport Layer Security (TLS) Library
 brew "gnutls"
+# Incremental parsing library
+brew "tree-sitter@0.25"
 # GNU Emacs text editor
 brew "emacs"
 # Incremental parsing library
@@ -114,6 +116,8 @@ brew "hdrhistogram_c"
 brew "ncurses"
 # Improved top (interactive process viewer)
 brew "htop"
+# Cryptography and SSL/TLS Toolkit
+brew "openssl@4"
 # Website copier/offline browser
 brew "httrack"
 # C/C++ and Java libraries for Unicode and globalization
@@ -168,6 +172,8 @@ brew "pipx"
 brew "pkgconf"
 # Monitor data's progress through a pipe
 brew "pv"
+# Interpreted, interactive, object-oriented programming language
+brew "python@3.13"
 # Install various Ruby versions and implementations
 brew "ruby-build"
 # Ruby version manager

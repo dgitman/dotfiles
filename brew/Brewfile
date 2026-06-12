@@ -1,4 +1,4 @@
-tap "homebrew/autoupdate"
+tap "domt4/autoupdate"
 tap "homebrew/cask"
 tap "homebrew/core"
 tap "shopify/shopify", trusted: true
@@ -248,6 +248,8 @@ cask "kaleidoscope"
 cask "meetingbar"
 # Private rolodex to remember people better
 cask "mesh"
+# AI-first productivity assistant for Microsoft 365
+cask "microsoft-365-copilot"
 # Provides updates to various Microsoft products
 cask "microsoft-auto-update"
 # Office suite

@@ -1,1 +1,9 @@
-{}
+{
+  "enabledPlugins": {
+    "telegram@claude-plugins-official": true,
+    "slack@claude-plugins-official": true,
+    "shopify@claude-plugins-official": true,
+    "shopify-ai-toolkit@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true
+  }
+}

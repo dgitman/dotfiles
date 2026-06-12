@@ -1,13 +1,9 @@
-tap "adoptopenjdk/openjdk"
-tap "buo/cask-upgrade"
-tap "darrylmorley/whatcable"
 tap "homebrew/autoupdate"
 tap "homebrew/cask"
 tap "homebrew/core"
-tap "jostasik/tap"
-tap "rcmdnk/file"
-tap "shopify/shopify"
-tap "wpscanteam/tap"
+tap "shopify/shopify", trusted: true
+tap "twilio/brew", trusted: true
+tap "wpscanteam/tap", trusted: true
 # Open-source formatting library for C++
 brew "fmt"
 # WHATWG-compliant and fast URL parser written in modern C++
@@ -46,28 +42,26 @@ brew "coreutils"
 brew "libunistring"
 # GNU internationalization (i18n) and localization (l10n) library
 brew "gettext"
-# Asynchronous event library
-brew "libevent"
 # International domain name library (IDNA2008, Punycode and TR46)
 brew "libidn2"
-# HTTP/2 C Library
-brew "libnghttp2"
 # ASN.1 structure parser library
 brew "libtasn1"
 # Low-level cryptographic library
 brew "nettle"
 # Library to load and enumerate PKCS#11 modules
 brew "p11-kit"
-# Validating, recursive, caching DNS resolver
-brew "unbound"
 # GNU Transport Layer Security (TLS) Library
 brew "gnutls"
+# Asynchronous event library
+brew "libevent"
+# HTTP/2 C Library
+brew "libnghttp2"
 # Incremental parsing library
 brew "tree-sitter@0.25"
+# Validating, recursive, caching DNS resolver
+brew "unbound"
 # GNU Emacs text editor
 brew "emacs"
-# Incremental parsing library
-brew "tree-sitter"
 # Emacs dependency management
 brew "cask"
 # AV1 decoder targeted to be small and fast
@@ -116,12 +110,10 @@ brew "hdrhistogram_c"
 brew "ncurses"
 # Improved top (interactive process viewer)
 brew "htop"
-# Cryptography and SSL/TLS Toolkit
-brew "openssl@4"
-# Website copier/offline browser
-brew "httrack"
 # C/C++ and Java libraries for Unicode and globalization
 brew "icu4c@78"
+# Migrate or backup IMAP mail accounts
+brew "imapsync"
 # Command-line tool to export and inspect local iMessage database
 brew "imessage-exporter"
 # Regular expressions library
@@ -162,12 +154,6 @@ brew "simdjson"
 brew "uvwasi"
 # Open-source, cross-platform JavaScript runtime environment
 brew "node"
-# Parallel gzip
-brew "pigz"
-# Pinentry for GPG on Mac
-brew "pinentry-mac"
-# Execute binaries from Python packages in isolated environments
-brew "pipx"
 # Package compiler and linker metadata toolkit
 brew "pkgconf"
 # Monitor data's progress through a pipe
@@ -184,8 +170,6 @@ brew "rclone"
 brew "ripgrep"
 # Powerful, clean, object-oriented scripting language
 brew "ruby@3.4"
-# Programmatically correct mistyped console commands
-brew "thefuck"
 # Executes a program periodically, showing output fullscreen
 brew "watch"
 # Internet file retriever
@@ -196,10 +180,6 @@ brew "zsh-autosuggestions"
 brew "zsh-completions"
 # Fish shell like syntax highlighting for zsh
 brew "zsh-syntax-highlighting"
-# Command-line USB-C cable diagnostics
-brew "darrylmorley/whatcable/whatcable-cli", link: false
-# Brewfile manager for Homebrew.
-brew "rcmdnk/file/brew-file"
 # A CLI tool to build for the Shopify platform
 brew "shopify/shopify/shopify-cli"
 # Black box WordPress vulnerability scanner
@@ -284,8 +264,6 @@ cask "nordvpn"
 cask "notion"
 # Calendar for professionals and teams
 cask "notion-calendar"
-# Personal AI assistant
-cask "openclaw"
 # Collaboration platform for API development
 cask "postman"
 # Client for Proton Mail and Proton Calendar
@@ -300,6 +278,8 @@ cask "signal"
 cask "slack"
 # Control your Sonos system
 cask "sonos"
+# AI-powered reading and voice assistant
+cask "speechify-voice-ai"
 # Music streaming service
 cask "spotify"
 # System monitor for the menu bar
@@ -310,6 +290,8 @@ cask "steam"
 cask "teamviewer"
 # Messaging app with a focus on speed and security
 cask "telegram"
+# Web browser focusing on security
+cask "tor-browser"
 # Open-source BitTorrent client
 cask "transmission"
 # File transfer application
@@ -322,14 +304,10 @@ cask "viber"
 cask "visual-studio-code"
 # Rust-based terminal
 cask "warp"
-# Menu bar app for USB-C cable diagnostics
-cask "darrylmorley/whatcable/whatcable"
 # Native desktop client for WhatsApp
 cask "whatsapp"
 # Network protocol analyzer
 cask "wireshark-app"
-# Voice-to-text dictation with AI-powered auto-editing
-cask "wispr-flow"
 # Video communication and virtual meeting platform
 cask "zoom"
 mas "1Password for Safari", id: 1569813296
@@ -343,7 +321,6 @@ mas "Notion Web Clipper", id: 1559269364
 mas "PayPal Honey", id: 1472777122
 mas "Prime Video", id: 545519333
 mas "Recap", id: 1600281788
-mas "Speechify", id: 1624912180
 mas "Wayback Machine", id: 1472432422
 vscode "anthropic.claude-code"
 vscode "charliermarsh.ruff"

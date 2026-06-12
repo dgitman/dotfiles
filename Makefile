@@ -19,7 +19,7 @@ secrets-history: ## Scan full git history for secrets
 	gitleaks git . --redact --no-banner
 
 brew-update:    ## Regenerate Brewfile from current machine
-	brew bundle dump --force --describe --file brew/Brewfile
+	brew bundle dump --force --file brew/Brewfile
 
 restore:        ## Restore 1Password-backed credential files to their live paths
 	./scripts/restore-op-files.sh

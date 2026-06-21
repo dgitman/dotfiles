@@ -85,8 +85,6 @@ link_file "$ROOT/ssh/config" "$HOME/.ssh/config"
 
 link_file "$ROOT/config/gh/config.yml" "$HOME/.config/gh/config.yml"
 
-link_file "$ROOT/config/op/config" "$HOME/.config/op/config"
-
 link_file "$ROOT/config/gcloud/active_config"                 "$HOME/.config/gcloud/active_config"
 link_file "$ROOT/config/gcloud/configurations/config_default" "$HOME/.config/gcloud/configurations/config_default"
 

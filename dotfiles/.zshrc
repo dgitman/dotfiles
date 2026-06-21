@@ -28,17 +28,16 @@ if type brew &>/dev/null; then
 
   brew() {
     command brew "$@"
-    local status=$?
+    local brew_status=$?
 
-    if [ "$status" -eq 0 ]; then
+    if [ "$brew_status" -eq 0 ]; then
       case "${1:-}" in
         install|uninstall|remove|rm|reinstall|tap|untap)
           make -C "$HOME/dotfiles" brew-update
           ;;
       esac
     fi
-
-    return "$status"
+    return "$brew_status"
   }
 fi
 

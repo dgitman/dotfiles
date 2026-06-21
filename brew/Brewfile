@@ -1,6 +1,7 @@
-tap "domt4/autoupdate"
+tap "domt4/autoupdate", "https://github.com/DomT4/homebrew-autoupdate.git", trusted: true
 tap "homebrew/cask"
 tap "homebrew/core"
+tap "oven-sh/bun", trusted: true
 tap "shopify/shopify", trusted: true
 tap "twilio/brew", trusted: true
 tap "wpscanteam/tap", trusted: true
@@ -80,8 +81,8 @@ brew "libvmaf"
 brew "libvpx"
 # Audio codec
 brew "opus"
-# Low-level access to audio, keyboard, mouse, joystick, and graphics
-brew "sdl2"
+# SDL2 compatibility layer that uses SDL3 behind the scenes
+brew "sdl2-compat"
 # AV1 encoder
 brew "svt-av1"
 # H.264/AVC encoder
@@ -154,6 +155,8 @@ brew "simdjson"
 brew "uvwasi"
 # Open-source, cross-platform JavaScript runtime environment
 brew "node"
+# Pinentry for GPG on Mac
+brew "pinentry-mac"
 # Package compiler and linker metadata toolkit
 brew "pkgconf"
 # Monitor data's progress through a pipe
@@ -180,6 +183,8 @@ brew "zsh-autosuggestions"
 brew "zsh-completions"
 # Fish shell like syntax highlighting for zsh
 brew "zsh-syntax-highlighting"
+# Incredibly fast JavaScript runtime, bundler, transpiler and package manager - all in one.
+brew "oven-sh/bun/bun", trusted: true
 # A CLI tool to build for the Shopify platform
 brew "shopify/shopify/shopify-cli"
 # Black box WordPress vulnerability scanner
@@ -246,8 +251,6 @@ cask "imazing"
 cask "kaleidoscope"
 # Shows the next meeting in the menu bar
 cask "meetingbar"
-# Private rolodex to remember people better
-cask "mesh"
 # AI-first productivity assistant for Microsoft 365
 cask "microsoft-365-copilot"
 # Provides updates to various Microsoft products
@@ -272,6 +275,8 @@ cask "postman"
 cask "proton-mail"
 # Imaging utility to install operating systems to a microSD card
 cask "raspberry-pi-imager"
+# Move and resize windows using keyboard shortcuts or snap areas
+cask "rectangle"
 # Client for the Progress ShareFile storage service
 cask "sharefile"
 # Instant messaging application focusing on security
@@ -306,6 +311,8 @@ cask "viber"
 cask "visual-studio-code"
 # Rust-based terminal
 cask "warp"
+# Free messaging and calling application
+cask "wechat"
 # Native desktop client for WhatsApp
 cask "whatsapp"
 # Network protocol analyzer
@@ -324,16 +331,16 @@ mas "PayPal Honey", id: 1472777122
 mas "Prime Video", id: 545519333
 mas "Recap", id: 1600281788
 mas "Wayback Machine", id: 1472432422
-vscode "anthropic.claude-code"
+vscode "anysphere.cursorpyright"
+vscode "anysphere.pyright"
+vscode "anysphere.remote-containers"
+vscode "anysphere.remote-ssh"
 vscode "charliermarsh.ruff"
-vscode "esbenp.prettier-vscode"
+vscode "fabriqaai.specsmd"
 vscode "github.vscode-github-actions"
-vscode "ms-azuretools.vscode-containers"
 vscode "ms-python.debugpy"
 vscode "ms-python.python"
 vscode "ms-python.vscode-pylance"
-vscode "ms-python.vscode-python-envs"
-vscode "ms-vscode-remote.remote-containers"
 vscode "openai.chatgpt"
-vscode "redhat.vscode-yaml"
+vscode "parallelsdesktop.parallels-desktop"
 vscode "zainchen.json"

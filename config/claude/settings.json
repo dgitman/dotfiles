@@ -4,6 +4,15 @@
     "slack@claude-plugins-official": true,
     "shopify@claude-plugins-official": true,
     "shopify-ai-toolkit@claude-plugins-official": true,
-    "playwright@claude-plugins-official": true
+    "playwright@claude-plugins-official": true,
+    "twilio-developer-kit@twilio": true
+  },
+  "extraKnownMarketplaces": {
+    "twilio": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/twilio/ai.git"
+      }
+    }
   }
 }

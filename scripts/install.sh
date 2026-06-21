@@ -85,6 +85,8 @@ link_file "$ROOT/ssh/config" "$HOME/.ssh/config"
 
 link_file "$ROOT/config/gh/config.yml" "$HOME/.config/gh/config.yml"
 
+link_file "$ROOT/config/op/config" "$HOME/.config/op/config"
+
 link_file "$ROOT/config/gcloud/active_config"                 "$HOME/.config/gcloud/active_config"
 link_file "$ROOT/config/gcloud/configurations/config_default" "$HOME/.config/gcloud/configurations/config_default"
 
@@ -95,6 +97,8 @@ link_file "$ROOT/config/vscode/settings.json" "$HOME/Library/Application Support
 link_file "$ROOT/config/vscode/argv.json"     "$HOME/.vscode/argv.json"
 
 link_file "$ROOT/config/thefuck/settings.py" "$HOME/.config/thefuck/settings.py"
+
+link_file "$ROOT/brew/Brewfile" "$HOME/.config/brewfile/Brewfile"
 
 link_file "$ROOT/config/codex/config.toml"        "$HOME/.codex/config.toml"
 link_file "$ROOT/config/codex/AGENTS.md"           "$HOME/.codex/AGENTS.md"

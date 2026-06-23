@@ -97,6 +97,32 @@ brew "libyaml"
 brew "yt-dlp"
 # Command-line downloader for image-hosting site galleries and collections
 brew "gallery-dl"
+# C port of the HdrHistogram
+brew "hdrhistogram_c"
+# C/C++ and Java libraries for Unicode and globalization
+brew "icu4c@78"
+# HTTP/3 library written in C
+brew "libnghttp3"
+# IETF QUIC protocol implementation
+brew "libngtcp2"
+# Multi-platform support library with a focus on asynchronous I/O
+brew "libuv"
+# Port of http_parser to llparse
+brew "llhttp"
+# Unicode conversion routines, fast
+brew "simdutf"
+# C++ lexer for extracting named exports from CommonJS modules
+brew "merve"
+# Library of byte handling functions extracted from Node.js core
+brew "nbytes"
+# SIMD-accelerated C++ JSON parser
+brew "simdjson"
+# WASI syscall API built atop libuv
+brew "uvwasi"
+# Open-source, cross-platform JavaScript runtime environment
+brew "node"
+# Interact with Google Gemini AI models from the command-line
+brew "gemini-cli"
 # GitHub command-line tool
 brew "gh"
 # Distributed revision control system
@@ -105,14 +131,10 @@ brew "git"
 brew "git-filter-repo"
 # Audit git repos for secrets
 brew "gitleaks"
-# C port of the HdrHistogram
-brew "hdrhistogram_c"
 # Text-based UI library
 brew "ncurses"
 # Improved top (interactive process viewer)
 brew "htop"
-# C/C++ and Java libraries for Unicode and globalization
-brew "icu4c@78"
 # Migrate or backup IMAP mail accounts
 brew "imapsync"
 # Command-line tool to export and inspect local iMessage database
@@ -127,34 +149,14 @@ brew "libgpg-error"
 brew "libassuan"
 # Library for large linear classification
 brew "liblinear"
-# HTTP/3 library written in C
-brew "libnghttp3"
-# IETF QUIC protocol implementation
-brew "libngtcp2"
 # C library implementing the SSH2 protocol
 brew "libssh2"
-# Multi-platform support library with a focus on asynchronous I/O
-brew "libuv"
-# Port of http_parser to llparse
-brew "llhttp"
 # Powerful, lightweight programming language
 brew "lua"
 # Mac App Store command-line interface
 brew "mas"
-# Unicode conversion routines, fast
-brew "simdutf"
-# C++ lexer for extracting named exports from CommonJS modules
-brew "merve"
-# Library of byte handling functions extracted from Node.js core
-brew "nbytes"
 # Port scanning utility for large networks
 brew "nmap"
-# SIMD-accelerated C++ JSON parser
-brew "simdjson"
-# WASI syscall API built atop libuv
-brew "uvwasi"
-# Open-source, cross-platform JavaScript runtime environment
-brew "node"
 # Pinentry for GPG on Mac
 brew "pinentry-mac"
 # Package compiler and linker metadata toolkit
@@ -195,6 +197,8 @@ cask "1password"
 cask "1password-cli"
 # Agent orchestration platform
 cask "antigravity"
+# Terminal interface for Antigravity agents
+cask "antigravity-cli"
 # AI Coding Agent IDE
 cask "antigravity-ide"
 # Application uninstaller
@@ -331,16 +335,17 @@ mas "PayPal Honey", id: 1472777122
 mas "Prime Video", id: 545519333
 mas "Recap", id: 1600281788
 mas "Wayback Machine", id: 1472432422
-vscode "anysphere.cursorpyright"
-vscode "anysphere.pyright"
-vscode "anysphere.remote-containers"
-vscode "anysphere.remote-ssh"
+vscode "anthropic.claude-code"
 vscode "charliermarsh.ruff"
+vscode "esbenp.prettier-vscode"
 vscode "fabriqaai.specsmd"
 vscode "github.vscode-github-actions"
+vscode "ms-azuretools.vscode-containers"
 vscode "ms-python.debugpy"
 vscode "ms-python.python"
 vscode "ms-python.vscode-pylance"
+vscode "ms-python.vscode-python-envs"
+vscode "ms-vscode-remote.remote-containers"
 vscode "openai.chatgpt"
-vscode "parallelsdesktop.parallels-desktop"
+vscode "redhat.vscode-yaml"
 vscode "zainchen.json"

@@ -5,13 +5,20 @@
     "shopify@claude-plugins-official": true,
     "shopify-ai-toolkit@claude-plugins-official": true,
     "playwright@claude-plugins-official": true,
-    "twilio-developer-kit@twilio": true
+    "twilio-developer-kit@twilio": true,
+    "shopify-plugin@shopify-ai-toolkit": true
   },
   "extraKnownMarketplaces": {
     "twilio": {
       "source": {
         "source": "git",
         "url": "https://github.com/twilio/ai.git"
+      }
+    },
+    "shopify-ai-toolkit": {
+      "source": {
+        "source": "github",
+        "repo": "Shopify/shopify-ai-toolkit"
       }
     }
   }

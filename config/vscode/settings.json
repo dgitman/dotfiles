@@ -9,5 +9,10 @@
     },
     "git.autofetch": true,
     "git.confirmSync": false,
-    "claudeCode.preferredLocation": "panel"
+    "claudeCode.preferredLocation": "panel",
+    "chat.plugins.marketplaces": [
+        "github/copilot-plugins",
+        "github/awesome-copilot#marketplace",
+        "https://github.com/Shopify/shopify-ai-toolkit"
+    ]
 }

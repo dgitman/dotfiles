@@ -165,12 +165,12 @@ NODE_REPL_NODE_MODULE_DIRS = "/Applications/Codex.app/Contents/Resources/cua_nod
 NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/dgitman/.codex"
 CODEX_HOME = "/Users/dgitman/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "2c20141b13bec5a64cd2874d8e2df011430d5b1a70e4f5425aa10d01743311a8"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "d1a8040310e3ed270b3d17f6f3d41f4cdbad9096fa1a4f7c425fbb37afe949d3"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.616.51431"
+BROWSER_USE_CODEX_APP_VERSION = "26.623.31921"
 CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
 
 [mcp_servers.1password]
@@ -195,6 +195,7 @@ keepRemoteControlAwakeWhilePluggedIn = true
 git-show-sidebar-pr-icons = false
 conversationDetailMode = "STEPS_PROSE"
 browser-annotation-screenshots-mode = "always"
+followUpQueueMode = "queue"
 
 [desktop.open-in-target-preferences]
 global = "fileManager"
@@ -206,7 +207,7 @@ global = "fileManager"
 js_repl = false
 
 [marketplaces.openai-bundled]
-last_updated = "2026-06-21T12:33:46Z"
+last_updated = "2026-06-26T20:42:58Z"
 source_type = "local"
 source = "/Users/dgitman/.codex/.tmp/bundled-marketplaces/openai-bundled"
 

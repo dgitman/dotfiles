@@ -35,14 +35,16 @@ brew "awscli"
 brew "brotli"
 # Asynchronous DNS library
 brew "c-ares"
-# GNU multiple precision arithmetic library
-brew "gmp"
-# GNU File, Shell, and Text utilities
-brew "coreutils"
 # C string library for manipulating Unicode strings
 brew "libunistring"
 # GNU internationalization (i18n) and localization (l10n) library
 brew "gettext"
+# Perl compatible regular expressions library with a new API
+brew "pcre2"
+# GNU multiple precision arithmetic library
+brew "gmp"
+# GNU File, Shell, and Text utilities
+brew "coreutils"
 # International domain name library (IDNA2008, Punycode and TR46)
 brew "libidn2"
 # ASN.1 structure parser library
@@ -69,8 +71,6 @@ brew "cask"
 brew "dav1d"
 # Perl lib for reading and writing EXIF metadata
 brew "exiftool"
-# Perl compatible regular expressions library with a new API
-brew "pcre2"
 # Identify or delete duplicate files
 brew "fdupes"
 # High quality MPEG Audio Layer III (MP3) encoder
@@ -97,32 +97,6 @@ brew "libyaml"
 brew "yt-dlp"
 # Command-line downloader for image-hosting site galleries and collections
 brew "gallery-dl"
-# C port of the HdrHistogram
-brew "hdrhistogram_c"
-# C/C++ and Java libraries for Unicode and globalization
-brew "icu4c@78"
-# HTTP/3 library written in C
-brew "libnghttp3"
-# IETF QUIC protocol implementation
-brew "libngtcp2"
-# Multi-platform support library with a focus on asynchronous I/O
-brew "libuv"
-# Port of http_parser to llparse
-brew "llhttp"
-# Unicode conversion routines, fast
-brew "simdutf"
-# C++ lexer for extracting named exports from CommonJS modules
-brew "merve"
-# Library of byte handling functions extracted from Node.js core
-brew "nbytes"
-# SIMD-accelerated C++ JSON parser
-brew "simdjson"
-# WASI syscall API built atop libuv
-brew "uvwasi"
-# Open-source, cross-platform JavaScript runtime environment
-brew "node"
-# Interact with Google Gemini AI models from the command-line
-brew "gemini-cli"
 # GitHub command-line tool
 brew "gh"
 # Distributed revision control system
@@ -131,6 +105,10 @@ brew "git"
 brew "git-filter-repo"
 # Audit git repos for secrets
 brew "gitleaks"
+# C/C++ and Java libraries for Unicode and globalization
+brew "icu4c@78"
+# C port of the HdrHistogram
+brew "hdrhistogram_c"
 # Text-based UI library
 brew "ncurses"
 # Improved top (interactive process viewer)
@@ -149,14 +127,36 @@ brew "libgpg-error"
 brew "libassuan"
 # Library for large linear classification
 brew "liblinear"
+# HTTP/3 library written in C
+brew "libnghttp3"
+# IETF QUIC protocol implementation
+brew "libngtcp2"
+# Library to render SVG files using Cairo
+brew "librsvg"
 # C library implementing the SSH2 protocol
 brew "libssh2"
+# Multi-platform support library with a focus on asynchronous I/O
+brew "libuv"
+# Port of http_parser to llparse
+brew "llhttp"
 # Powerful, lightweight programming language
 brew "lua"
 # Mac App Store command-line interface
 brew "mas"
+# Unicode conversion routines, fast
+brew "simdutf"
+# C++ lexer for extracting named exports from CommonJS modules
+brew "merve"
+# Library of byte handling functions extracted from Node.js core
+brew "nbytes"
 # Port scanning utility for large networks
 brew "nmap"
+# SIMD-accelerated C++ JSON parser
+brew "simdjson"
+# WASI syscall API built atop libuv
+brew "uvwasi"
+# Open-source, cross-platform JavaScript runtime environment
+brew "node"
 # Pinentry for GPG on Mac
 brew "pinentry-mac"
 # Package compiler and linker metadata toolkit
@@ -326,7 +326,6 @@ cask "zoom"
 mas "1Password for Safari", id: 1569813296
 mas "AwardWallet", id: 1473828829
 mas "Awesome Screenshot & Recorder", id: 1531282066
-mas "Clay for Safari", id: 6745995785
 mas "Grammarly for Safari", id: 1462114288
 mas "Kindle", id: 302584613
 mas "Magnet", id: 441258766
@@ -349,3 +348,4 @@ vscode "ms-vscode-remote.remote-containers"
 vscode "openai.chatgpt"
 vscode "redhat.vscode-yaml"
 vscode "zainchen.json"
+uv "browser-act-cli"

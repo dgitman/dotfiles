@@ -109,6 +109,12 @@ link_file "$ROOT/config/claude/plugins/config.json" "$HOME/.claude/plugins/confi
 # settings.local.json uses $HOME placeholders — copy with envsubst rather than symlink
 deploy_template "$ROOT/config/claude/settings.local.json" "$HOME/.claude/settings.local.json"
 
+link_file "$ROOT/config/claude/commands/specsmd-agent.md" "$HOME/.claude/commands/specsmd-agent.md"
+link_file "$ROOT/config/claude/agents/specsmd-agent.md"   "$HOME/.claude/agents/specsmd-agent.md"
+
+link_file "$ROOT/config/op/dotfiles-files.env" "$HOME/.config/op/dotfiles-files.env"
+link_file "$ROOT/config/op/dotfiles.env"        "$HOME/.config/op/dotfiles.env"
+
 # ── install-only steps ─────────────────────────────────────────────────────────
 
 if [ "$MODE" = "check" ]; then

@@ -10,6 +10,12 @@ path = '''(^|/)config/(gh/hosts\.yml|gcloud/(access_tokens\.db|credentials\.db|d
 tags = ["dotfiles", "credentials"]
 
 [[allowlists]]
+description = "1Password reference files (op:// URIs only, no raw secrets)"
+paths = [
+  '''^config/op/dotfiles(-files)?\.env$''',
+]
+
+[[allowlists]]
 description = "Generated logs and vendored upstream examples"
 paths = [
   '''^logs/''',

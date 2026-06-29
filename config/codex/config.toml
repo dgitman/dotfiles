@@ -126,6 +126,9 @@ enabled = true
 [plugins."chrome@openai-bundled"]
 enabled = true
 
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
 [mcp_servers.playwright]
 command = "npx"
 args = ["-y", "@playwright/mcp@latest", "--headless"]
@@ -165,12 +168,12 @@ NODE_REPL_NODE_MODULE_DIRS = "/Applications/Codex.app/Contents/Resources/cua_nod
 NODE_REPL_NODE_PATH = "/Applications/Codex.app/Contents/Resources/cua_node/bin/node"
 NODE_REPL_TRUSTED_CODE_PATHS = "/Users/dgitman/.codex"
 CODEX_HOME = "/Users/dgitman/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "d1a8040310e3ed270b3d17f6f3d41f4cdbad9096fa1a4f7c425fbb37afe949d3"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "59e7bb81812ddd5f102e1d580335166e552c91686b5726218a985b59b4f89ca1"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.623.31921"
+BROWSER_USE_CODEX_APP_VERSION = "26.623.42026"
 CODEX_CLI_PATH = "/Applications/Codex.app/Contents/Resources/codex"
 
 [mcp_servers.1password]
@@ -207,12 +210,12 @@ global = "fileManager"
 js_repl = false
 
 [marketplaces.openai-bundled]
-last_updated = "2026-06-26T20:42:58Z"
+last_updated = "2026-06-27T12:31:04Z"
 source_type = "local"
 source = "/Users/dgitman/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-06-20T13:10:30Z"
+last_updated = "2026-06-27T18:19:28Z"
 source_type = "local"
 source = "/Users/dgitman/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 

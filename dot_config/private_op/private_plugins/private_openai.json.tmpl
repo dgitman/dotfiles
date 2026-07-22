@@ -1,0 +1,17 @@
+{{- $opAccount := index (fromJson (output "op" "account" "list" "--format=json")) 0 -}}
+{{- $openaiItem := onepassword "OpenAI API Key" -}}
+{
+        "account_id": "{{ $opAccount.account_uuid }}",
+        "entrypoint": [
+                "openai"
+        ],
+        "credentials": [
+                {
+                        "plugin": "openai",
+                        "credential_type": "api_key",
+                        "usage_id": "api_key",
+                        "vault_id": "{{ $openaiItem.vault.id }}",
+                        "item_id": "{{ $openaiItem.id }}"
+                }
+        ]
+}

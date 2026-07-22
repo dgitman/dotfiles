@@ -1,0 +1,17 @@
+{{- $opAccount := index (fromJson (output "op" "account" "list" "--format=json")) 0 -}}
+{{- $claudeItem := onepassword "Anthropic API Key" -}}
+{
+        "account_id": "{{ $opAccount.account_uuid }}",
+        "entrypoint": [
+                "claude"
+        ],
+        "credentials": [
+                {
+                        "plugin": "anthropic",
+                        "credential_type": "api_key",
+                        "usage_id": "api_key",
+                        "vault_id": "{{ $claudeItem.vault.id }}",
+                        "item_id": "{{ $claudeItem.id }}"
+                }
+        ]
+}

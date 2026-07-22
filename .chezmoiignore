@@ -1,0 +1,5 @@
+.ssh/known_hosts
+.ssh/known_hosts.old
+.ssh/id_*
+.claude.json
+.claude.json.backup

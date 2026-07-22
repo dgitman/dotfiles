@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Editor swap files
+*.swp
+*.swo
+*~
+
+**/.claude/settings.local.json

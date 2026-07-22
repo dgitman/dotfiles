@@ -1,0 +1,68 @@
+# ==============================================================================
+# ENVIRONMENT VARIABLES
+# ==============================================================================
+
+# Homebrew Configuration
+export HOMEBREW_BREWFILE_DESCRIBE=1
+export HOMEBREW_BREWFILE_VSCODE=1
+export HOMEBREW_AUTO_UPDATE_SECS=86400
+
+# ==============================================================================
+# SHELL FUNCTIONS & PATH HELPERS
+# ==============================================================================
+
+# Ensure array elements stay unique (prevents path bloating)
+typeset -U path fpath
+
+# Safely prepend valid directories to the path array
+path_prepend() {
+    [ -d "$1" ] || return 0
+    path=("$1" $path)
+}
+
+
+# ==============================================================================
+# PATH & SYSTEM CONFIGURATIONS
+# ==============================================================================
+
+# Custom binary and IDE search paths
+path_prepend "$HOME/.antigravity/antigravity/bin"
+path_prepend "$HOME/.antigravity-ide/antigravity-ide/bin"
+
+# Homebrew core integration
+if type brew &>/dev/null; then
+    brew_prefix="$(brew --prefix)"
+    path_prepend "$brew_prefix/bin"
+
+    # Keep the chezmoi source-state Brewfile current after package changes.
+    brew() {
+        command brew "$@"
+        local brew_status=$?
+
+        if [ "$brew_status" -eq 0 ]; then
+            case "${1:-}" in
+                install|uninstall|remove|rm|reinstall|tap|untap)
+                    command brew bundle dump --force --global &&
+                        chezmoi re-add "$HOME/.Brewfile"
+                    ;;
+            esac
+        fi
+        return "$brew_status"
+    }
+fi
+
+
+# ==============================================================================
+# ALIASES & PLUGINS
+# ==============================================================================
+
+# 1Password CLI plugin
+[[ -r "$HOME/.config/op/plugins.sh" ]] && source "$HOME/.config/op/plugins.sh"
+
+# Navigation shortcuts
+alias d="cd ~/Developer"
+alias dotfiles="cd ~/.local/share/chezmoi"
+
+# Homebrew shortcuts
+alias brewdump="brew bundle dump --file=~/.Brewfile --force"
+source {{ .chezmoi.homeDir }}/.config/op/plugins.sh

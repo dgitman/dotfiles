@@ -1,0 +1,20 @@
+{
+  "enabledPlugins": {
+    "slack@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true,
+    "warp@claude-code-warp": true,
+    "telegram@claude-plugins-official": true,
+    "imessage@claude-plugins-official": true,
+    "fakechat@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "claude-code-warp": {
+      "source": {
+        "source": "github",
+        "repo": "warpdotdev/claude-code-warp"
+      }
+    }
+  },
+  "tui": "fullscreen",
+  "theme": "auto"
+}

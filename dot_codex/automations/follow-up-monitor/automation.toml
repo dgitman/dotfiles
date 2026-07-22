@@ -1,0 +1,14 @@
+version = 1
+id = "follow-up-monitor"
+kind = "cron"
+name = "Follow-up monitor"
+prompt = "Review recent email and calendar activity, highlight meaningful changes, and flag anything that needs my attention."
+status = "ACTIVE"
+rrule = "RRULE:FREQ=WEEKLY;BYHOUR=9;BYMINUTE=0;BYDAY=MO,TU,WE,TH,FR"
+model = "gpt-5.6-sol"
+reasoning_effort = "low"
+execution_environment = "local"
+target = { type = "projectless" }
+cwds = ["~"]
+created_at = 1784547440206
+updated_at = 1784547440206

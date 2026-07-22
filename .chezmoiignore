@@ -3,3 +3,4 @@
 .ssh/id_*
 .claude.json
 .claude.json.backup
+.codex/auth.json

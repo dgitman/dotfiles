@@ -4,3 +4,7 @@
 .claude.json
 .claude.json.backup
 .codex/auth.json
+.config/gcloud
+.claude/settings.local.json
+.zsh_history
+.viminfo

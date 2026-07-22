@@ -1,0 +1,242 @@
+model = "gpt-5.6-sol"
+model_reasoning_effort = "low"
+approval_policy = "on-request"
+sandbox_mode = "danger-full-access"
+notify = ["{{ .chezmoi.homeDir }}/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+network_access = true
+service_tier = "priority"
+
+# Machine-specific [projects."..."] trust stanzas are intentionally omitted.
+# Codex repopulates them as you trust each project. Only the root fallback is
+# tracked so a fresh machine starts with a sane default.
+
+[projects."{{ .chezmoi.homeDir }}/.local/share/chezmoi"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Documents/Trakt Google Search and Google TV"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Documents/Divorce"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Developer"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Documents/Codex/2026-07-21/webflow-plugin-app-6a0783a98c4c8191841404d786d4a4b9-openai-curated"]
+trust_level = "trusted"
+
+[plugins."google-calendar@openai-curated"]
+enabled = true
+
+[plugins."gmail@openai-curated"]
+enabled = true
+
+[plugins."slack@openai-curated"]
+enabled = true
+
+[plugins."canva@openai-curated"]
+enabled = true
+
+[plugins."stripe@openai-curated"]
+enabled = true
+
+[plugins."github@openai-curated"]
+enabled = true
+
+[plugins."google-drive@openai-curated"]
+enabled = true
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."notion@openai-curated"]
+enabled = true
+
+[plugins."hubspot@openai-curated"]
+enabled = true
+
+[plugins."zoom@openai-curated"]
+enabled = true
+
+[plugins."docusign@openai-curated"]
+enabled = true
+
+[plugins."outlook-email@openai-curated"]
+enabled = true
+
+[plugins."calendly@openai-curated"]
+enabled = true
+
+[plugins."openai-developers@openai-curated"]
+enabled = true
+
+[plugins."computer-use@openai-bundled"]
+enabled = true
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."chrome@openai-bundled"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
+[plugins."visualize@openai-bundled"]
+enabled = true
+
+[plugins."sites@openai-bundled"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["-y", "@playwright/mcp@latest", "--headless"]
+
+[mcp_servers.playwright.tools.browser_resize]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_navigate]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_evaluate]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_fill_form]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_click]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_tabs]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_run_code_unsafe]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_close]
+approval_mode = "approve"
+
+[mcp_servers.node_repl]
+args = []
+command = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node_repl"
+startup_timeout_sec = 120
+
+[mcp_servers.node_repl.env]
+NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
+NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
+NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
+NODE_REPL_TRUSTED_CODE_PATHS = "{{ .chezmoi.homeDir }}/.codex"
+CODEX_HOME = "{{ .chezmoi.homeDir }}/.codex"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "0b03c76c1d0f3d4c81f89f58ff210ae6709fd1204d2c5a4fdffa0a7bdb961b96,6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f"
+BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
+NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
+NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
+BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
+BROWSER_USE_CODEX_APP_VERSION = "26.715.61943"
+SKY_CUA_SERVICE_PATH = "{{ .chezmoi.homeDir }}/.codex/plugins/cache/openai-bundled/computer-use/1.0.1000451/Codex Computer Use.app"
+CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
+
+[mcp_servers.1password]
+enabled = true
+command = "/Applications/1Password.app/Contents/MacOS/onepassword-mcp"
+
+[mcp_servers.1password.tools.authenticate]
+approval_mode = "approve"
+
+[mcp_servers.1password.tools.create_local_env_file]
+approval_mode = "approve"
+
+[mcp_servers.trakt]
+command = "uvx"
+args = ["--python", "3.12", "--from", "git+https://github.com/wwiens/trakt_mcpserver", "trakt-mcp"]
+
+[mcp_servers.trakt.env]
+TRAKT_CLIENT_ID = "op://Private/Trakt/TRAKT_CLIENT_ID"
+TRAKT_CLIENT_SECRET = "op://Private/Trakt/TRAKT_CLIENT_SECRET"
+
+[mcp_servers.trakt.tools.fetch_user_watchlist]
+approval_mode = "approve"
+
+[mcp_servers.trakt.tools.add_user_watchlist]
+approval_mode = "approve"
+
+[mcp_servers.trakt.tools.search_movies]
+approval_mode = "approve"
+
+[mcp_servers.trakt.tools.search_shows]
+approval_mode = "approve"
+
+[mcp_servers.webflow]
+enabled = true
+url = "https://mcp.webflow.com/mcp"
+
+[mcp_servers.computer-use]
+command = "./Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient"
+args = ["mcp"]
+cwd = "."
+enabled = false
+
+[mcp_servers.workspace_mcp_-_personal]
+enabled = true
+url = "https://private.workspacemcp.com/mcp?your-personal-email@example.com"
+
+[mcp_servers.workspace_mcp_-_business]
+enabled = true
+url = "https://private.workspacemcp.com/mcp?your-work-email@example.com"
+
+[desktop]
+ambient-suggestions-enabled = true
+sansFontSize = 14
+codeFontSize = 13
+mac-menu-bar-enabled = false
+preventSleepWhileRunning = true
+keepRemoteControlAwakeWhilePluggedIn = true
+git-show-sidebar-pr-icons = false
+conversationDetailMode = "STEPS_PROSE"
+browser-annotation-screenshots-mode = "always"
+followUpQueueMode = "queue"
+dock-icon-preference = "app-default"
+open-link-in-target-preference = "in-app-browser"
+
+[desktop.open-in-target-preferences]
+global = "fileManager"
+
+[desktop.open-in-target-preferences.perPath]
+"{{ .chezmoi.homeDir }}/Developer/gmail-takeout-mbox-to-ai" = "fileManager"
+
+[features]
+js_repl = false
+memories = true
+
+[marketplaces.openai-bundled]
+last_updated = "2026-07-21T17:05:11Z"
+source_type = "local"
+source = "{{ .chezmoi.homeDir }}/.codex/.tmp/bundled-marketplaces/openai-bundled"
+
+[marketplaces.openai-primary-runtime]
+last_updated = "2026-07-19T22:54:02Z"
+source_type = "local"
+source = "{{ .chezmoi.homeDir }}/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
+[tui.model_availability_nux]
+"gpt-5.5" = 4
+"gpt-5.6-sol" = 4
+
+[memories]
+generate_memories = true
+use_memories = true
+
+[shell_environment_policy.set]
+BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "0b03c76c1d0f3d4c81f89f58ff210ae6709fd1204d2c5a4fdffa0a7bdb961b96,6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f"
+NODE_REPL_TRUSTED_CODE_PATHS = "{{ .chezmoi.homeDir }}/.codex"

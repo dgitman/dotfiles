@@ -1,0 +1,305 @@
+tap "oven-sh/bun", trusted: true
+tap "twilio/brew", trusted: true
+tap "wpscanteam/tap", trusted: true
+# Open-source formatting library for C++
+brew "fmt"
+# WHATWG-compliant and fast URL parser written in modern C++
+brew "ada-url"
+# Macro processing language
+brew "m4"
+# Automatic configure script builder
+brew "autoconf"
+# Generic-purpose lossless compression algorithm by Google
+brew "brotli"
+# Incredibly fast JavaScript runtime, bundler, test runner, and package manager
+brew "bun"
+# Asynchronous DNS library
+brew "c-ares"
+# Mozilla CA certificate store
+brew "ca-certificates"
+# GNU multiple precision arithmetic library
+brew "gmp"
+# GNU File, Shell, and Text utilities
+brew "coreutils"
+# GNU internationalization (i18n) and localization (l10n) library
+brew "gettext"
+# International domain name library (IDNA2008, Punycode and TR46)
+brew "libidn2"
+# ASN.1 structure parser library
+brew "libtasn1"
+# Low-level cryptographic library
+brew "nettle"
+# Library to load and enumerate PKCS#11 modules
+brew "p11-kit"
+# GNU Transport Layer Security (TLS) Library
+brew "gnutls"
+# Incremental parsing library
+brew "tree-sitter@0.25"
+# GNU Emacs text editor
+brew "emacs"
+# Emacs dependency management
+brew "cask"
+# Manage your dotfiles across multiple diverse machines, securely
+brew "chezmoi"
+# AV1 decoder targeted to be small and fast
+brew "dav1d"
+# Perl lib for reading and writing EXIF metadata
+brew "exiftool"
+# Perl compatible regular expressions library with a new API
+brew "pcre2"
+# Identify or delete duplicate files
+brew "fdupes"
+# GitHub command-line tool
+brew "gh"
+# Distributed revision control system
+brew "git"
+# Quickly rewrite git repository history
+brew "git-filter-repo"
+# Audit git repos for secrets
+brew "gitleaks"
+# C port of the HdrHistogram
+brew "hdrhistogram_c"
+# Text-based UI library
+brew "ncurses"
+# Improved top (interactive process viewer)
+brew "htop"
+# C/C++ and Java libraries for Unicode and globalization
+brew "icu4c@78"
+# Migrate or backup IMAP mail accounts
+brew "imapsync"
+# Command-line tool to export and inspect local iMessage database
+brew "imessage-exporter"
+# Regular expressions library
+brew "oniguruma"
+# Lightweight and flexible command-line JSON processor
+brew "jq"
+# Common error values for all GnuPG components
+brew "libgpg-error"
+# Assuan IPC Library
+brew "libassuan"
+# Double-Array Trie Library
+brew "libdatrie"
+# Cryptography and SSL/TLS Toolkit
+brew "openssl@3"
+# Asynchronous event library
+brew "libevent"
+# Portable Foreign Function Interface library
+brew "libffi"
+# Library for large linear classification
+brew "liblinear"
+# HTTP/2 C Library
+brew "libnghttp2"
+# HTTP/3 library written in C
+brew "libnghttp3"
+# IETF QUIC protocol implementation
+brew "libngtcp2"
+# Library for manipulating PNG images
+brew "libpng"
+# C library implementing the SSH2 protocol
+brew "libssh2"
+# Multi-platform support library with a focus on asynchronous I/O
+brew "libuv"
+# YAML Parser
+brew "libyaml"
+# Port of http_parser to llparse
+brew "llhttp"
+# Powerful, lightweight programming language
+brew "lua"
+# Extremely Fast Compression algorithm
+brew "lz4"
+# Mac App Store command-line interface
+brew "mas"
+# Unicode conversion routines, fast
+brew "simdutf"
+# C++ lexer for extracting named exports from CommonJS modules
+brew "merve"
+# Library for decimal floating point arithmetic
+brew "mpdecimal"
+# Library of byte handling functions extracted from Node.js core
+brew "nbytes"
+# Library for command-line editing
+brew "readline"
+# General-purpose data compression with high compression ratio
+brew "xz"
+# Zstandard is a real-time compression algorithm
+brew "zstd"
+# Interpreted, interactive, object-oriented programming language
+brew "python@3.14"
+# Port scanning utility for large networks
+brew "nmap"
+# SIMD-accelerated C++ JSON parser
+brew "simdjson"
+# WASI syscall API built atop libuv
+brew "uvwasi"
+# Open-source, cross-platform JavaScript runtime environment
+brew "node"
+# Package compiler and linker metadata toolkit
+brew "pkgconf"
+# Monitor data's progress through a pipe
+brew "pv"
+# Interpreted, interactive, object-oriented programming language
+brew "python@3.13"
+# Install various Ruby versions and implementations
+brew "ruby-build"
+# Ruby version manager
+brew "rbenv"
+# Rsync for cloud storage
+brew "rclone"
+# Search tool like grep and The Silver Searcher
+brew "ripgrep"
+# Powerful, clean, object-oriented scripting language
+brew "ruby@3.4"
+# SDL2 compatibility layer that uses SDL3 behind the scenes
+brew "sdl2-compat"
+# Validating, recursive, caching DNS resolver
+brew "unbound"
+# Extremely fast Python package installer and resolver, written in Rust
+brew "uv"
+# Executes a program periodically, showing output fullscreen
+brew "watch"
+# Internet file retriever
+brew "wget"
+# Black box WordPress vulnerability scanner
+brew "wpscanteam/tap/wpscan", trusted: true
+# Password manager that keeps all passwords secure behind one password
+cask "1password"
+# Command-line interface for 1Password
+cask "1password-cli"
+# Agent orchestration platform
+cask "antigravity"
+# Terminal interface for Antigravity agents
+cask "antigravity-cli"
+# AI Coding Agent IDE
+cask "antigravity-ide"
+# Application uninstaller
+cask "appcleaner"
+# Menu bar icon organiser
+cask "bartender"
+# OpenAI's official ChatGPT desktop app
+cask "chatgpt"
+# Anthropic's official Claude AI desktop app
+cask "claude"
+# Terminal-based AI coding assistant
+cask "claude-code"
+# Tool to remove unnecessary files and folders from disk
+cask "cleanmymac"
+# OpenAI's coding agent that runs in your terminal
+cask "codex"
+# Brings the power of Copilot coding agent directly to your terminal
+cask "copilot-cli"
+# Slicer for all Creality FDM 3D printers
+cask "creality-slicer"
+# Write, edit, and chat about your code with AI
+cask "cursor"
+# Voice and text chat software
+cask "discord"
+# App to build and share containerised applications and microservices
+cask "docker-desktop"
+# Client for the Dropbox cloud storage service
+cask "dropbox"
+# Collaborative team software
+cask "figma"
+# Fujitsu ScanSnap Scanner software
+cask "fujitsu-scansnap-home"
+# Set of tools to manage resources and applications hosted on Google Cloud
+cask "gcloud-cli"
+# Desktop client for GitHub repositories
+cask "github"
+# Web browser
+cask "google-chrome"
+# Client for the Google Drive storage service
+cask "google-drive"
+# Native desktop AI assistant from Google
+cask "google-gemini"
+# Grammarly for desktop
+cask "grammarly-desktop"
+# Open-source video transcoder
+cask "handbrake-app"
+# iPhone management application
+cask "imazing"
+# Spot and merge differences in text and image files or folders
+cask "kaleidoscope"
+# Provides updates to various Microsoft products
+cask "microsoft-auto-update"
+# Office suite
+cask "microsoft-office"
+# Meet, chat, call, and collaborate in just one place
+cask "microsoft-teams"
+# Tool to control external monitor brightness & volume
+cask "monitorcontrol"
+# VPN client for secure internet access and private browsing
+cask "nordvpn"
+# App to write, plan, collaborate, and get organised
+cask "notion"
+# Calendar for professionals and teams
+cask "notion-calendar"
+# Collaboration platform for API development
+cask "postman"
+# Imaging utility to install operating systems to a microSD card
+cask "raspberry-pi-imager"
+# Move and resize windows using keyboard shortcuts or snap areas
+cask "rectangle"
+# Client for the Progress ShareFile storage service
+cask "sharefile"
+# Instant messaging application focusing on security
+cask "signal"
+# Team communication and collaboration software
+cask "slack"
+# Control your Sonos system
+cask "sonos"
+# AI-powered reading and voice assistant
+cask "speechify-voice-ai"
+# Music streaming service
+cask "spotify"
+# Video game digital distribution service
+cask "steam"
+# Remote access and connectivity software focused on security
+cask "teamviewer"
+# Messaging app with a focus on speed and security
+cask "telegram"
+# Web browser focusing on security
+cask "tor-browser"
+# Open-source BitTorrent client
+cask "transmission"
+# File transfer application
+cask "transmit"
+# 3D printer and slicing GUI
+cask "ultimaker-cura"
+# Calling and messaging application focusing on security
+cask "viber"
+# Open-source code editor
+cask "visual-studio-code"
+# Rust-based terminal
+cask "warp"
+# Free messaging and calling application
+cask "wechat"
+# Native desktop client for WhatsApp
+cask "whatsapp"
+# Network protocol analyzer
+cask "wireshark-app"
+# Voice-to-text dictation with AI-powered auto-editing
+cask "wispr-flow"
+# Video communication and virtual meeting platform
+cask "zoom"
+mas "1Password for Safari", id: 1569813296
+mas "AwardWallet", id: 1473828829
+mas "Awesome Screenshot & Recorder", id: 1531282066
+mas "Grammarly for Safari", id: 1462114288
+mas "Kindle", id: 302584613
+mas "Magnet", id: 441258766
+mas "Prime Video", id: 545519333
+vscode "1password.op-vscode"
+vscode "anthropic.claude-code"
+vscode "charliermarsh.ruff"
+vscode "esbenp.prettier-vscode"
+vscode "fabriqaai.specsmd"
+vscode "github.vscode-github-actions"
+vscode "ms-azuretools.vscode-containers"
+vscode "ms-python.debugpy"
+vscode "ms-python.python"
+vscode "ms-python.vscode-pylance"
+vscode "ms-python.vscode-python-envs"
+vscode "ms-vscode-remote.remote-containers"
+vscode "openai.chatgpt"
+vscode "redhat.vscode-yaml"
+vscode "zainchen.json"

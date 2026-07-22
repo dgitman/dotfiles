@@ -1,0 +1,11 @@
+{{- $computerName := output "scutil" "--get" "ComputerName" | trim -}}
+
+[onepassword]
+mode = "account"
+
+[data]
+computerName = "{{ $computerName }}"
+
+[git]
+autoCommit = false
+autoPush = false

@@ -1,0 +1,1 @@
+Always use the 1Password MCP server if you need to work with the 1Password developer environments without me having to explicitly ask.

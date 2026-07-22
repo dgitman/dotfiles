@@ -1,0 +1,17 @@
+{{- $opAccount := index (fromJson (output "op" "account" "list" "--format=json")) 0 -}}
+{{- $agentItem := onepassword "Cursor API Key" -}}
+{
+        "account_id": "{{ $opAccount.account_uuid }}",
+        "entrypoint": [
+                "agent"
+        ],
+        "credentials": [
+                {
+                        "plugin": "cursor",
+                        "credential_type": "api_key",
+                        "usage_id": "api_key",
+                        "vault_id": "{{ $agentItem.vault.id }}",
+                        "item_id": "{{ $agentItem.id }}"
+                }
+        ]
+}

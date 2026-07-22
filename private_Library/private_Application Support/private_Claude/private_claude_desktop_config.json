@@ -1,0 +1,77 @@
+{
+  "coworkUserFilesPath": "{{ .chezmoi.homeDir }}/Claude",
+  "preferences": {
+    "launchPreviewPersistedWorkspaces": [],
+    "launchPreviewSessionScopedSessions": [],
+    "localAgentModeTrustedFolders": [
+      "{{ .chezmoi.homeDir }}/Developer/dgitman/shiragitman.com",
+      "{{ .chezmoi.homeDir }}/.local/share/chezmoi"
+    ],
+    "folderTccProbeResults": {
+      "desktop": "granted",
+      "documents": "granted",
+      "downloads": "granted",
+      "recordedAt": "2026-07-20T21:22:33.479Z",
+      "appVersion": "1.22209.3"
+    },
+    "coworkScheduledTasksEnabled": true,
+    "coworkHipaaRestricted": false,
+    "ccdScheduledTasksEnabled": true,
+    "sidebarMode": "chat",
+    "bypassPermissionsGateByAccount": {
+      "c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": false
+    },
+    "coworkWebSearchEnabled": true,
+    "coworkModelAutoFallbackByAccount": {
+      "c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": true
+    },
+    "keepAwakeEnabled": true,
+    "coworkOnboardingResumeStep": null,
+    "chicagoEnabled": true,
+    "remoteToolsDeviceName": "davids-macbook-pro-local",
+    "epitaxyPrefs": {
+      "starred-local-code-sessions": [],
+      "starred-cowork-spaces": [],
+      "starred-session-groups": [],
+      "ccd-sessions-filter": {
+        "state": {
+          "selectedProjects": []
+        },
+        "version": 0
+      },
+      "desktop-frame.paneStore.v1": {
+        "state": {
+          "extraPanesByMode": {},
+          "colWeightsByMode": {},
+          "rowSplit": 0.5,
+          "draftNonce": 0
+        },
+        "version": 4
+      },
+      "dframe-group-scopes": {
+        "c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55/434c64cb-f6cd-4ee6-a89b-7a4e957bde68": {
+          "groups": [
+            {
+              "id": "cg-1be8497c-550d-4c4a-a59b-0532e4f45c12",
+              "name": "Shira"
+            }
+          ],
+          "assignments": {
+            "code:local_a4a1ca6e-a996-4dc5-806d-027e68e725fa": "cg-1be8497c-550d-4c4a-a59b-0532e4f45c12"
+          },
+          "order": {
+            "cg-1be8497c-550d-4c4a-a59b-0532e4f45c12": [
+              "code:local_a4a1ca6e-a996-4dc5-806d-027e68e725fa"
+            ]
+          }
+        }
+      },
+      "dframe-local-slice": {
+        "pinnedOrder": [],
+        "homeProjectsPinnedOrder": []
+      },
+      "cc-landing-worktree-enabled": false
+    },
+    "allowAllBrowserActions": true
+  }
+}

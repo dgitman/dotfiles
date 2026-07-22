@@ -1,0 +1,9 @@
+{
+  "security": {
+    "auth": {
+      "selectedType": "oauth-personal"
+    }
+  },
+  "google.cloud.project": "claude-500116",
+  "google.cloud.region": "us-east1"
+}

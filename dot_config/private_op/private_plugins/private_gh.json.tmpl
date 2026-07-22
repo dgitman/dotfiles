@@ -1,0 +1,17 @@
+{{- $opAccount := index (fromJson (output "op" "account" "list" "--format=json")) 0 -}}
+{{- $ghItem := onepassword "GitHub Personal Access Token" -}}
+{
+        "account_id": "{{ $opAccount.account_uuid }}",
+        "entrypoint": [
+                "gh"
+        ],
+        "credentials": [
+                {
+                        "plugin": "github",
+                        "credential_type": "personal_access_token",
+                        "usage_id": "personal_access_token",
+                        "vault_id": "{{ $ghItem.vault.id }}",
+                        "item_id": "{{ $ghItem.id }}"
+                }
+        ]
+}

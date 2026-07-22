@@ -8,3 +8,11 @@
 .claude/settings.local.json
 .zsh_history
 .viminfo
+
+# macOS Finder junk
+**/.DS_Store
+**/.AppleDouble
+**/.LSOverride
+
+# Never track the keychain
+Library/Keychains/

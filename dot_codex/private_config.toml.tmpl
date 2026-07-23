@@ -196,11 +196,11 @@ enabled = false
 
 [mcp_servers.workspace_mcp_-_personal]
 enabled = true
-url = "https://private.workspacemcp.com/mcp?your-personal-email@example.com"
+url = "https://private.workspacemcp.com/mcp?{{ .personalEmail }}"
 
 [mcp_servers.workspace_mcp_-_business]
 enabled = true
-url = "https://private.workspacemcp.com/mcp?your-work-email@example.com"
+url = "https://private.workspacemcp.com/mcp?{{ .workEmail }}"
 
 [desktop]
 ambient-suggestions-enabled = true

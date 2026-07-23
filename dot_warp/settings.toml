@@ -74,3 +74,6 @@ is_password_prompt_enabled = true
 long_running_threshold = 30
 mode = "enabled"
 play_notification_sound = true
+
+[general]
+login_item = false

@@ -3,9 +3,9 @@
 .ssh/id_*
 .claude.json
 .claude.json.backup
+.claude/settings.local.json
 .codex/auth.json
 .config/gcloud
-.claude/settings.local.json
 .zsh_history
 .viminfo
 

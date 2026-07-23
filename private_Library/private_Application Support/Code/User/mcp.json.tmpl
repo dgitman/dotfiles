@@ -2,11 +2,11 @@
 	"inputs": [],
 	"servers": {
 		"Workspace MCP - Personal": {
-			"url": "https://private.workspacemcp.com/mcp?your-personal-email@example.com",
+			"url": "https://private.workspacemcp.com/mcp?{{ .personalEmail }}",
 			"type": "http"
 		},
 		"Workspace MCP - Business": {
-			"url": "https://private.workspacemcp.com/mcp?your-work-email@example.com",
+			"url": "https://private.workspacemcp.com/mcp?{{ .workEmail }}",
 			"type": "http"
 		},
 		"Trakt MCP": {

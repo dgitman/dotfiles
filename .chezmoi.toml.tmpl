@@ -1,10 +1,14 @@
 {{- $computerName := output "scutil" "--get" "ComputerName" | trim -}}
+{{- $personalEmail := promptStringOnce . "personalEmail" "Personal email (Workspace MCP)" -}}
+{{- $workEmail := promptStringOnce . "workEmail" "Work email (Workspace MCP)" -}}
 
 [onepassword]
 mode = "account"
 
 [data]
 computerName = "{{ $computerName }}"
+personalEmail = "{{ $personalEmail }}"
+workEmail = "{{ $workEmail }}"
 
 [git]
 autoCommit = false

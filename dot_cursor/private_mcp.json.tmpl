@@ -1,11 +1,11 @@
 {
   "mcpServers": {
     "Workspace MCP - Personal": {
-      "url": "https://private.workspacemcp.com/mcp?your-personal-email@example.com",
+      "url": "https://private.workspacemcp.com/mcp?{{ .personalEmail }}",
       "headers": {}
     },
     "Workspace MCP - Business": {
-      "url": "https://private.workspacemcp.com/mcp?your-work-email@example.com",
+      "url": "https://private.workspacemcp.com/mcp?{{ .workEmail }}",
       "headers": {}
     },
     "trakt": {

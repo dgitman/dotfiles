@@ -1,0 +1,43 @@
+{
+  "mcpServers": {
+    "1password": {
+      "command": "1password-mcp",
+      "args": []
+    },
+    "trakt": {
+      "command": "/opt/homebrew/bin/op",
+      "args": [
+        "run",
+        "--no-masking",
+        "--",
+        "uvx",
+        "--python",
+        "3.12",
+        "--from",
+        "git+https://github.com/wwiens/trakt_mcpserver",
+        "trakt-mcp"
+      ],
+      "env": {
+        "TRAKT_CLIENT_ID": "op://ts4jmaranagdjfxrtkfukeglcm/t7aiboqrptwqpqk6fe5em4ag7u/TRAKT_CLIENT_ID",
+        "TRAKT_CLIENT_SECRET": "op://ts4jmaranagdjfxrtkfukeglcm/t7aiboqrptwqpqk6fe5em4ag7u/TRAKT_CLIENT_SECRET"
+      }
+    },
+    "X": {
+      "command": "/opt/homebrew/bin/op",
+      "args": [
+        "run",
+        "--no-masking",
+        "--",
+        "npx",
+        "-y",
+        "@xdevplatform/xurl",
+        "mcp",
+        "https://api.x.com/mcp"
+      ],
+      "env": {
+        "CLIENT_ID": "op://ts4jmaranagdjfxrtkfukeglcm/mnubbxp5r4vbrlbyow6nfem5wi/CLIENT_ID",
+        "CLIENT_SECRET": "op://ts4jmaranagdjfxrtkfukeglcm/mnubbxp5r4vbrlbyow6nfem5wi/CLIENT_SECRET"
+      }
+    }
+  }
+}

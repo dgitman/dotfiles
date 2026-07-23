@@ -1,3 +1,4 @@
+tap "composio-temp/tap", "https://github.com/composio-temp/homebrew-tap.git"
 tap "oven-sh/bun", trusted: true
 tap "twilio/brew", trusted: true
 tap "wpscanteam/tap", trusted: true
@@ -43,6 +44,8 @@ brew "cask"
 brew "chezmoi"
 # AV1 decoder targeted to be small and fast
 brew "dav1d"
+# Select default apps for documents and URL schemes on macOS
+brew "duti"
 # Perl lib for reading and writing EXIF metadata
 brew "exiftool"
 # Perl compatible regular expressions library with a new API
@@ -290,8 +293,6 @@ mas "Magnet", id: 441258766
 mas "Prime Video", id: 545519333
 vscode "1password.op-vscode"
 vscode "anthropic.claude-code"
-vscode "charliermarsh.ruff"
-vscode "esbenp.prettier-vscode"
 vscode "fabriqaai.specsmd"
 vscode "github.vscode-github-actions"
 vscode "ms-azuretools.vscode-containers"
@@ -301,5 +302,3 @@ vscode "ms-python.vscode-pylance"
 vscode "ms-python.vscode-python-envs"
 vscode "ms-vscode-remote.remote-containers"
 vscode "openai.chatgpt"
-vscode "redhat.vscode-yaml"
-vscode "zainchen.json"

@@ -3,7 +3,7 @@ id = "daily-brief"
 kind = "cron"
 name = "Daily brief"
 prompt = "Give me a morning brief with what's on my calendar, important unread emails, and anything that needs my attention today."
-status = "ACTIVE"
+status = "PAUSED"
 rrule = "RRULE:FREQ=WEEKLY;BYHOUR=8;BYMINUTE=0;BYDAY=MO,TU,WE,TH,FR"
 model = "gpt-5.6-sol"
 reasoning_effort = "low"
@@ -11,4 +11,4 @@ execution_environment = "local"
 target = { type = "projectless" }
 cwds = ["~"]
 created_at = 1784547174076
-updated_at = 1784547174076
+updated_at = 1784812644258

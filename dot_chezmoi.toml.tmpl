@@ -1,0 +1,17 @@
+[onepassword]
+    mode = "account"
+
+[data]
+    computerName = "David’s MacBook Pro"
+    personalEmail = {{ onepasswordRead "op://Private/Personal Email/username" | quote }}
+    workEmail = {{ onepasswordRead "op://Private/Work Email/username" | quote }}
+
+[git]
+    autoCommit = false
+    autoPush = false
+
+[hooks.read-source-state]
+    type = "exec"
+    command = "sh"
+    args = ["-c", 'git config filter.chezmoiclean.clean "sed \'s|{{ .chezmoi.homeDir }}|{{ "{{ .chezmoi.homeDir }}" }}|g\'"']
+

@@ -65,4 +65,4 @@ alias dotfiles="cd ~/.local/share/chezmoi"
 
 # Homebrew shortcuts
 alias brewdump="brew bundle dump --file=~/.Brewfile --force"
-source {{ .chezmoi.homeDir }}/.config/op/plugins.sh
+source "$HOME/.config/op/plugins.sh"

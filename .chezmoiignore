@@ -1,18 +1,23 @@
-.ssh/known_hosts
-.ssh/known_hosts.old
-.ssh/id_*
-.claude.json
-.claude.json.backup
-.claude/settings.local.json
-.codex/auth.json
-.config/gcloud
-.zsh_history
-.viminfo
+# ==============================================================================
+# DEVELOPER WORKSPACE & IDE TRANSIENT DATA
+# ==============================================================================
 
-# macOS Finder junk
-**/.DS_Store
-**/.AppleDouble
-**/.LSOverride
+# Cursor & VS Code Runtime Caches, Sync State, and Backups
+Library/Application Support/Cursor/User/workspaceStorage/
+Library/Application Support/Cursor/User/globalStorage/
+Library/Application Support/Cursor/Backups/
+Library/Application Support/Code/User/workspaceStorage/
+Library/Application Support/Code/User/globalStorage/
+Library/Application Support/Code/Backups/
 
-# Never track the keychain
-Library/Keychains/
+# Local Python Caches and Virtual Environments (if they creep into dotfiles)
+**/__pycache__/
+**/.pytest_cache/
+**/.venv/
+**/venv/
+
+# General Package Manager Lockfile Backups
+**/*.log
+**/.npm/
+**/.pnpm-store/
+

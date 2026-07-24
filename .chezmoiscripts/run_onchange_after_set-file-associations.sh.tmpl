@@ -1,0 +1,32 @@
+#!/usr/bin/env zsh
+# .duti hash: {{ include "dot_duti.tmpl" | sha256sum }}
+
+set -euo pipefail
+
+if ! command -v duti >/dev/null 2>&1; then
+  echo "Warning: 'duti' not found. Skipping file associations."
+  exit 0
+fi
+
+VSCODE_ID="com.microsoft.VSCode"
+
+echo "Validating and mapping 166 macOS file associations..."
+
+while IFS=$'\t' read -r bundle_id extension role; do
+  [[ "$bundle_id" =~ ^#.*$ || -z "$bundle_id" ]] && continue
+  ext_clean="${extension#.}"
+  
+  # Try Cursor first, fallback to VS Code if macOS rejects it
+  if duti -s "$bundle_id" "$ext_clean" "$role" 2>/dev/null; then
+    echo "  ✓ .$ext_clean -> Cursor"
+  else
+    if duti -s "$VSCODE_ID" "$ext_clean" "$role" 2>/dev/null; then
+      echo "  ↳ .$ext_clean -> Re-routed to VS Code"
+    else
+      echo "  ✗ .$ext_clean -> Skipped (macOS system lock)"
+    fi
+  fi
+done < ~/.duti
+
+echo "File association process complete!"
+

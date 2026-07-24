@@ -1,0 +1,12 @@
+{{- if eq .chezmoi.os "darwin" -}}
+# Format: <bundle-id> <extension> <role>
+# Managed by chezmoi. Do not edit directly.
+
+{{ $bundleId := output "osascript" "-e" "id of app \"Cursor\"" | trim -}}
+{{- $extensions := list "ascx" "asp" "aspx" "bash" "bashrc" "bat" "bower" "bowerrc" "c" "cc" "cfg" "cjs" "clj" "cljs" "cljx" "clojure" "cls" "cmake" "cmd" "code-workspace" "coffee" "conf" "config" "containerfile" "cpp" "cs" "csharp" "cshtml" "csproj" "css" "csv" "csx" "ctp" "cxx" "dart" "default" "diff" "dockerfile" "dockerignore" "dot" "dtd" "editorconfig" "edn" "env" "erb" "eslintrc" "eyaml" "eyml" "fs" "fsi" "fsscript" "fsx" "gemspec" "gitattributes" "gitconfig" "gitignore" "go" "gql" "gradle" "graphql" "groovy" "h" "handlebars" "hbs" "hh" "hpp" "htm" "html" "hxx" "ini" "ipynb" "jade" "jav" "java" "js" "jscsrc" "jshintrc" "jshtm" "json" "jsonc" "jsp" "jsx" "less" "lock" "log" "lua" "m" "makefile" "markdown" "md" "mdoc" "mdown" "mdtext" "mdtxt" "mdwn" "mdx" "mjs" "mk" "mkd" "mkdn" "ml" "mli" "mm" "mts" "patch" "php" "phtml" "pl" "pl6" "plist" "pm" "pm6" "pod" "powershell" "pp" "profile" "properties" "proto" "ps1" "psd1" "psgi" "psm1" "pug" "py" "pyi" "r" "rb" "react" "rhistory" "rprofile" "rs" "rst" "rt" "sass" "scss" "sh" "shell" "shtml" "sql" "svg" "swift" "t" "tex" "toml" "ts" "tsx" "txt" "utxt" "vb" "vue" "wxi" "wxl" "wxs" "xaml" "xcodeproj" "xcworkspace" "xhtml" "xml" "yaml" "yml" "zlogin" "zlogout" "zprofile" "zsh" "zshenv" "zshrc" -}}
+
+{{- range $extensions }}
+{{ $bundleId }}	.{{ . }}	all
+{{- end }}
+{{- end }}
+

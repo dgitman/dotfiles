@@ -154,6 +154,8 @@ brew "ripgrep"
 brew "ruby@3.4"
 # SDL2 compatibility layer that uses SDL3 behind the scenes
 brew "sdl2-compat"
+# Find and verify credentials
+brew "trufflehog"
 # Validating, recursive, caching DNS resolver
 brew "unbound"
 # Extremely fast Python package installer and resolver, written in Rust

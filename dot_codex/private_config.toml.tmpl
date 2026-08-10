@@ -15,146 +15,41 @@ trust_level = "trusted"
 [projects."{{ .chezmoi.homeDir }}/Developer"]
 trust_level = "trusted"
 
-[projects."{{ .chezmoi.homeDir }}/Documents/Codex/2026-08-03/do"]
-trust_level = "trusted"
-
-[projects."{{ .chezmoi.homeDir }}/Documents/Codex/2026-08-03/do-both-mcp-servers-trakt-and"]
-trust_level = "trusted"
-
-[projects."{{ .chezmoi.homeDir }}/Documents/Codex/2026-08-03/implement-the-antiawswaftask-token-workflow-inject"]
-trust_level = "trusted"
-
-[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/nc-ecourts-playwright"]
-trust_level = "trusted"
-
-[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/nc-court"]
-trust_level = "trusted"
-
-[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/spinning-dare-wheel"]
-trust_level = "trusted"
-
-[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/panda-explosion"]
-trust_level = "trusted"
-
-[projects."{{ .chezmoi.homeDir }}/Documents/Codex/2026-08-04/panda-explosion-sites-project-appgprj-6a6524b595208191898fddb713b2664a"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/custody"]
 trust_level = "trusted"
 
 [projects."{{ .chezmoi.homeDir }}/Developer/dgitman/gitman-antique"]
 trust_level = "trusted"
 
-[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/gitmanantique.com"]
-trust_level = "trusted"
-
-[projects."{{ .chezmoi.homeDir }}/Developer/laura-email-sync"]
-trust_level = "trusted"
-
 [projects."{{ .chezmoi.homeDir }}/Developer/dgitman/gitman-messages-sync"]
 trust_level = "trusted"
 
-[projects."{{ .chezmoi.homeDir }}/Documents/Codex/2026-08-06/https-secure-e-konsulat-gov-pl"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/gitmanantique.com"]
 trust_level = "trusted"
 
 [projects."{{ .chezmoi.homeDir }}/Developer/dgitman/laura-email-sync"]
 trust_level = "trusted"
 
-[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/polish-passport"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/nc-court"]
 trust_level = "trusted"
 
 [projects."{{ .chezmoi.homeDir }}/Developer/dgitman/nc-ecourts-hearings"]
 trust_level = "trusted"
 
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/nc-ecourts-playwright"]
+trust_level = "trusted"
+
 [projects."{{ .chezmoi.homeDir }}/Developer/dgitman/nc-family-court-cases"]
 trust_level = "trusted"
 
-[projects."{{ .chezmoi.homeDir }}/Documents/Codex/2026-08-06/do-i-need-the-users-dgitman"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/panda-explosion"]
 trust_level = "trusted"
 
-[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/custody"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/polish-passport"]
 trust_level = "trusted"
 
-[projects."{{ .chezmoi.homeDir }}/Documents/Codex/2026-08-06/ca"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/spinning-dare-wheel"]
 trust_level = "trusted"
-
-[projects."{{ .chezmoi.homeDir }}/Documents/Codex/2026-08-07/install-the-langfuse-ai-skill-from"]
-trust_level = "trusted"
-
-[projects."{{ .chezmoi.homeDir }}/Documents/Codex/2026-08-09/install-the-langfuse-ai-skill-from"]
-trust_level = "trusted"
-
-[plugins."google-calendar@openai-curated"]
-enabled = true
-
-[plugins."gmail@openai-curated"]
-enabled = true
-
-[plugins."slack@openai-curated"]
-enabled = true
-
-[plugins."canva@openai-curated"]
-enabled = true
-
-[plugins."stripe@openai-curated"]
-enabled = true
-
-[plugins."github@openai-curated"]
-enabled = true
-
-[plugins."google-drive@openai-curated"]
-enabled = true
-
-[plugins."documents@openai-primary-runtime"]
-enabled = true
-
-[plugins."spreadsheets@openai-primary-runtime"]
-enabled = true
-
-[plugins."presentations@openai-primary-runtime"]
-enabled = true
-
-[plugins."notion@openai-curated"]
-enabled = true
-
-[plugins."hubspot@openai-curated"]
-enabled = true
-
-[plugins."zoom@openai-curated"]
-enabled = false
-
-[plugins."docusign@openai-curated"]
-enabled = false
-
-[plugins."outlook-email@openai-curated"]
-enabled = true
-
-[plugins."calendly@openai-curated"]
-enabled = true
-
-[plugins."openai-developers@openai-curated"]
-enabled = true
-
-[plugins."computer-use@openai-bundled"]
-enabled = true
-
-[plugins."pdf@openai-primary-runtime"]
-enabled = true
-
-[plugins."chrome@openai-bundled"]
-enabled = true
-
-[plugins."template-creator@openai-primary-runtime"]
-enabled = true
-
-[plugins."visualize@openai-bundled"]
-enabled = true
-
-[plugins."browser@openai-bundled"]
-enabled = true
-
-[plugins."sites@openai-bundled"]
-enabled = true
-
-[plugins."warp@codex-warp"]
-enabled = true
 
 [plugins."adobe-for-creativity@claude-cowork"]
 enabled = true
@@ -165,8 +60,20 @@ enabled = true
 [plugins."anthropic-skills@claude-cowork"]
 enabled = true
 
+[plugins."apify@apify-plugins"]
+enabled = true
+
+[plugins."browser@openai-bundled"]
+enabled = true
+
+[plugins."calendly@openai-curated"]
+enabled = true
+
 [plugins."canva@claude-cowork"]
 enabled = false
+
+[plugins."canva@openai-curated"]
+enabled = true
 
 [plugins."carta-cap-table@claude-cowork"]
 enabled = true
@@ -174,8 +81,20 @@ enabled = true
 [plugins."carta-investors@claude-cowork"]
 enabled = true
 
+[plugins."chrome@openai-bundled"]
+enabled = true
+
+[plugins."computer-use@openai-bundled"]
+enabled = true
+
 [plugins."cowork-plugin-management@claude-cowork"]
 enabled = true
+
+[plugins."documents@openai-primary-runtime"]
+enabled = true
+
+[plugins."docusign@openai-curated"]
+enabled = false
 
 [plugins."dropbox@claude-cowork"]
 enabled = true
@@ -183,17 +102,107 @@ enabled = true
 [plugins."figma@claude-cowork"]
 enabled = true
 
+[plugins."github@openai-curated"]
+enabled = true
+
+[plugins."gmail@openai-curated"]
+enabled = true
+
+[plugins."google-calendar@openai-curated"]
+enabled = true
+
+[plugins."google-drive@openai-curated"]
+enabled = true
+
+[plugins."hubspot@openai-curated"]
+enabled = true
+
 [plugins."learn-with-coursera@claude-cowork"]
+enabled = true
+
+[plugins."notion@openai-curated"]
+enabled = true
+
+[plugins."openai-developers@openai-curated"]
+enabled = true
+
+[plugins."outlook-email@openai-curated"]
+enabled = true
+
+[plugins."pdf@openai-primary-runtime"]
+enabled = true
+
+[plugins."presentations@openai-primary-runtime"]
+enabled = true
+
+[plugins."sites@openai-bundled"]
 enabled = true
 
 [plugins."slack-by-salesforce@claude-cowork"]
 enabled = false
 
+[plugins."slack@openai-curated"]
+enabled = true
+
+[plugins."spreadsheets@openai-primary-runtime"]
+enabled = true
+
+[plugins."stripe@openai-curated"]
+enabled = true
+
+[plugins."template-creator@openai-primary-runtime"]
+enabled = true
+
+[plugins."visualize@openai-bundled"]
+enabled = true
+
+[plugins."warp@codex-warp"]
+enabled = true
+
 [plugins."zapier@claude-cowork"]
 enabled = true
 
-[plugins."apify@apify-plugins"]
+[plugins."zoom@openai-curated"]
+enabled = false
+
+[mcp_servers.1password]
+command = "1password-mcp"
+
+[mcp_servers.bright_data]
 enabled = true
+command = "/opt/homebrew/bin/op"
+args = [
+    "run",
+    "--no-masking",
+    "--",
+    "sh",
+    "-c",
+    "exec npx mcp-remote \"https://mcp.brightdata.com/mcp?token=${BRIGHT_DATA_API_KEY}\"",
+]
+
+[mcp_servers.bright_data.env]
+BRIGHT_DATA_API_KEY = "op://Employee/527zuc4qn45pthp2vmha37bw2m/API Key"
+
+[mcp_servers.cloudflare_bindings]
+url = "https://bindings.mcp.cloudflare.com/mcp"
+
+[mcp_servers.cloudflare_builds]
+url = "https://builds.mcp.cloudflare.com/mcp"
+
+[mcp_servers.cloudflare_docs]
+url = "https://docs.mcp.cloudflare.com/mcp"
+
+[mcp_servers.cloudflare_observability]
+url = "https://observability.mcp.cloudflare.com/mcp"
+
+[mcp_servers.computer-use]
+command = "./Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient"
+args = ["mcp"]
+cwd = "."
+enabled = false
+
+[mcp_servers.make]
+url = "https://mcp.make.com"
 
 [mcp_servers.node_repl]
 args = []
@@ -216,8 +225,15 @@ BROWSER_USE_CODEX_APP_VERSION = "26.803.41515"
 SKY_CUA_SERVICE_PATH = "{{ .chezmoi.homeDir }}/.codex/computer-use/Codex Computer Use.app"
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
 
-[mcp_servers.1password]
-command = "1password-mcp"
+[mcp_servers.postman]
+url = "https://mcp.postman.com/mcp"
+
+[mcp_servers.shopify_dev]
+command = "npx"
+args = ["-y", "@shopify/dev-mcp@latest"]
+
+[mcp_servers.supabase]
+url = "https://mcp.supabase.com/mcp"
 
 [mcp_servers.trakt]
 command = "/opt/homebrew/bin/op"
@@ -239,11 +255,11 @@ approval_mode = "approve"
 [mcp_servers.trakt.tools.search_shows]
 approval_mode = "approve"
 
-[mcp_servers.computer-use]
-command = "./Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient"
-args = ["mcp"]
-cwd = "."
-enabled = false
+[mcp_servers.upwork]
+url = "https://mcp.upwork.com/mcp"
+
+[mcp_servers.webflow]
+url = "https://mcp.webflow.com/mcp"
 
 [mcp_servers.X]
 command = "/opt/homebrew/bin/op"
@@ -254,23 +270,8 @@ enabled = true
 CLIENT_ID = "op://Private/mnubbxp5r4vbrlbyow6nfem5wi/client_id"
 CLIENT_SECRET = "op://Private/mnubbxp5r4vbrlbyow6nfem5wi/client_secret"
 
-[mcp_servers.make]
-url = "https://mcp.make.com"
-
-[mcp_servers.bright_data]
-enabled = true
-command = "/opt/homebrew/bin/op"
-args = [
-    "run",
-    "--no-masking",
-    "--",
-    "sh",
-    "-c",
-    "exec npx mcp-remote \"https://mcp.brightdata.com/mcp?token=${BRIGHT_DATA_API_KEY}\"",
-]
-
-[mcp_servers.bright_data.env]
-BRIGHT_DATA_API_KEY = "op://Employee/527zuc4qn45pthp2vmha37bw2m/API Key"
+[mcp_servers.zapier]
+url = "https://mcp.zapier.com/api/v1/connect"
 
 [desktop]
 ambient-suggestions-enabled = true
@@ -308,6 +309,29 @@ js_repl = false
 memories = true
 chronicle = true
 
+[marketplaces.apify-plugins]
+last_updated = "2026-08-03T17:24:02Z"
+last_revision = "4a6311daabd8103832f57d66496fdba763ed4c3a"
+source_type = "git"
+source = "https://github.com/apify/apify-codex-plugin.git"
+
+[marketplaces.claude-cowork]
+last_updated = "2026-08-09T20:08:55Z"
+source_type = "local"
+source = "{{ .chezmoi.homeDir }}/.codex/plugins/cache/claude-cowork"
+
+[marketplaces.codex-warp]
+last_updated = "2026-08-01T19:43:26Z"
+last_revision = "f11334dc715d48f07d133db6046895cb45f4accb"
+source_type = "git"
+source = "https://github.com/warpdotdev/codex-warp.git"
+
+[marketplaces.make-marketplace]
+last_updated = "2026-08-05T11:41:56Z"
+last_revision = "8ee0fef21b0179f102ff272821bb480ba5c96772"
+source_type = "git"
+source = "https://github.com/integromat/make-skills.git"
+
 [marketplaces.openai-bundled]
 last_updated = "2026-08-10T21:48:54Z"
 source_type = "local"
@@ -317,29 +341,6 @@ source = "{{ .chezmoi.homeDir }}/.codex/.tmp/bundled-marketplaces/openai-bundled
 last_updated = "2026-08-06T13:12:26Z"
 source_type = "local"
 source = "{{ .chezmoi.homeDir }}/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
-
-[marketplaces.codex-warp]
-last_updated = "2026-08-01T19:43:26Z"
-last_revision = "f11334dc715d48f07d133db6046895cb45f4accb"
-source_type = "git"
-source = "https://github.com/warpdotdev/codex-warp.git"
-
-[marketplaces.apify-plugins]
-last_updated = "2026-08-03T17:24:02Z"
-last_revision = "4a6311daabd8103832f57d66496fdba763ed4c3a"
-source_type = "git"
-source = "https://github.com/apify/apify-codex-plugin.git"
-
-[marketplaces.make-marketplace]
-last_updated = "2026-08-05T11:41:56Z"
-last_revision = "8ee0fef21b0179f102ff272821bb480ba5c96772"
-source_type = "git"
-source = "https://github.com/integromat/make-skills.git"
-
-[marketplaces.claude-cowork]
-last_updated = "2026-08-09T20:08:55Z"
-source_type = "local"
-source = "{{ .chezmoi.homeDir }}/.codex/plugins/cache/claude-cowork"
 
 [tui]
 notification_condition = "always"
@@ -412,39 +413,55 @@ approval_mode = "approve"
 approval_mode = "approve"
 
 [[skills.config]]
-name = "zoom:source-command-zoom-integration-doctor"
+name = "zoom:source-command-build-zoom-apps-sdk-app"
 enabled = false
 
 [[skills.config]]
-name = "zoom:source-command-setup-zoom-websockets"
+name = "zoom:source-command-build-zoom-bot"
 enabled = false
 
 [[skills.config]]
-name = "zoom:source-command-setup-zoom-webhooks"
+name = "zoom:source-command-build-zoom-cobrowse-app"
 enabled = false
 
 [[skills.config]]
-name = "zoom:source-command-setup-zoom-oauth"
+name = "zoom:source-command-build-zoom-contact-center-app"
 enabled = false
 
 [[skills.config]]
-name = "zoom:source-command-plan-zoom-product"
+name = "zoom:source-command-build-zoom-meeting-app"
 enabled = false
 
 [[skills.config]]
-name = "zoom:source-command-plan-zoom-integration"
+name = "zoom:source-command-build-zoom-meeting-sdk-app"
 enabled = false
 
 [[skills.config]]
-name = "zoom:source-command-debug-zoom-webhook"
+name = "zoom:source-command-build-zoom-phone-integration"
 enabled = false
 
 [[skills.config]]
-name = "zoom:source-command-debug-zoom-auth"
+name = "zoom:source-command-build-zoom-probe-flow"
 enabled = false
 
 [[skills.config]]
-name = "zoom:source-command-debug-zoom"
+name = "zoom:source-command-build-zoom-rest-api-app"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-build-zoom-rivet-app"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-build-zoom-rtms-app"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-build-zoom-scribe-app"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-build-zoom-team-chat-app"
 enabled = false
 
 [[skills.config]]
@@ -460,82 +477,51 @@ name = "zoom:source-command-build-zoom-virtual-agent"
 enabled = false
 
 [[skills.config]]
-name = "zoom:source-command-build-zoom-team-chat-app"
+name = "zoom:source-command-debug-zoom"
 enabled = false
 
 [[skills.config]]
-name = "zoom:source-command-build-zoom-scribe-app"
+name = "zoom:source-command-debug-zoom-auth"
 enabled = false
 
 [[skills.config]]
-name = "zoom:source-command-build-zoom-rtms-app"
+name = "zoom:source-command-debug-zoom-webhook"
 enabled = false
 
 [[skills.config]]
-name = "zoom:source-command-build-zoom-rivet-app"
+name = "zoom:source-command-plan-zoom-integration"
 enabled = false
 
 [[skills.config]]
-name = "zoom:source-command-build-zoom-probe-flow"
+name = "zoom:source-command-plan-zoom-product"
 enabled = false
 
 [[skills.config]]
-name = "zoom:source-command-build-zoom-rest-api-app"
+name = "zoom:source-command-setup-zoom-oauth"
 enabled = false
 
 [[skills.config]]
-name = "zoom:source-command-build-zoom-phone-integration"
+name = "zoom:source-command-setup-zoom-webhooks"
 enabled = false
 
 [[skills.config]]
-name = "zoom:source-command-build-zoom-meeting-sdk-app"
+name = "zoom:source-command-setup-zoom-websockets"
 enabled = false
 
 [[skills.config]]
-name = "zoom:source-command-build-zoom-meeting-app"
-enabled = false
-
-[[skills.config]]
-name = "zoom:source-command-build-zoom-contact-center-app"
-enabled = false
-
-[[skills.config]]
-name = "zoom:source-command-build-zoom-cobrowse-app"
-enabled = false
-
-[[skills.config]]
-name = "zoom:source-command-build-zoom-bot"
-enabled = false
-
-[[skills.config]]
-name = "zoom:source-command-build-zoom-apps-sdk-app"
+name = "zoom:source-command-zoom-integration-doctor"
 enabled = false
 
 [hooks.state]
 
-[hooks.state."warp@codex-warp:hooks/hooks.json:permission_request:0:0"]
-trusted_hash = "sha256:a5f8b0ebc36bb459328ffeb5f62ff146dfb74e3d88d4c369cf0280f7b354e388"
-
-[hooks.state."warp@codex-warp:hooks/hooks.json:post_tool_use:0:0"]
-trusted_hash = "sha256:be77e14a9094af2f521258e2bff1f5d777249bc50ce8eb0574a85bea9bd79e7f"
-
-[hooks.state."warp@codex-warp:hooks/hooks.json:session_start:0:0"]
-trusted_hash = "sha256:91587043033e7831d4d154fdef2e495f3113c3552a4529d8013f5546ffb2c140"
-
-[hooks.state."warp@codex-warp:hooks/hooks.json:user_prompt_submit:0:0"]
-trusted_hash = "sha256:2480a7db650a36e05d8005aabca58b9d106f3b7a46f7094d7747d0d77773f75c"
-
-[hooks.state."warp@codex-warp:hooks/hooks.json:stop:0:0"]
-trusted_hash = "sha256:6a3b3af655efa426e920425de93a830fe25b8b5a62ef7b9a699e7ff40d9ef351"
+[hooks.state."carta-cap-table@claude-cowork:hooks/hooks.json:post_tool_use:0:0"]
+trusted_hash = "sha256:6d9d1f9d0251ecf396d9637c8b913bd52b3704c645758d74330c6e92e034bbd0"
 
 [hooks.state."carta-cap-table@claude-cowork:hooks/hooks.json:pre_tool_use:0:0"]
 trusted_hash = "sha256:82d712709d3c2f628762a6b3258c4365f1099520c2b798b0c6e96b18d623e8dc"
 
 [hooks.state."carta-cap-table@claude-cowork:hooks/hooks.json:pre_tool_use:1:0"]
 trusted_hash = "sha256:4c845c6d50d498fc2694b2fabdc1a81e10e1df51f5cea066aa805a4a084d1961"
-
-[hooks.state."carta-cap-table@claude-cowork:hooks/hooks.json:post_tool_use:0:0"]
-trusted_hash = "sha256:6d9d1f9d0251ecf396d9637c8b913bd52b3704c645758d74330c6e92e034bbd0"
 
 [hooks.state."carta-cap-table@claude-cowork:hooks/hooks.json:session_start:0:0"]
 trusted_hash = "sha256:1cccb124fb0a68dfaf085782411f717aeed170280cd128f60c6d1de37a915086"
@@ -549,14 +535,14 @@ trusted_hash = "sha256:e113d67ca64c6d9ce8a654c049ebb03d48d2e7fdfaf0d54f121b1b505
 [hooks.state."carta-cap-table@claude-cowork:hooks/hooks.json:user_prompt_submit:0:0"]
 trusted_hash = "sha256:9605dd15c9d16bf33564d2239c80f34602e617ecc857808dae9c2e0a5bfbfd68"
 
+[hooks.state."carta-investors@claude-cowork:hooks/hooks.json:post_tool_use:0:0"]
+trusted_hash = "sha256:ee6a129f6e06aff2c7ba322edd8f2981e9e297e61d0f20208d1a42fac0d1ce71"
+
 [hooks.state."carta-investors@claude-cowork:hooks/hooks.json:pre_tool_use:0:0"]
 trusted_hash = "sha256:82d712709d3c2f628762a6b3258c4365f1099520c2b798b0c6e96b18d623e8dc"
 
 [hooks.state."carta-investors@claude-cowork:hooks/hooks.json:pre_tool_use:1:0"]
 trusted_hash = "sha256:4c845c6d50d498fc2694b2fabdc1a81e10e1df51f5cea066aa805a4a084d1961"
-
-[hooks.state."carta-investors@claude-cowork:hooks/hooks.json:post_tool_use:0:0"]
-trusted_hash = "sha256:ee6a129f6e06aff2c7ba322edd8f2981e9e297e61d0f20208d1a42fac0d1ce71"
 
 [hooks.state."carta-investors@claude-cowork:hooks/hooks.json:session_start:0:0"]
 trusted_hash = "sha256:1cccb124fb0a68dfaf085782411f717aeed170280cd128f60c6d1de37a915086"
@@ -570,34 +556,18 @@ trusted_hash = "sha256:e113d67ca64c6d9ce8a654c049ebb03d48d2e7fdfaf0d54f121b1b505
 [hooks.state."carta-investors@claude-cowork:hooks/hooks.json:user_prompt_submit:0:0"]
 trusted_hash = "sha256:9605dd15c9d16bf33564d2239c80f34602e617ecc857808dae9c2e0a5bfbfd68"
 
-[mcp_servers.supabase]
-url = "https://mcp.supabase.com/mcp"
+[hooks.state."warp@codex-warp:hooks/hooks.json:permission_request:0:0"]
+trusted_hash = "sha256:a5f8b0ebc36bb459328ffeb5f62ff146dfb74e3d88d4c369cf0280f7b354e388"
 
-[mcp_servers.zapier]
-url = "https://mcp.zapier.com/api/v1/connect"
+[hooks.state."warp@codex-warp:hooks/hooks.json:post_tool_use:0:0"]
+trusted_hash = "sha256:be77e14a9094af2f521258e2bff1f5d777249bc50ce8eb0574a85bea9bd79e7f"
 
-[mcp_servers.cloudflare_docs]
-url = "https://docs.mcp.cloudflare.com/mcp"
+[hooks.state."warp@codex-warp:hooks/hooks.json:session_start:0:0"]
+trusted_hash = "sha256:91587043033e7831d4d154fdef2e495f3113c3552a4529d8013f5546ffb2c140"
 
-[mcp_servers.cloudflare_bindings]
-url = "https://bindings.mcp.cloudflare.com/mcp"
+[hooks.state."warp@codex-warp:hooks/hooks.json:stop:0:0"]
+trusted_hash = "sha256:6a3b3af655efa426e920425de93a830fe25b8b5a62ef7b9a699e7ff40d9ef351"
 
-[mcp_servers.cloudflare_builds]
-url = "https://builds.mcp.cloudflare.com/mcp"
-
-[mcp_servers.cloudflare_observability]
-url = "https://observability.mcp.cloudflare.com/mcp"
-
-[mcp_servers.postman]
-url = "https://mcp.postman.com/mcp"
-
-[mcp_servers.webflow]
-url = "https://mcp.webflow.com/mcp"
-
-[mcp_servers.upwork]
-url = "https://mcp.upwork.com/mcp"
-
-[mcp_servers.shopify_dev]
-command = "npx"
-args = ["-y", "@shopify/dev-mcp@latest"]
+[hooks.state."warp@codex-warp:hooks/hooks.json:user_prompt_submit:0:0"]
+trusted_hash = "sha256:2480a7db650a36e05d8005aabca58b9d106f3b7a46f7094d7747d0d77773f75c"
 {{ "\n" -}}

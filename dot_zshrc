@@ -56,12 +56,13 @@ fi
 # ALIASES & PLUGINS
 # ==============================================================================
 
-# 1Password CLI plugin
-[[ -r "$HOME/.config/op/plugins.sh" ]] && source "$HOME/.config/op/plugins.sh"
-
 # Navigation shortcuts
 alias d="cd ~/Developer"
 alias dotfiles="cd ~/.local/share/chezmoi"
+alias fix-fakechat="lsof -ti :8787 | xargs kill -9 2>/dev/null && echo 'Port 8787 cleared!'"
+
+# 1Password CLI plugin
+[[ -r "$HOME/.config/op/plugins.sh" ]] && source "$HOME/.config/op/plugins.sh"
 
 # Homebrew shortcuts
 alias brewdump="brew bundle dump --file=~/.Brewfile --force"

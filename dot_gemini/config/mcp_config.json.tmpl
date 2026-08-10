@@ -1,8 +1,43 @@
 {
   "mcpServers": {
-    "bigquery": {
-      "authProviderType": "google_credentials",
-      "serverUrl": "https://bigquery.googleapis.com/mcp"
+    "1password": {
+      "command": "1password-mcp",
+      "args": []
+    },
+    "apify": {
+      "serverUrl": "https://mcp.apify.com"
+    },
+    "Bright Data": {
+      "command": "/opt/homebrew/bin/op",
+      "args": [
+        "run",
+        "--no-masking",
+        "--",
+        "sh",
+        "-c",
+        "exec npx mcp-remote \"https://mcp.brightdata.com/mcp?token=${BRIGHT_DATA_API_KEY}\""
+      ],
+      "env": {
+        "BRIGHT_DATA_API_KEY": "op://Employee/527zuc4qn45pthp2vmha37bw2m/API Key"
+      }
+    },
+    "Canva": {
+      "serverUrl": "https://mcp.canva.com/mcp"
+    },
+    "Cloudflare Bindings": {
+      "url": "https://bindings.mcp.cloudflare.com/mcp"
+    },
+    "Cloudflare Builds": {
+      "url": "https://builds.mcp.cloudflare.com/mcp"
+    },
+    "Cloudflare Docs": {
+      "url": "https://docs.mcp.cloudflare.com/mcp"
+    },
+    "Cloudflare Observability": {
+      "url": "https://observability.mcp.cloudflare.com/mcp"
+    },
+    "composio": {
+      "serverUrl": "https://connect.composio.dev/mcp"
     },
     "datacloud_alloydb_remote": {
       "authProviderType": "google_credentials",
@@ -52,12 +87,57 @@
       "oauth": {},
       "serverUrl": "https://spanner.googleapis.com/mcp"
     },
+    "decilehub": {
+      "command": "/opt/homebrew/bin/op",
+      "args": [
+        "run",
+        "--no-masking",
+        "--",
+        "npx",
+        "-y",
+        "mcp-remote",
+        "https://decilehub.com/mcp",
+        "--header",
+        "X-Decile-API-Key:${DECILE_HUB_API_KEY}"
+      ],
+      "env": {
+        "DECILE_HUB_API_KEY": "op://Employee/nqqsk2hwmnjvdruchd3yhiqcde/API Key"
+      }
+    },
+    "Figma": {
+      "serverUrl": "https://mcp.figma.com/mcp"
+    },
+    "GitHub": {
+      "serverUrl": "https://api.githubcopilot.com/mcp/"
+    },
+    "make": {
+      "serverUrl": "https://mcp.make.com"
+    },
     "notebooks": {
       "command": "node",
       "args": [
         "{{ .chezmoi.homeDir }}/.antigravity-ide/extensions/googlecloudtools.datacloud-0.6.1-universal/mcp_servers/cli/mcp_proxy_bundle.js",
         "notebooks-antigravityide"
       ]
+    },
+    "Notion": {
+      "serverUrl": "https://mcp.notion.com/mcp"
+    },
+    "Postman": {
+      "url": "https://mcp.postman.com/mcp"
+    },
+    "Shopify Dev": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@shopify/dev-mcp@latest"
+      ]
+    },
+    "Slack": {
+      "serverUrl": "https://mcp.slack.com/mcp"
+    },
+    "Stripe": {
+      "url": "https://mcp.stripe.com"
     },
     "supabase": {
       "serverUrl": "https://mcp.supabase.com/mcp"
@@ -76,9 +156,12 @@
         "trakt-mcp"
       ],
       "env": {
-        "TRAKT_CLIENT_ID": "op://Private/Trakt/TRAKT_CLIENT_ID",
-        "TRAKT_CLIENT_SECRET": "op://Private/Trakt/TRAKT_CLIENT_SECRET"
+        "TRAKT_CLIENT_ID": "op://Private/t7aiboqrptwqpqk6fe5em4ag7u/client_id",
+        "TRAKT_CLIENT_SECRET": "op://Private/t7aiboqrptwqpqk6fe5em4ag7u/client_secret"
       }
+    },
+    "Upwork": {
+      "url": "https://mcp.upwork.com/mcp"
     },
     "visualization": {
       "command": "node",
@@ -86,6 +169,15 @@
         "{{ .chezmoi.homeDir }}/.antigravity-ide/extensions/googlecloudtools.datacloud-0.6.1-universal/mcp_servers/cli/mcp_proxy_bundle.js",
         "visualization-antigravityide"
       ]
+    },
+    "Webflow": {
+      "url": "https://mcp.webflow.com/mcp"
+    },
+    "Workspace MCP - Business": {
+      "serverUrl": "https://private.workspacemcp.com/mcp?{{ .workEmail }}"
+    },
+    "Workspace MCP - Personal": {
+      "serverUrl": "https://private.workspacemcp.com/mcp?{{ .personalEmail }}"
     },
     "X": {
       "command": "/opt/homebrew/bin/op",
@@ -100,9 +192,12 @@
         "https://api.x.com/mcp"
       ],
       "env": {
-        "CLIENT_ID": "op://Private/X API/CLIENT_ID",
-        "CLIENT_SECRET": "op://Private/X API/CLIENT_SECRET"
+        "CLIENT_ID": "op://Private/mnubbxp5r4vbrlbyow6nfem5wi/client_id",
+        "CLIENT_SECRET": "op://Private/mnubbxp5r4vbrlbyow6nfem5wi/client_secret"
       }
+    },
+    "Zapier": {
+      "serverUrl": "https://mcp.zapier.com/api/v1/connect"
     }
   }
 }

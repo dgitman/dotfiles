@@ -5,5 +5,113 @@
     }
   },
   "google.cloud.project": "claude-500116",
-  "google.cloud.region": "us-east1"
+  "google.cloud.region": "us-east1",
+  "mcpServers": {
+    "1password": {
+      "command": "1password-mcp",
+      "args": []
+    },
+    "Bright Data": {
+      "command": "/opt/homebrew/bin/op",
+      "args": [
+        "run",
+        "--no-masking",
+        "--",
+        "sh",
+        "-c",
+        "exec npx mcp-remote \"https://mcp.brightdata.com/mcp?token=${BRIGHT_DATA_API_KEY}\""
+      ],
+      "env": {
+        "BRIGHT_DATA_API_KEY": "op://Employee/527zuc4qn45pthp2vmha37bw2m/API Key"
+      }
+    },
+    "Workspace MCP - Business": {
+      "httpUrl": "https://private.workspacemcp.com/mcp?david@because.ventures"
+    },
+    "Workspace MCP - Personal": {
+      "httpUrl": "https://private.workspacemcp.com/mcp?davidmarkgitman@gmail.com"
+    },
+    "X": {
+      "command": "/opt/homebrew/bin/op",
+      "args": [
+        "run",
+        "--no-masking",
+        "--",
+        "npx",
+        "-y",
+        "@xdevplatform/xurl",
+        "mcp",
+        "https://api.x.com/mcp"
+      ],
+      "env": {
+        "CLIENT_ID": "op://Private/mnubbxp5r4vbrlbyow6nfem5wi/client_id",
+        "CLIENT_SECRET": "op://Private/mnubbxp5r4vbrlbyow6nfem5wi/client_secret"
+      }
+    },
+    "apify": {
+      "httpUrl": "https://mcp.apify.com"
+    },
+    "composio": {
+      "httpUrl": "https://connect.composio.dev/mcp"
+    },
+    "decilehub": {
+      "command": "/opt/homebrew/bin/op",
+      "args": [
+        "run",
+        "--no-masking",
+        "--",
+        "npx",
+        "-y",
+        "mcp-remote",
+        "https://decilehub.com/mcp",
+        "--header",
+        "X-Decile-API-Key:${DECILE_HUB_API_KEY}"
+      ],
+      "env": {
+        "DECILE_HUB_API_KEY": "op://Employee/nqqsk2hwmnjvdruchd3yhiqcde/API Key"
+      }
+    },
+    "make": {
+      "httpUrl": "https://mcp.make.com"
+    },
+    "supabase": {
+      "httpUrl": "https://mcp.supabase.com/mcp"
+    },
+    "trakt": {
+      "command": "/opt/homebrew/bin/op",
+      "args": [
+        "run",
+        "--no-masking",
+        "--",
+        "uvx",
+        "--python",
+        "3.12",
+        "--from",
+        "git+https://github.com/wwiens/trakt_mcpserver",
+        "trakt-mcp"
+      ],
+      "env": {
+        "TRAKT_CLIENT_ID": "op://Private/t7aiboqrptwqpqk6fe5em4ag7u/client_id",
+        "TRAKT_CLIENT_SECRET": "op://Private/t7aiboqrptwqpqk6fe5em4ag7u/client_secret"
+      }
+    },
+    "Figma": {
+      "httpUrl": "https://mcp.figma.com/mcp"
+    },
+    "GitHub": {
+      "httpUrl": "https://api.githubcopilot.com/mcp/"
+    },
+    "Notion": {
+      "httpUrl": "https://mcp.notion.com/mcp"
+    },
+    "Canva": {
+      "httpUrl": "https://mcp.canva.com/mcp"
+    },
+    "Slack": {
+      "httpUrl": "https://mcp.slack.com/mcp"
+    },
+    "Zapier": {
+      "httpUrl": "https://mcp.zapier.com/api/v1/connect"
+    }
+  }
 }

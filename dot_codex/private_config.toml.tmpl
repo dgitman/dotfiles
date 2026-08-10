@@ -1,28 +1,84 @@
 model = "gpt-5.6-sol"
-model_reasoning_effort = "low"
+model_reasoning_effort = "high"
 approval_policy = "on-request"
 sandbox_mode = "danger-full-access"
-notify = ["{{ .chezmoi.homeDir }}/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+notify = [
+    "{{ .chezmoi.homeDir }}/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient",
+    "turn-ended",
+]
 network_access = true
-service_tier = "priority"
-
-# Machine-specific [projects."..."] trust stanzas are intentionally omitted.
-# Codex repopulates them as you trust each project. Only the root fallback is
-# tracked so a fresh machine starts with a sane default.
+service_tier = "default"
 
 [projects."{{ .chezmoi.homeDir }}/.local/share/chezmoi"]
-trust_level = "trusted"
-
-[projects."{{ .chezmoi.homeDir }}/Documents/Trakt Google Search and Google TV"]
-trust_level = "trusted"
-
-[projects."{{ .chezmoi.homeDir }}/Documents/Divorce"]
 trust_level = "trusted"
 
 [projects."{{ .chezmoi.homeDir }}/Developer"]
 trust_level = "trusted"
 
-[projects."{{ .chezmoi.homeDir }}/Documents/Codex/2026-07-21/webflow-plugin-app-6a0783a98c4c8191841404d786d4a4b9-openai-curated"]
+[projects."{{ .chezmoi.homeDir }}/Documents/Codex/2026-08-03/do"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Documents/Codex/2026-08-03/do-both-mcp-servers-trakt-and"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Documents/Codex/2026-08-03/implement-the-antiawswaftask-token-workflow-inject"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/nc-ecourts-playwright"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/nc-court"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/spinning-dare-wheel"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/panda-explosion"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Documents/Codex/2026-08-04/panda-explosion-sites-project-appgprj-6a6524b595208191898fddb713b2664a"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/gitman-antique"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/gitmanantique.com"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Developer/laura-email-sync"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/gitman-messages-sync"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Documents/Codex/2026-08-06/https-secure-e-konsulat-gov-pl"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/laura-email-sync"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/polish-passport"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/nc-ecourts-hearings"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/nc-family-court-cases"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Documents/Codex/2026-08-06/do-i-need-the-users-dgitman"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/custody"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Documents/Codex/2026-08-06/ca"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Documents/Codex/2026-08-07/install-the-langfuse-ai-skill-from"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Documents/Codex/2026-08-09/install-the-langfuse-ai-skill-from"]
 trust_level = "trusted"
 
 [plugins."google-calendar@openai-curated"]
@@ -62,10 +118,10 @@ enabled = true
 enabled = true
 
 [plugins."zoom@openai-curated"]
-enabled = true
+enabled = false
 
 [plugins."docusign@openai-curated"]
-enabled = true
+enabled = false
 
 [plugins."outlook-email@openai-curated"]
 enabled = true
@@ -91,39 +147,53 @@ enabled = true
 [plugins."visualize@openai-bundled"]
 enabled = true
 
-[plugins."sites@openai-bundled"]
-enabled = true
-
 [plugins."browser@openai-bundled"]
 enabled = true
 
-[mcp_servers.playwright]
-command = "npx"
-args = ["-y", "@playwright/mcp@latest", "--headless"]
+[plugins."sites@openai-bundled"]
+enabled = true
 
-[mcp_servers.playwright.tools.browser_resize]
-approval_mode = "approve"
+[plugins."warp@codex-warp"]
+enabled = true
 
-[mcp_servers.playwright.tools.browser_navigate]
-approval_mode = "approve"
+[plugins."adobe-for-creativity@claude-cowork"]
+enabled = true
 
-[mcp_servers.playwright.tools.browser_evaluate]
-approval_mode = "approve"
+[plugins."airtable@claude-cowork"]
+enabled = true
 
-[mcp_servers.playwright.tools.browser_fill_form]
-approval_mode = "approve"
+[plugins."anthropic-skills@claude-cowork"]
+enabled = true
 
-[mcp_servers.playwright.tools.browser_click]
-approval_mode = "approve"
+[plugins."canva@claude-cowork"]
+enabled = false
 
-[mcp_servers.playwright.tools.browser_tabs]
-approval_mode = "approve"
+[plugins."carta-cap-table@claude-cowork"]
+enabled = true
 
-[mcp_servers.playwright.tools.browser_run_code_unsafe]
-approval_mode = "approve"
+[plugins."carta-investors@claude-cowork"]
+enabled = true
 
-[mcp_servers.playwright.tools.browser_close]
-approval_mode = "approve"
+[plugins."cowork-plugin-management@claude-cowork"]
+enabled = true
+
+[plugins."dropbox@claude-cowork"]
+enabled = true
+
+[plugins."figma@claude-cowork"]
+enabled = true
+
+[plugins."learn-with-coursera@claude-cowork"]
+enabled = true
+
+[plugins."slack-by-salesforce@claude-cowork"]
+enabled = false
+
+[plugins."zapier@claude-cowork"]
+enabled = true
+
+[plugins."apify@apify-plugins"]
+enabled = true
 
 [mcp_servers.node_repl]
 args = []
@@ -134,48 +204,33 @@ startup_timeout_sec = 120
 NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
 NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
 NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
-NODE_REPL_TRUSTED_CODE_PATHS = "{{ .chezmoi.homeDir }}/.codex"
+NODE_REPL_TRUSTED_CODE_PATHS = "{{ .chezmoi.homeDir }}/.codex:/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
 CODEX_HOME = "{{ .chezmoi.homeDir }}/.codex"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "0b03c76c1d0f3d4c81f89f58ff210ae6709fd1204d2c5a4fdffa0a7bdb961b96,6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "323bc3e687e17d7e377238d9f4c69111c4d0e6219103b6316d8c52082489533b"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = "Control the in-app browser in conjunction with the Browser Plugin."
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = "Control the Chrome browser in conjunction with the Chrome Plugin. Prefer this method of controlling Chrome over alternatives (such as Computer Use) unless the user explicitly mentions an alternative."
 NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = "Control desktop apps on macOS through Computer Use."
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.715.61943"
-SKY_CUA_SERVICE_PATH = "{{ .chezmoi.homeDir }}/.codex/plugins/cache/openai-bundled/computer-use/1.0.1000451/Codex Computer Use.app"
+BROWSER_USE_CODEX_APP_VERSION = "26.803.41515"
+SKY_CUA_SERVICE_PATH = "{{ .chezmoi.homeDir }}/.codex/computer-use/Codex Computer Use.app"
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex"
 
 [mcp_servers.1password]
-enabled = true
-command = "/Applications/1Password.app/Contents/MacOS/onepassword-mcp"
-
-[mcp_servers.1password.tools.authenticate]
-approval_mode = "approve"
-
-[mcp_servers.1password.tools.create_local_env_file]
-approval_mode = "approve"
+command = "1password-mcp"
 
 [mcp_servers.trakt]
 command = "/opt/homebrew/bin/op"
 args = ["run", "--no-masking", "--", "uvx", "--python", "3.12", "--from", "git+https://github.com/wwiens/trakt_mcpserver", "trakt-mcp"]
 
 [mcp_servers.trakt.env]
-TRAKT_CLIENT_ID = "op://Private/Trakt/TRAKT_CLIENT_ID"
-TRAKT_CLIENT_SECRET = "op://Private/Trakt/TRAKT_CLIENT_SECRET"
-
-[mcp_servers.X]
-command = "/opt/homebrew/bin/op"
-args = ["run", "--no-masking", "--", "npx", "-y", "@xdevplatform/xurl", "mcp", "https://api.x.com/mcp"]
-
-[mcp_servers.X.env]
-CLIENT_ID = "op://Private/X API/CLIENT_ID"
-CLIENT_SECRET = "op://Private/X API/CLIENT_SECRET"
-
-[mcp_servers.trakt.tools.fetch_user_watchlist]
-approval_mode = "approve"
+TRAKT_CLIENT_ID = "op://Private/t7aiboqrptwqpqk6fe5em4ag7u/client_id"
+TRAKT_CLIENT_SECRET = "op://Private/t7aiboqrptwqpqk6fe5em4ag7u/client_secret"
 
 [mcp_servers.trakt.tools.add_user_watchlist]
+approval_mode = "approve"
+
+[mcp_servers.trakt.tools.fetch_user_watchlist]
 approval_mode = "approve"
 
 [mcp_servers.trakt.tools.search_movies]
@@ -184,37 +239,63 @@ approval_mode = "approve"
 [mcp_servers.trakt.tools.search_shows]
 approval_mode = "approve"
 
-[mcp_servers.webflow]
-enabled = true
-url = "https://mcp.webflow.com/mcp"
-
 [mcp_servers.computer-use]
 command = "./Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient"
 args = ["mcp"]
 cwd = "."
 enabled = false
 
-[mcp_servers.workspace_mcp_-_personal]
+[mcp_servers.X]
+command = "/opt/homebrew/bin/op"
+args = ["run", "--no-masking", "--", "npx", "-y", "@xdevplatform/xurl", "mcp", "https://api.x.com/mcp"]
 enabled = true
-url = "https://private.workspacemcp.com/mcp?{{ .personalEmail }}"
 
-[mcp_servers.workspace_mcp_-_business]
+[mcp_servers.X.env]
+CLIENT_ID = "op://Private/mnubbxp5r4vbrlbyow6nfem5wi/client_id"
+CLIENT_SECRET = "op://Private/mnubbxp5r4vbrlbyow6nfem5wi/client_secret"
+
+[mcp_servers.make]
+url = "https://mcp.make.com"
+
+[mcp_servers.bright_data]
 enabled = true
-url = "https://private.workspacemcp.com/mcp?{{ .workEmail }}"
+command = "/opt/homebrew/bin/op"
+args = [
+    "run",
+    "--no-masking",
+    "--",
+    "sh",
+    "-c",
+    "exec npx mcp-remote \"https://mcp.brightdata.com/mcp?token=${BRIGHT_DATA_API_KEY}\"",
+]
+
+[mcp_servers.bright_data.env]
+BRIGHT_DATA_API_KEY = "op://Employee/527zuc4qn45pthp2vmha37bw2m/API Key"
 
 [desktop]
 ambient-suggestions-enabled = true
 sansFontSize = 14
 codeFontSize = 13
-mac-menu-bar-enabled = false
+mac-menu-bar-enabled = true
 preventSleepWhileRunning = true
 keepRemoteControlAwakeWhilePluggedIn = true
 git-show-sidebar-pr-icons = false
-conversationDetailMode = "STEPS_PROSE"
+conversationDetailMode = "STEPS_COMMANDS"
 browser-annotation-screenshots-mode = "always"
 followUpQueueMode = "queue"
 dock-icon-preference = "app-default"
 open-link-in-target-preference = "in-app-browser"
+realtimeVoiceScreenContextEnabled = true
+enabled-reasoning-efforts = [
+    "low",
+    "medium",
+    "high",
+    "xhigh",
+    "ultra",
+    "max",
+]
+show-context-window-usage = true
+hotkey-window-projectless-default-enabled = false
 
 [desktop.open-in-target-preferences]
 global = "fileManager"
@@ -225,16 +306,43 @@ global = "fileManager"
 [features]
 js_repl = false
 memories = true
+chronicle = true
 
 [marketplaces.openai-bundled]
-last_updated = "2026-07-21T17:05:11Z"
+last_updated = "2026-08-10T21:48:54Z"
 source_type = "local"
 source = "{{ .chezmoi.homeDir }}/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
-last_updated = "2026-07-19T22:54:02Z"
+last_updated = "2026-08-06T13:12:26Z"
 source_type = "local"
 source = "{{ .chezmoi.homeDir }}/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+
+[marketplaces.codex-warp]
+last_updated = "2026-08-01T19:43:26Z"
+last_revision = "f11334dc715d48f07d133db6046895cb45f4accb"
+source_type = "git"
+source = "https://github.com/warpdotdev/codex-warp.git"
+
+[marketplaces.apify-plugins]
+last_updated = "2026-08-03T17:24:02Z"
+last_revision = "4a6311daabd8103832f57d66496fdba763ed4c3a"
+source_type = "git"
+source = "https://github.com/apify/apify-codex-plugin.git"
+
+[marketplaces.make-marketplace]
+last_updated = "2026-08-05T11:41:56Z"
+last_revision = "8ee0fef21b0179f102ff272821bb480ba5c96772"
+source_type = "git"
+source = "https://github.com/integromat/make-skills.git"
+
+[marketplaces.claude-cowork]
+last_updated = "2026-08-09T20:08:55Z"
+source_type = "local"
+source = "{{ .chezmoi.homeDir }}/.codex/plugins/cache/claude-cowork"
+
+[tui]
+notification_condition = "always"
 
 [tui.model_availability_nux]
 "gpt-5.5" = 4
@@ -246,5 +354,250 @@ use_memories = true
 
 [shell_environment_policy.set]
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab"
-NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "0b03c76c1d0f3d4c81f89f58ff210ae6709fd1204d2c5a4fdffa0a7bdb961b96,6d25aa7656feac858f3a3bdaea5bcbab0dbfd426c9de8e6931ce90c399ee8e4f"
-NODE_REPL_TRUSTED_CODE_PATHS = "{{ .chezmoi.homeDir }}/.codex"
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = "323bc3e687e17d7e377238d9f4c69111c4d0e6219103b6316d8c52082489533b"
+NODE_REPL_TRUSTED_CODE_PATHS = "{{ .chezmoi.homeDir }}/.codex:/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
+
+[apps.connector_20205bf7d4e99a89d7154bb849718324.tools."sites.update_site_access"]
+approval_mode = "approve"
+
+[apps.connector_20205bf7d4e99a89d7154bb849718324.tools."sites.deploy_site_version"]
+approval_mode = "approve"
+
+[apps.connector_20205bf7d4e99a89d7154bb849718324.tools."sites.add_custom_domain"]
+approval_mode = "approve"
+
+[apps.connector_20205bf7d4e99a89d7154bb849718324.tools."sites.remove_custom_domain"]
+approval_mode = "approve"
+
+[apps.connector_20205bf7d4e99a89d7154bb849718324.tools."sites.refresh_custom_domain_status"]
+approval_mode = "approve"
+
+[apps.connector_openai_plugin_management.tools."plugin_management.uninstall_app"]
+approval_mode = "approve"
+
+[apps.connector_2128aebfecb84f64a069897515042a44.tools."gmail.send_email"]
+approval_mode = "approve"
+
+[apps.asdk_app_6a63e69e18348191bd997043d7921588.tools."composio.COMPOSIO_MULTI_EXECUTE_TOOL"]
+approval_mode = "approve"
+
+[apps.asdk_app_6a63e69e18348191bd997043d7921588.tools."composio.COMPOSIO_REMOTE_WORKBENCH"]
+approval_mode = "approve"
+
+[apps.asdk_app_6a63e69e18348191bd997043d7921588.tools."composio.COMPOSIO_REMOTE_BASH_TOOL"]
+approval_mode = "approve"
+
+[apps.connector_5f3c8c41a1e54ad7a76272c89e2554fa.tools."google_drive.upload_file"]
+approval_mode = "approve"
+
+[apps.connector_5f3c8c41a1e54ad7a76272c89e2554fa.tools."google_drive.batch_update_spreadsheet"]
+approval_mode = "approve"
+
+[apps.connector_5f3c8c41a1e54ad7a76272c89e2554fa.tools."google_drive.copy_file"]
+approval_mode = "approve"
+
+[apps.connector_5f3c8c41a1e54ad7a76272c89e2554fa.tools."google_drive.batch_update_document"]
+approval_mode = "approve"
+
+[apps.connector_5f3c8c41a1e54ad7a76272c89e2554fa.tools."google_drive.update_file"]
+approval_mode = "approve"
+
+[apps.connector_5f3c8c41a1e54ad7a76272c89e2554fa.tools."google_drive.create_folder"]
+approval_mode = "approve"
+
+[apps.connector_5f3c8c41a1e54ad7a76272c89e2554fa.tools."google_drive.delete_file"]
+approval_mode = "approve"
+
+[apps.asdk_app_6a6e46240d4c81918af83b5c27a6d545.tools."decile_hub.check_api_key_status"]
+approval_mode = "approve"
+
+[[skills.config]]
+name = "zoom:source-command-zoom-integration-doctor"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-setup-zoom-websockets"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-setup-zoom-webhooks"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-setup-zoom-oauth"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-plan-zoom-product"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-plan-zoom-integration"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-debug-zoom-webhook"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-debug-zoom-auth"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-debug-zoom"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-build-zoom-ui-toolkit-app"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-build-zoom-video-sdk-app"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-build-zoom-virtual-agent"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-build-zoom-team-chat-app"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-build-zoom-scribe-app"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-build-zoom-rtms-app"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-build-zoom-rivet-app"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-build-zoom-probe-flow"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-build-zoom-rest-api-app"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-build-zoom-phone-integration"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-build-zoom-meeting-sdk-app"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-build-zoom-meeting-app"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-build-zoom-contact-center-app"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-build-zoom-cobrowse-app"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-build-zoom-bot"
+enabled = false
+
+[[skills.config]]
+name = "zoom:source-command-build-zoom-apps-sdk-app"
+enabled = false
+
+[hooks.state]
+
+[hooks.state."warp@codex-warp:hooks/hooks.json:permission_request:0:0"]
+trusted_hash = "sha256:a5f8b0ebc36bb459328ffeb5f62ff146dfb74e3d88d4c369cf0280f7b354e388"
+
+[hooks.state."warp@codex-warp:hooks/hooks.json:post_tool_use:0:0"]
+trusted_hash = "sha256:be77e14a9094af2f521258e2bff1f5d777249bc50ce8eb0574a85bea9bd79e7f"
+
+[hooks.state."warp@codex-warp:hooks/hooks.json:session_start:0:0"]
+trusted_hash = "sha256:91587043033e7831d4d154fdef2e495f3113c3552a4529d8013f5546ffb2c140"
+
+[hooks.state."warp@codex-warp:hooks/hooks.json:user_prompt_submit:0:0"]
+trusted_hash = "sha256:2480a7db650a36e05d8005aabca58b9d106f3b7a46f7094d7747d0d77773f75c"
+
+[hooks.state."warp@codex-warp:hooks/hooks.json:stop:0:0"]
+trusted_hash = "sha256:6a3b3af655efa426e920425de93a830fe25b8b5a62ef7b9a699e7ff40d9ef351"
+
+[hooks.state."carta-cap-table@claude-cowork:hooks/hooks.json:pre_tool_use:0:0"]
+trusted_hash = "sha256:82d712709d3c2f628762a6b3258c4365f1099520c2b798b0c6e96b18d623e8dc"
+
+[hooks.state."carta-cap-table@claude-cowork:hooks/hooks.json:pre_tool_use:1:0"]
+trusted_hash = "sha256:4c845c6d50d498fc2694b2fabdc1a81e10e1df51f5cea066aa805a4a084d1961"
+
+[hooks.state."carta-cap-table@claude-cowork:hooks/hooks.json:post_tool_use:0:0"]
+trusted_hash = "sha256:6d9d1f9d0251ecf396d9637c8b913bd52b3704c645758d74330c6e92e034bbd0"
+
+[hooks.state."carta-cap-table@claude-cowork:hooks/hooks.json:session_start:0:0"]
+trusted_hash = "sha256:1cccb124fb0a68dfaf085782411f717aeed170280cd128f60c6d1de37a915086"
+
+[hooks.state."carta-cap-table@claude-cowork:hooks/hooks.json:session_start:0:1"]
+trusted_hash = "sha256:ec4606154c7c123452a89df952ff28deef1ab01cb53fbcb4336597005c734826"
+
+[hooks.state."carta-cap-table@claude-cowork:hooks/hooks.json:session_start:0:2"]
+trusted_hash = "sha256:e113d67ca64c6d9ce8a654c049ebb03d48d2e7fdfaf0d54f121b1b5053e24d76"
+
+[hooks.state."carta-cap-table@claude-cowork:hooks/hooks.json:user_prompt_submit:0:0"]
+trusted_hash = "sha256:9605dd15c9d16bf33564d2239c80f34602e617ecc857808dae9c2e0a5bfbfd68"
+
+[hooks.state."carta-investors@claude-cowork:hooks/hooks.json:pre_tool_use:0:0"]
+trusted_hash = "sha256:82d712709d3c2f628762a6b3258c4365f1099520c2b798b0c6e96b18d623e8dc"
+
+[hooks.state."carta-investors@claude-cowork:hooks/hooks.json:pre_tool_use:1:0"]
+trusted_hash = "sha256:4c845c6d50d498fc2694b2fabdc1a81e10e1df51f5cea066aa805a4a084d1961"
+
+[hooks.state."carta-investors@claude-cowork:hooks/hooks.json:post_tool_use:0:0"]
+trusted_hash = "sha256:ee6a129f6e06aff2c7ba322edd8f2981e9e297e61d0f20208d1a42fac0d1ce71"
+
+[hooks.state."carta-investors@claude-cowork:hooks/hooks.json:session_start:0:0"]
+trusted_hash = "sha256:1cccb124fb0a68dfaf085782411f717aeed170280cd128f60c6d1de37a915086"
+
+[hooks.state."carta-investors@claude-cowork:hooks/hooks.json:session_start:0:1"]
+trusted_hash = "sha256:ec4606154c7c123452a89df952ff28deef1ab01cb53fbcb4336597005c734826"
+
+[hooks.state."carta-investors@claude-cowork:hooks/hooks.json:session_start:0:2"]
+trusted_hash = "sha256:e113d67ca64c6d9ce8a654c049ebb03d48d2e7fdfaf0d54f121b1b5053e24d76"
+
+[hooks.state."carta-investors@claude-cowork:hooks/hooks.json:user_prompt_submit:0:0"]
+trusted_hash = "sha256:9605dd15c9d16bf33564d2239c80f34602e617ecc857808dae9c2e0a5bfbfd68"
+
+[mcp_servers.supabase]
+url = "https://mcp.supabase.com/mcp"
+
+[mcp_servers.zapier]
+url = "https://mcp.zapier.com/api/v1/connect"
+
+[mcp_servers.cloudflare_docs]
+url = "https://docs.mcp.cloudflare.com/mcp"
+
+[mcp_servers.cloudflare_bindings]
+url = "https://bindings.mcp.cloudflare.com/mcp"
+
+[mcp_servers.cloudflare_builds]
+url = "https://builds.mcp.cloudflare.com/mcp"
+
+[mcp_servers.cloudflare_observability]
+url = "https://observability.mcp.cloudflare.com/mcp"
+
+[mcp_servers.postman]
+url = "https://mcp.postman.com/mcp"
+
+[mcp_servers.webflow]
+url = "https://mcp.webflow.com/mcp"
+
+[mcp_servers.upwork]
+url = "https://mcp.upwork.com/mcp"
+
+[mcp_servers.shopify_dev]
+command = "npx"
+args = ["-y", "@shopify/dev-mcp@latest"]
+{{ "\n" -}}

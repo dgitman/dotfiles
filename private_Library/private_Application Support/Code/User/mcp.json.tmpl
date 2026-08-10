@@ -1,56 +1,176 @@
 {
-	"inputs": [],
-	"servers": {
-		"Workspace MCP - Personal": {
-			"url": "https://private.workspacemcp.com/mcp?{{ .personalEmail }}",
-			"type": "http"
-		},
-		"Workspace MCP - Business": {
-			"url": "https://private.workspacemcp.com/mcp?{{ .workEmail }}",
-			"type": "http"
-		},
-		"Trakt MCP": {
-			"command": "/opt/homebrew/bin/op",
-			"args": [
-				"run",
-				"--no-masking",
-				"--",
-				"uvx",
-				"--python",
-				"3.12",
-				"--from",
-				"git+https://github.com/wwiens/trakt_mcpserver",
-				"trakt-mcp"
-			],
-			"env": {
-				"TRAKT_CLIENT_ID": "op://Private/Trakt/TRAKT_CLIENT_ID",
-				"TRAKT_CLIENT_SECRET": "op://Private/Trakt/TRAKT_CLIENT_SECRET"
-			},
-			"type": "stdio"
-		},
-		"io.github.ComposioHQ/composio": {
-			"type": "http",
-			"url": "https://connect.composio.dev/mcp",
-			"gallery": "https://api.mcp.github.com",
-			"version": "1.0.5"
-		},
-		"X": {
-			"command": "/opt/homebrew/bin/op",
-			"args": [
-				"run",
-				"--no-masking",
-				"--",
-				"npx",
-				"-y",
-				"@xdevplatform/xurl",
-				"mcp",
-				"https://api.x.com/mcp"
-			],
-			"env": {
-				"CLIENT_ID": "op://Private/X API/CLIENT_ID",
-				"CLIENT_SECRET": "op://Private/X API/CLIENT_SECRET"
-			},
-			"type": "stdio"
-		}
-	}
+  "inputs": [],
+  "servers": {
+    "1password": {
+      "command": "1password-mcp",
+      "args": [],
+      "type": "stdio"
+    },
+    "Apify": {
+      "url": "https://mcp.apify.com",
+      "type": "http"
+    },
+    "Bright Data": {
+      "command": "/opt/homebrew/bin/op",
+      "args": [
+        "run",
+        "--no-masking",
+        "--",
+        "sh",
+        "-c",
+        "exec npx mcp-remote \"https://mcp.brightdata.com/mcp?token=${BRIGHT_DATA_API_KEY}\""
+      ],
+      "env": {
+        "BRIGHT_DATA_API_KEY": "op://Employee/527zuc4qn45pthp2vmha37bw2m/API Key"
+      },
+      "type": "stdio"
+    },
+    "Canva": {
+      "url": "https://mcp.canva.com/mcp",
+      "type": "http"
+    },
+    "Cloudflare Bindings": {
+      "type": "http",
+      "url": "https://bindings.mcp.cloudflare.com/mcp"
+    },
+    "Cloudflare Builds": {
+      "type": "http",
+      "url": "https://builds.mcp.cloudflare.com/mcp"
+    },
+    "Cloudflare Docs": {
+      "type": "http",
+      "url": "https://docs.mcp.cloudflare.com/mcp"
+    },
+    "Cloudflare Observability": {
+      "type": "http",
+      "url": "https://observability.mcp.cloudflare.com/mcp"
+    },
+    "decilehub": {
+      "command": "/opt/homebrew/bin/op",
+      "args": [
+        "run",
+        "--no-masking",
+        "--",
+        "npx",
+        "-y",
+        "mcp-remote",
+        "https://decilehub.com/mcp",
+        "--header",
+        "X-Decile-API-Key:${DECILE_HUB_API_KEY}"
+      ],
+      "env": {
+        "DECILE_HUB_API_KEY": "op://Employee/nqqsk2hwmnjvdruchd3yhiqcde/API Key"
+      },
+      "type": "stdio"
+    },
+    "Figma": {
+      "url": "https://mcp.figma.com/mcp",
+      "type": "http"
+    },
+    "GitHub": {
+      "url": "https://api.githubcopilot.com/mcp/",
+      "type": "http"
+    },
+    "io.github.ComposioHQ/composio": {
+      "type": "http",
+      "url": "https://connect.composio.dev/mcp",
+      "gallery": "https://api.mcp.github.com",
+      "version": "1.0.5"
+    },
+    "Make": {
+      "url": "https://mcp.make.com",
+      "type": "http"
+    },
+    "Notion": {
+      "url": "https://mcp.notion.com/mcp",
+      "type": "http"
+    },
+    "Postman": {
+      "type": "http",
+      "url": "https://mcp.postman.com/mcp"
+    },
+    "Shopify Dev": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@shopify/dev-mcp@latest"
+      ],
+      "type": "stdio"
+    },
+    "Slack": {
+      "command": "{{ .chezmoi.homeDir }}/.warp/bin/slack-mcp.sh",
+      "args": [],
+      "type": "stdio"
+    },
+    "Stripe": {
+      "type": "http",
+      "url": "https://mcp.stripe.com"
+    },
+    "Supabase": {
+      "url": "https://mcp.supabase.com/mcp",
+      "type": "http"
+    },
+    "Trakt MCP": {
+      "command": "/opt/homebrew/bin/op",
+      "args": [
+        "run",
+        "--no-masking",
+        "--",
+        "uvx",
+        "--python",
+        "3.12",
+        "--from",
+        "git+https://github.com/wwiens/trakt_mcpserver",
+        "trakt-mcp"
+      ],
+      "env": {
+        "TRAKT_CLIENT_ID": "op://Private/t7aiboqrptwqpqk6fe5em4ag7u/client_id",
+        "TRAKT_CLIENT_SECRET": "op://Private/t7aiboqrptwqpqk6fe5em4ag7u/client_secret"
+      },
+      "type": "stdio"
+    },
+    "Upwork": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://mcp.upwork.com/mcp"
+      ],
+      "type": "stdio"
+    },
+    "Webflow": {
+      "type": "http",
+      "url": "https://mcp.webflow.com/mcp"
+    },
+    "Workspace MCP - Business": {
+      "url": "https://private.workspacemcp.com/mcp?{{ .workEmail }}",
+      "type": "http"
+    },
+    "Workspace MCP - Personal": {
+      "url": "https://private.workspacemcp.com/mcp?{{ .personalEmail }}",
+      "type": "http"
+    },
+    "X": {
+      "command": "/opt/homebrew/bin/op",
+      "args": [
+        "run",
+        "--no-masking",
+        "--",
+        "npx",
+        "-y",
+        "@xdevplatform/xurl",
+        "mcp",
+        "https://api.x.com/mcp"
+      ],
+      "env": {
+        "CLIENT_ID": "op://Private/mnubbxp5r4vbrlbyow6nfem5wi/client_id",
+        "CLIENT_SECRET": "op://Private/mnubbxp5r4vbrlbyow6nfem5wi/client_secret"
+      },
+      "type": "stdio"
+    },
+    "Zapier": {
+      "url": "https://mcp.zapier.com/api/v1/connect",
+      "type": "http"
+    }
+  }
 }

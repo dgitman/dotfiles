@@ -1,5 +1,26 @@
 {
   "mcpServers": {
+    "Bright Data": {
+      "command": "/opt/homebrew/bin/op",
+      "args": [
+        "run",
+        "--no-masking",
+        "--",
+        "sh",
+        "-c",
+        "exec npx mcp-remote \"https://mcp.brightdata.com/mcp?token=${BRIGHT_DATA_API_KEY}\""
+      ],
+      "env": {
+        "BRIGHT_DATA_API_KEY": "op://Employee/527zuc4qn45pthp2vmha37bw2m/API Key"
+      }
+    },
+    "Shopify Dev": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@shopify/dev-mcp@latest"
+      ]
+    },
     "trakt": {
       "command": "/opt/homebrew/bin/op",
       "args": [
@@ -12,8 +33,8 @@
         "trakt-mcp"
       ],
       "env": {
-        "TRAKT_CLIENT_ID": "op://Private/Trakt/TRAKT_CLIENT_ID",
-        "TRAKT_CLIENT_SECRET": "op://Private/Trakt/TRAKT_CLIENT_SECRET"
+        "TRAKT_CLIENT_ID": "op://Private/t7aiboqrptwqpqk6fe5em4ag7u/client_id",
+        "TRAKT_CLIENT_SECRET": "op://Private/t7aiboqrptwqpqk6fe5em4ag7u/client_secret"
       }
     },
     "X": {
@@ -29,18 +50,21 @@
         "https://api.x.com/mcp"
       ],
       "env": {
-        "CLIENT_ID": "op://Private/X API/CLIENT_ID",
-        "CLIENT_SECRET": "op://Private/X API/CLIENT_SECRET"
+        "CLIENT_ID": "op://Private/mnubbxp5r4vbrlbyow6nfem5wi/client_id",
+        "CLIENT_SECRET": "op://Private/mnubbxp5r4vbrlbyow6nfem5wi/client_secret"
       }
     }
   },
   "coworkUserFilesPath": "{{ .chezmoi.homeDir }}/Claude",
   "preferences": {
+    "launchPreviewStorage": "shared",
     "launchPreviewPersistedWorkspaces": [],
     "launchPreviewSessionScopedSessions": [],
     "localAgentModeTrustedFolders": [
       "{{ .chezmoi.homeDir }}/Developer/dgitman/shiragitman.com",
-      "{{ .chezmoi.homeDir }}/.local/share/chezmoi"
+      "{{ .chezmoi.homeDir }}/.local/share/chezmoi",
+      "{{ .chezmoi.homeDir }}/Developer/dgitman/polish-passport",
+      "{{ .chezmoi.homeDir }}/Developer"
     ],
     "folderTccProbeResults": {
       "desktop": "granted",
@@ -48,6 +72,13 @@
       "downloads": "granted",
       "recordedAt": "2026-07-20T21:22:33.479Z",
       "appVersion": "1.22209.3"
+    },
+    "remoteSessionFolderGrants": {
+      "session_01Ct2ew6Hd41CgDgp4MaWqof": [
+        "{{ .chezmoi.homeDir }}/Downloads",
+        "{{ .chezmoi.homeDir }}/Developer/dgitman/custody",
+        "{{ .chezmoi.homeDir }}/Library/CloudStorage/GoogleDrive-{{ .personalEmail }}/My Drive/Personal/Legal/Temporary Child Custody 24CV009376-910/Laura's Parenting/Exhibits"
+      ]
     },
     "allowAllBrowserActions": true,
     "coworkScheduledTasksEnabled": true,
@@ -68,39 +99,37 @@
     "coworkOnboardingResumeStep": null,
     "chicagoEnabled": true,
     "remoteToolsDeviceName": "davids-macbook-pro-local",
+    "ccRemoteControlDefaultEnabled": true,
     "epitaxyPrefs": {
       "starred-local-code-sessions": [],
       "starred-cowork-spaces": [],
       "starred-session-groups": [],
-      "ccd-sessions-filter": {
-        "state": {
-          "selectedProjects": []
-        },
-        "version": 0
-      },
-      "desktop-frame.paneStore.v1": {
-        "state": {
-          "extraPanesByMode": {},
-          "colWeightsByMode": {},
-          "rowSplit": 0.5,
-          "draftNonce": 0
-        },
-        "version": 4
-      },
       "dframe-group-scopes": {
         "c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55/434c64cb-f6cd-4ee6-a89b-7a4e957bde68": {
           "groups": [
             {
               "id": "cg-1be8497c-550d-4c4a-a59b-0532e4f45c12",
-              "name": "Shira"
+              "name": "Shira Website"
+            },
+            {
+              "id": "cg-613c11f2-f814-401b-9c5e-8ae2358c21a5",
+              "name": "Polish Passport"
             }
           ],
           "assignments": {
-            "code:local_a4a1ca6e-a996-4dc5-806d-027e68e725fa": "cg-1be8497c-550d-4c4a-a59b-0532e4f45c12"
+            "code:local_a4a1ca6e-a996-4dc5-806d-027e68e725fa": "cg-1be8497c-550d-4c4a-a59b-0532e4f45c12",
+            "code:local_67a88d77-04bd-42ca-a692-89c110eaa53c": "cg-1be8497c-550d-4c4a-a59b-0532e4f45c12",
+            "code:local_ac34d1ba-dc15-44b5-b203-44c35a41c973": "cg-1be8497c-550d-4c4a-a59b-0532e4f45c12",
+            "code:local_d999367f-876b-4cc2-86f7-4be4d21d513f": "cg-613c11f2-f814-401b-9c5e-8ae2358c21a5"
           },
           "order": {
             "cg-1be8497c-550d-4c4a-a59b-0532e4f45c12": [
-              "code:local_a4a1ca6e-a996-4dc5-806d-027e68e725fa"
+              "code:local_a4a1ca6e-a996-4dc5-806d-027e68e725fa",
+              "code:local_67a88d77-04bd-42ca-a692-89c110eaa53c",
+              "code:local_ac34d1ba-dc15-44b5-b203-44c35a41c973"
+            ],
+            "cg-613c11f2-f814-401b-9c5e-8ae2358c21a5": [
+              "code:local_d999367f-876b-4cc2-86f7-4be4d21d513f"
             ]
           }
         }
@@ -110,14 +139,23 @@
         "homeProjectsPinnedOrder": []
       },
       "cc-landing-worktree-enabled": false,
-      "epitaxy-perm-mode-acks.c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": [
-        "{{ .chezmoi.homeDir }}/.local/share/chezmoi:bypassPermissions"
-      ],
-      "epitaxy-folder-permission-mode.c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": {
-        "{{ .chezmoi.homeDir }}/.local/share/chezmoi": "bypassPermissions"
-      },
       "epitaxy-transcript-links-in-preview": false,
-      "epitaxy-transcript-links-chooser-seen": true
+      "epitaxy-transcript-links-chooser-seen": true,
+      "desktop-frame.paneStore.v1": {
+        "state": {
+          "extraPanesByMode": {},
+          "colWeightsByMode": {},
+          "rowSplit": 0.5,
+          "draftNonce": 0
+        },
+        "version": 4
+      },
+      "ccd-sessions-filter": {
+        "state": {
+          "selectedProjects": []
+        },
+        "version": 0
+      }
     }
   }
 }

@@ -1,4 +1,5 @@
 tap "composio-temp/tap", "https://github.com/composio-temp/homebrew-tap.git"
+tap "daptify14/tap"
 tap "oven-sh/bun", trusted: true
 tap "twilio/brew", trusted: true
 tap "wpscanteam/tap", trusted: true
@@ -18,12 +19,16 @@ brew "bun"
 brew "c-ares"
 # Mozilla CA certificate store
 brew "ca-certificates"
+# Library for manipulating PNG images
+brew "libpng"
+# GNU internationalization (i18n) and localization (l10n) library
+brew "gettext"
+# Perl compatible regular expressions library with a new API
+brew "pcre2"
 # GNU multiple precision arithmetic library
 brew "gmp"
 # GNU File, Shell, and Text utilities
 brew "coreutils"
-# GNU internationalization (i18n) and localization (l10n) library
-brew "gettext"
 # International domain name library (IDNA2008, Punycode and TR46)
 brew "libidn2"
 # ASN.1 structure parser library
@@ -48,18 +53,32 @@ brew "dav1d"
 brew "duti"
 # Perl lib for reading and writing EXIF metadata
 brew "exiftool"
-# Perl compatible regular expressions library with a new API
-brew "pcre2"
 # Identify or delete duplicate files
 brew "fdupes"
+# Cryptography and SSL/TLS Toolkit
+brew "openssl@3"
+# SDL2 compatibility layer that uses SDL3 behind the scenes
+brew "sdl2-compat"
+# Play, record, convert, and stream select audio and video codecs
+brew "ffmpeg"
 # GitHub command-line tool
 brew "gh"
 # Distributed revision control system
 brew "git"
 # Quickly rewrite git repository history
 brew "git-filter-repo"
+# Git extension for versioning large files
+brew "git-lfs"
 # Audit git repos for secrets
 brew "gitleaks"
+# Common error values for all GnuPG components
+brew "libgpg-error"
+# Assuan IPC Library
+brew "libassuan"
+# Library for command-line editing
+brew "readline"
+# CLI for Drive, Gmail, Calendar, Sheets, Docs, Chat, Admin, and more
+brew "googleworkspace-cli"
 # C port of the HdrHistogram
 brew "hdrhistogram_c"
 # Text-based UI library
@@ -68,6 +87,14 @@ brew "ncurses"
 brew "htop"
 # C/C++ and Java libraries for Unicode and globalization
 brew "icu4c@78"
+# Extremely Fast Compression algorithm
+brew "lz4"
+# General-purpose data compression with high compression ratio
+brew "xz"
+# Zstandard is a real-time compression algorithm
+brew "zstd"
+# Tools and libraries to manipulate images in select formats
+brew "imagemagick"
 # Migrate or backup IMAP mail accounts
 brew "imapsync"
 # Command-line tool to export and inspect local iMessage database
@@ -76,14 +103,8 @@ brew "imessage-exporter"
 brew "oniguruma"
 # Lightweight and flexible command-line JSON processor
 brew "jq"
-# Common error values for all GnuPG components
-brew "libgpg-error"
-# Assuan IPC Library
-brew "libassuan"
 # Double-Array Trie Library
 brew "libdatrie"
-# Cryptography and SSL/TLS Toolkit
-brew "openssl@3"
 # Asynchronous event library
 brew "libevent"
 # Portable Foreign Function Interface library
@@ -96,8 +117,6 @@ brew "libnghttp2"
 brew "libnghttp3"
 # IETF QUIC protocol implementation
 brew "libngtcp2"
-# Library for manipulating PNG images
-brew "libpng"
 # C library implementing the SSH2 protocol
 brew "libssh2"
 # Multi-platform support library with a focus on asynchronous I/O
@@ -108,8 +127,6 @@ brew "libyaml"
 brew "llhttp"
 # Powerful, lightweight programming language
 brew "lua"
-# Extremely Fast Compression algorithm
-brew "lz4"
 # Mac App Store command-line interface
 brew "mas"
 # Unicode conversion routines, fast
@@ -120,12 +137,6 @@ brew "merve"
 brew "mpdecimal"
 # Library of byte handling functions extracted from Node.js core
 brew "nbytes"
-# Library for command-line editing
-brew "readline"
-# General-purpose data compression with high compression ratio
-brew "xz"
-# Zstandard is a real-time compression algorithm
-brew "zstd"
 # Interpreted, interactive, object-oriented programming language
 brew "python@3.14"
 # Port scanning utility for large networks
@@ -136,12 +147,18 @@ brew "simdjson"
 brew "uvwasi"
 # Open-source, cross-platform JavaScript runtime environment
 brew "node"
+# PDF rendering library (based on the xpdf-3.0 code base)
+brew "poppler"
+# Search PDFs for strings matching a regular expression
+brew "pdfgrep"
 # Package compiler and linker metadata toolkit
 brew "pkgconf"
 # Monitor data's progress through a pipe
 brew "pv"
 # Interpreted, interactive, object-oriented programming language
 brew "python@3.13"
+# Tools for and transforming and inspecting PDF files
+brew "qpdf"
 # Install various Ruby versions and implementations
 brew "ruby-build"
 # Ruby version manager
@@ -152,8 +169,8 @@ brew "rclone"
 brew "ripgrep"
 # Powerful, clean, object-oriented scripting language
 brew "ruby@3.4"
-# SDL2 compatibility layer that uses SDL3 behind the scenes
-brew "sdl2-compat"
+# Command-line tool for Stripe
+brew "stripe-cli"
 # Find and verify credentials
 brew "trufflehog"
 # Validating, recursive, caching DNS resolver
@@ -182,6 +199,8 @@ cask "appcleaner"
 cask "bartender"
 # OpenAI's official ChatGPT desktop app
 cask "chatgpt"
+# Terminal UI for chezmoi dotfile management
+cask "daptify14/tap/chezit", trusted: true
 # Anthropic's official Claude AI desktop app
 cask "claude"
 # Terminal-based AI coding assistant
@@ -204,6 +223,7 @@ cask "docker-desktop"
 cask "dropbox"
 # Collaborative team software
 cask "figma"
+cask "font-fira-code-nerd-font"
 # Fujitsu ScanSnap Scanner software
 cask "fujitsu-scansnap-home"
 # Set of tools to manage resources and applications hosted on Google Cloud
@@ -295,12 +315,20 @@ mas "Magnet", id: 441258766
 mas "Prime Video", id: 545519333
 vscode "1password.op-vscode"
 vscode "anthropic.claude-code"
+vscode "cloudflare.cloudflare-workers-bindings-extension"
 vscode "fabriqaai.specsmd"
+vscode "figma.figma-vscode-extension"
 vscode "github.vscode-github-actions"
 vscode "ms-azuretools.vscode-containers"
+vscode "ms-dotnettools.vscode-dotnet-runtime"
 vscode "ms-python.debugpy"
 vscode "ms-python.python"
 vscode "ms-python.vscode-pylance"
 vscode "ms-python.vscode-python-envs"
 vscode "ms-vscode-remote.remote-containers"
 vscode "openai.chatgpt"
+vscode "postman.postman-for-vscode"
+vscode "shopify.theme-check-vscode"
+vscode "stripe.vscode-stripe"
+vscode "supabase.vscode-supabase-extension"
+npm "apify-cli"

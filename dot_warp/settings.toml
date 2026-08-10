@@ -20,6 +20,46 @@ cloud_agent_computer_use_enabled = true
 [agents.mcp_servers]
 file_based_mcp_enabled = false
 
+[agents.execution_profiles]
+
+[agents.execution_profiles.default]
+apply_code_diffs = "agent_decides"
+ask_user_question = "ask_except_in_auto_approve"
+autosync_plans_to_warp_drive = true
+cli_agent_model = "cli-agent-auto"
+command_allowlist = []
+command_denylist = [
+  'bash(\s.*)?',
+  'fish(\s.*)?',
+  'pwsh(\s.*)?',
+  'sh(\s.*)?',
+  'zsh(\s.*)?',
+  'curl(\s.*)?',
+  'eval(\s.*)?',
+  'exec(\s.*)?',
+  'source(\s.*)?',
+  'wget(\s.*)?',
+  'dig(\s.*)?',
+  'nslookup(\s.*)?',
+  'host(\s.*)?',
+  'ssh(\s.*)?',
+  'scp(\s.*)?',
+  'rsync(\s.*)?',
+  'telnet(\s.*)?',
+  'rm(\s.*)?',
+]
+computer_use = "always_ask"
+directory_allowlist = []
+execute_commands = "always_ask"
+mcp_allowlist = []
+mcp_denylist = []
+mcp_permissions = "agent_decides"
+name = "Default"
+read_files = "agent_decides"
+run_agents = "always_ask"
+web_search_enabled = true
+write_to_pty = "always_allow"
+
 [privacy]
 telemetry_enabled = true
 crash_reporting_enabled = true
@@ -62,6 +102,7 @@ enabled = true
 [appearance.text]
 notebook_font_size = 14.0
 font_size = 13.0
+font_name = "FiraCode Nerd Font"
 
 [notifications]
 toast_duration_secs = 8
@@ -77,3 +118,6 @@ play_notification_sound = true
 
 [general]
 login_item = false
+
+[accessibility]
+accessibility_verbosity = "concise"

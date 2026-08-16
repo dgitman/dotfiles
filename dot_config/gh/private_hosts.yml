@@ -1,5 +1,2 @@
 github.com:
-    git_protocol: https
-    users:
-        dgitman:
-    user: dgitman
+    git_protocol: ssh

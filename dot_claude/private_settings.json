@@ -3,7 +3,8 @@
     "slack@claude-plugins-official": true,
     "warp@claude-code-warp": true,
     "telegram@claude-plugins-official": true,
-    "imessage@claude-plugins-official": true
+    "imessage@claude-plugins-official": true,
+    "firecrawl@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "claude-code-warp": {
@@ -21,6 +22,6 @@
   },
   "tui": "fullscreen",
   "theme": "auto",
-  "agentPushNotifEnabled": true,
-  "inputNeededNotifEnabled": true
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true
 }

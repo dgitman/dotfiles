@@ -104,6 +104,9 @@ notebook_font_size = 14.0
 font_size = 13.0
 font_name = "FiraCode Nerd Font"
 
+[appearance.blocks]
+should_show_ssh_block = false
+
 [notifications]
 toast_duration_secs = 8
 

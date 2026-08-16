@@ -66,4 +66,3 @@ alias fix-fakechat="lsof -ti :8787 | xargs kill -9 2>/dev/null && echo 'Port 878
 
 # Homebrew shortcuts
 alias brewdump="brew bundle dump --file=~/.Brewfile --force"
-source "$HOME/.config/op/plugins.sh"

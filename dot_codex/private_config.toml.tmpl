@@ -51,6 +51,24 @@ trust_level = "trusted"
 [projects."{{ .chezmoi.homeDir }}/Developer/dgitman/spinning-dare-wheel"]
 trust_level = "trusted"
 
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/google-watched-to-trakt"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/homebrew-alerts"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/brewlerts"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/nc-smart-cities"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/davidgitman.com"]
+trust_level = "trusted"
+
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/shiragitman.com"]
+trust_level = "trusted"
+
 [plugins."adobe-for-creativity@claude-cowork"]
 enabled = true
 
@@ -82,6 +100,9 @@ enabled = true
 enabled = true
 
 [plugins."chrome@openai-bundled"]
+enabled = true
+
+[plugins."computer-history@openai-bundled"]
 enabled = true
 
 [plugins."computer-use@openai-bundled"]
@@ -281,7 +302,7 @@ mac-menu-bar-enabled = true
 preventSleepWhileRunning = true
 keepRemoteControlAwakeWhilePluggedIn = true
 git-show-sidebar-pr-icons = false
-conversationDetailMode = "STEPS_COMMANDS"
+conversationDetailMode = "STEPS_PROSE"
 browser-annotation-screenshots-mode = "always"
 followUpQueueMode = "queue"
 dock-icon-preference = "app-default"

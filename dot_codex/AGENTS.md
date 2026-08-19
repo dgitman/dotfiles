@@ -1,5 +1,7 @@
 Always use the 1Password MCP server if you need to work with the 1Password developer environments without me having to explicitly ask.
 
+GitHub CLI authentication is provided by the 1Password shell plugin. Before reporting that `gh` is logged out, run `op plugin run -- gh ...` with normal system permissions outside a restricted sandbox. Do not ask me to run `gh auth login` or persist the token locally.
+
 /lawyer: Please sum up what Laura did wrong here in a few sentences for my lawyer
 
 /llinkedInexperiencemedia Resize this image for LinkedIn Experiance Media.

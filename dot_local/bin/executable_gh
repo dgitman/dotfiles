@@ -1,0 +1,22 @@
+#!/bin/zsh
+set -eu
+
+plugins_file="$HOME/.config/op/plugins.sh"
+
+if [[ ! -r "$plugins_file" ]]; then
+  print -u2 "1Password shell plugins are not configured at $plugins_file"
+  exit 1
+fi
+
+for binary_directory in /opt/homebrew/bin /usr/local/bin; do
+  if [[ -x "$binary_directory/op" && -x "$binary_directory/gh" ]]; then
+    # Exclude this wrapper from PATH before the plugin launches the real gh.
+    export PATH="$binary_directory:/usr/bin:/bin:/usr/sbin:/sbin"
+    source "$plugins_file"
+    gh "$@"
+    exit $?
+  fi
+done
+
+print -u2 "Could not find both the 1Password and GitHub CLIs."
+exit 1

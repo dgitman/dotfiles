@@ -1,0 +1,50 @@
+#!/bin/zsh
+# Swap "_a" and "_b" suffixes on files in the current directory, e.g.
+# "foo_0001_a.jpg" <-> "foo_0001_b.jpg".
+#
+# Usage: swap-ab-suffix [extension]
+#   extension: file extension to operate on (default: jpg)
+#
+# Safe against collisions: renames happen in two passes via a temporary
+# extension, so a file being swapped into another's name never clashes
+# with that file mid-operation. If the computed swapped name is already
+# taken by an unrelated file (not part of this swap), that rename is
+# skipped and the original file is left in place.
+set -eu
+setopt nullglob
+
+ext="${1:-jpg}"
+temp_ext=".swap-ab-tmp"
+
+files=(*_a."$ext" *_b."$ext")
+
+if [ ${#files[@]} -eq 0 ]; then
+    echo "No *_a.$ext or *_b.$ext files found in the current directory." >&2
+    exit 1
+fi
+
+# Pass 1: move every matching file to a temporary name so the two sets
+# ("_a" and "_b") never collide with each other while swapping.
+for file in "${files[@]}"; do
+    mv -n -- "$file" "${file}${temp_ext}"
+done
+
+# Pass 2: move each temporary file to its swapped final name.
+for file in "${files[@]}"; do
+    tmp_file="${file}${temp_ext}"
+    [ -e "$tmp_file" ] || continue
+
+    case "$file" in
+        *_a."$ext") new_file="${file%_a.$ext}_b.$ext" ;;
+        *_b."$ext") new_file="${file%_b.$ext}_a.$ext" ;;
+        *) continue ;;
+    esac
+
+    if [ -e "$new_file" ]; then
+        echo "Skipping (target already exists): $file -> $new_file" >&2
+        mv -n -- "$tmp_file" "$file"
+        continue
+    fi
+
+    mv -n -- "$tmp_file" "$new_file"
+done

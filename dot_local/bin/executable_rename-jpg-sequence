@@ -1,0 +1,23 @@
+#!/bin/zsh
+# Sequentially rename *.jpg files in the current directory to "<prefix>_NNNN_<suffix>.jpg"
+# Usage: rename-jpg-sequence <prefix> [suffix] [start]
+#   prefix: base name to prepend, e.g. "1995_June_Shawn IS 72 Graduation"
+#   suffix: letter appended after the number (default: b)
+#   start:  starting number (default: 1)
+set -eu
+
+if [ -z "${1:-}" ]; then
+    echo "Usage: rename-jpg-sequence <prefix> [suffix] [start]" >&2
+    exit 1
+fi
+
+prefix="$1"
+suffix="${2:-b}"
+count="${3:-1}"
+
+for file in *.jpg; do
+    [ -e "$file" ] || continue
+    num=$(printf "%04d" "$count")
+    mv -- "$file" "${prefix}_${num}_${suffix}.jpg"
+    ((count++))
+done

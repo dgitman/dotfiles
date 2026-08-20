@@ -1,5 +1,6 @@
 tap "composio-temp/tap", "https://github.com/composio-temp/homebrew-tap.git", trusted: true
 tap "daptify14/tap"
+tap "integromat/tap"
 tap "oven-sh/bun", trusted: true
 tap "twilio/brew", trusted: true
 tap "wpscanteam/tap", trusted: true
@@ -183,6 +184,8 @@ brew "watch"
 brew "wget"
 # CLI for Composio: connect AI agents to 250+ apps and tools
 brew "composio-temp/tap/composio"
+# A command-line tool for Make automation platform
+brew "integromat/tap/make-cli", trusted: true
 # Black box WordPress vulnerability scanner
 brew "wpscanteam/tap/wpscan", trusted: true
 # Password manager that keeps all passwords secure behind one password
@@ -323,6 +326,7 @@ vscode "cloudflare.cloudflare-workers-bindings-extension"
 vscode "fabriqaai.specsmd"
 vscode "figma.figma-vscode-extension"
 vscode "github.vscode-github-actions"
+vscode "integromat.apps-sdk"
 vscode "ms-azuretools.vscode-containers"
 vscode "ms-dotnettools.vscode-dotnet-runtime"
 vscode "ms-python.debugpy"

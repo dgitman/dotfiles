@@ -48,6 +48,8 @@ brew "emacs"
 brew "cask"
 # Manage your dotfiles across multiple diverse machines, securely
 brew "chezmoi"
+# Cryptography and SSL/TLS Toolkit
+brew "openssl@3"
 # AV1 decoder targeted to be small and fast
 brew "dav1d"
 # Select default apps for documents and URL schemes on macOS
@@ -56,8 +58,6 @@ brew "duti"
 brew "exiftool"
 # Identify or delete duplicate files
 brew "fdupes"
-# Cryptography and SSL/TLS Toolkit
-brew "openssl@3"
 # SDL2 compatibility layer that uses SDL3 behind the scenes
 brew "sdl2-compat"
 # General-purpose data compression with high compression ratio
@@ -66,6 +66,14 @@ brew "xz"
 brew "ffmpeg"
 # GitHub command-line tool
 brew "gh"
+# C/C++ and Java libraries for Unicode and globalization
+brew "icu4c@78"
+# Extremely Fast Compression algorithm
+brew "lz4"
+# Zstandard is a real-time compression algorithm
+brew "zstd"
+# Double-Array Trie Library
+brew "libdatrie"
 # Distributed revision control system
 brew "git"
 # Quickly rewrite git repository history
@@ -88,24 +96,22 @@ brew "hdrhistogram_c"
 brew "ncurses"
 # Improved top (interactive process viewer)
 brew "htop"
-# C/C++ and Java libraries for Unicode and globalization
-brew "icu4c@78"
-# Extremely Fast Compression algorithm
-brew "lz4"
-# Zstandard is a real-time compression algorithm
-brew "zstd"
 # Tools and libraries to manipulate images in select formats
 brew "imagemagick"
 # Migrate or backup IMAP mail accounts
 brew "imapsync"
 # Command-line tool to export and inspect local iMessage database
 brew "imessage-exporter"
+# Library for decimal floating point arithmetic
+brew "mpdecimal"
+# Interpreted, interactive, object-oriented programming language
+brew "python@3.14"
+# Tools for and transforming and inspecting PDF files
+brew "qpdf"
 # Regular expressions library
 brew "oniguruma"
 # Lightweight and flexible command-line JSON processor
 brew "jq"
-# Double-Array Trie Library
-brew "libdatrie"
 # Asynchronous event library
 brew "libevent"
 # Portable Foreign Function Interface library
@@ -134,12 +140,8 @@ brew "mas"
 brew "simdutf"
 # C++ lexer for extracting named exports from CommonJS modules
 brew "merve"
-# Library for decimal floating point arithmetic
-brew "mpdecimal"
 # Library of byte handling functions extracted from Node.js core
 brew "nbytes"
-# Interpreted, interactive, object-oriented programming language
-brew "python@3.14"
 # Port scanning utility for large networks
 brew "nmap"
 # SIMD-accelerated C++ JSON parser
@@ -148,6 +150,8 @@ brew "simdjson"
 brew "uvwasi"
 # Open-source, cross-platform JavaScript runtime environment
 brew "node"
+# Adds an OCR text layer to scanned PDF files
+brew "ocrmypdf"
 # PDF rendering library (based on the xpdf-3.0 code base)
 brew "poppler"
 # Search PDFs for strings matching a regular expression
@@ -158,14 +162,14 @@ brew "pkgconf"
 brew "pv"
 # Interpreted, interactive, object-oriented programming language
 brew "python@3.13"
-# Tools for and transforming and inspecting PDF files
-brew "qpdf"
 # Install various Ruby versions and implementations
 brew "ruby-build"
 # Ruby version manager
 brew "rbenv"
 # Rsync for cloud storage
 brew "rclone"
+# Perl-powered file rename script with many helpful built-ins
+brew "rename"
 # Search tool like grep and The Silver Searcher
 brew "ripgrep"
 # Powerful, clean, object-oriented scripting language
@@ -218,8 +222,6 @@ cask "cleanmymac"
 cask "codex"
 # Brings the power of Copilot coding agent directly to your terminal
 cask "copilot-cli"
-# Slicer for all Creality FDM 3D printers
-cask "creality-slicer"
 # Write, edit, and chat about your code with AI
 cask "cursor"
 # Voice and text chat software
@@ -263,8 +265,6 @@ cask "monitorcontrol"
 cask "nordvpn"
 # App to write, plan, collaborate, and get organised
 cask "notion"
-# Calendar for professionals and teams
-cask "notion-calendar"
 # Collaboration platform for API development
 cask "postman"
 # Imaging utility to install operating systems to a microSD card
@@ -277,14 +277,8 @@ cask "sharefile"
 cask "signal"
 # Team communication and collaboration software
 cask "slack"
-# Control your Sonos system
-cask "sonos"
-# AI-powered reading and voice assistant
-cask "speechify-voice-ai"
 # Music streaming service
 cask "spotify"
-# Video game digital distribution service
-cask "steam"
 # Remote access and connectivity software focused on security
 cask "teamviewer"
 # Messaging app with a focus on speed and security
@@ -295,8 +289,6 @@ cask "tor-browser"
 cask "transmission"
 # File transfer application
 cask "transmit"
-# 3D printer and slicing GUI
-cask "ultimaker-cura"
 # Calling and messaging application focusing on security
 cask "viber"
 # Open-source code editor
@@ -309,8 +301,6 @@ cask "wechat"
 cask "whatsapp"
 # Network protocol analyzer
 cask "wireshark-app"
-# Voice-to-text dictation with AI-powered auto-editing
-cask "wispr-flow"
 # Video communication and virtual meeting platform
 cask "zoom"
 mas "1Password for Safari", id: 1569813296

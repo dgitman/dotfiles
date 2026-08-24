@@ -1,23 +1,74 @@
 #!/bin/zsh
 # Sequentially rename *.jpg files in the current directory to "<prefix>_NNNN_<suffix>.jpg"
 # Usage: rename-jpg-sequence <prefix> [suffix] [start]
-#   prefix: base name to prepend, e.g. "1995_June_Shawn IS 72 Graduation"
-#   suffix: letter appended after the number (default: b)
-#   start:  starting number (default: 1)
+# Example: rename-jpg-sequence "1995_June_Shawn IS 72 Graduation" a
 set -eu
 
-if [ -z "${1:-}" ]; then
-    echo "Usage: rename-jpg-sequence <prefix> [suffix] [start]" >&2
-    exit 1
+usage() {
+    cat >&2 <<'EOF'
+Usage: rename-jpg-sequence <prefix> [suffix] [start]
+
+Quote a prefix that contains spaces:
+  rename-jpg-sequence "1995_June_Shawn IS 72 Graduation" a
+
+  prefix  Base name to prepend
+  suffix  One letter appended after the number (default: b)
+  start   Positive starting number (default: 1)
+EOF
+}
+
+if (( $# < 1 || $# > 3 )); then
+    echo "Error: expected 1 to 3 arguments; prefixes containing spaces must be quoted." >&2
+    usage
+    exit 2
 fi
 
 prefix="$1"
 suffix="${2:-b}"
 count="${3:-1}"
 
-for file in *.jpg; do
-    [ -e "$file" ] || continue
-    num=$(printf "%04d" "$count")
-    mv -- "$file" "${prefix}_${num}_${suffix}.jpg"
-    ((count++))
+if [[ -z "$prefix" ]]; then
+    echo "Error: prefix cannot be empty." >&2
+    usage
+    exit 2
+fi
+
+if [[ ! "$suffix" =~ '^[A-Za-z]$' ]]; then
+    echo "Error: suffix must be a single letter (for example, a or b)." >&2
+    usage
+    exit 2
+fi
+
+if [[ ! "$count" =~ '^[1-9][0-9]*$' ]]; then
+    echo "Error: start must be a positive whole number." >&2
+    usage
+    exit 2
+fi
+
+files=( *.jpg(N) )
+if (( ${#files} == 0 )); then
+    echo "No .jpg files found in the current directory." >&2
+    exit 1
+fi
+
+# Validate the complete operation before renaming anything.
+next=$count
+for file in "${files[@]}"; do
+    num=$(printf "%04d" "$next")
+    target="${prefix}_${num}_${suffix}.jpg"
+    if [[ "$file" != "$target" && -e "$target" ]]; then
+        echo "Error: target already exists; no files were renamed: $target" >&2
+        exit 1
+    fi
+    ((next++))
+done
+
+next=$count
+for file in "${files[@]}"; do
+    num=$(printf "%04d" "$next")
+    target="${prefix}_${num}_${suffix}.jpg"
+    if [[ "$file" != "$target" ]]; then
+        mv -- "$file" "$target"
+    fi
+    ((next++))
 done

@@ -1,5 +1,8 @@
 tap "composio-temp/tap", "https://github.com/composio-temp/homebrew-tap.git", trusted: true
+tap "composiohq/tap", "https://github.com/composio-temp/homebrew-tap.git", trusted: true
 tap "daptify14/tap"
+tap "homebrew/cask", "https://github.com/dgitman/homebrew-cask.git", trusted: { casks: ["littlebird"] }
+tap "homebrew/core"
 tap "integromat/tap"
 tap "oven-sh/bun", trusted: true
 tap "twilio/brew", trusted: true
@@ -40,10 +43,10 @@ brew "nettle"
 brew "p11-kit"
 # GNU Transport Layer Security (TLS) Library
 brew "gnutls"
-# Incremental parsing library
-brew "tree-sitter@0.25"
 # GNU Emacs text editor
 brew "emacs"
+# Incremental parsing library
+brew "tree-sitter@0.25"
 # Emacs dependency management
 brew "cask"
 # Manage your dotfiles across multiple diverse machines, securely
@@ -112,8 +115,6 @@ brew "qpdf"
 brew "oniguruma"
 # Lightweight and flexible command-line JSON processor
 brew "jq"
-# Asynchronous event library
-brew "libevent"
 # Portable Foreign Function Interface library
 brew "libffi"
 # Library for large linear classification
@@ -170,16 +171,10 @@ brew "rbenv"
 brew "rclone"
 # Perl-powered file rename script with many helpful built-ins
 brew "rename"
-# Search tool like grep and The Silver Searcher
-brew "ripgrep"
 # Powerful, clean, object-oriented scripting language
 brew "ruby@3.4"
-# Command-line tool for Stripe
-brew "stripe-cli"
 # Find and verify credentials
 brew "trufflehog"
-# Validating, recursive, caching DNS resolver
-brew "unbound"
 # Extremely fast Python package installer and resolver, written in Rust
 brew "uv"
 # Executes a program periodically, showing output fullscreen
@@ -187,7 +182,7 @@ brew "watch"
 # Internet file retriever
 brew "wget"
 # CLI for Composio: connect AI agents to 250+ apps and tools
-brew "composio-temp/tap/composio"
+brew "composiohq/tap/composio"
 # A command-line tool for Make automation platform
 brew "integromat/tap/make-cli", trusted: true
 # Black box WordPress vulnerability scanner
@@ -196,6 +191,8 @@ brew "wpscanteam/tap/wpscan", trusted: true
 cask "1password"
 # Command-line interface for 1Password
 cask "1password-cli"
+# Classic After Dark screen savers emulator
+cask "afterglow"
 # Agent orchestration platform
 cask "antigravity"
 # Terminal interface for Antigravity agents
@@ -218,12 +215,16 @@ cask "claude"
 cask "claude-code"
 # Tool to remove unnecessary files and folders from disk
 cask "cleanmymac"
+# Command-line interface for CleanMyMac
+cask "cleanmymac-cli"
 # OpenAI's coding agent that runs in your terminal
 cask "codex"
 # Brings the power of Copilot coding agent directly to your terminal
 cask "copilot-cli"
 # Write, edit, and chat about your code with AI
 cask "cursor"
+# Command-line agent for Cursor
+cask "cursor-cli"
 # Voice and text chat software
 cask "discord"
 # App to build and share containerised applications and microservices
@@ -247,6 +248,8 @@ cask "google-drive"
 cask "google-gemini"
 # Grammarly for desktop
 cask "grammarly-desktop"
+# AI teammates that work across your apps and tools
+cask "grok-bot"
 # Open-source video transcoder
 cask "handbrake-app"
 # iPhone management application
@@ -332,4 +335,5 @@ vscode "supabase.vscode-supabase-extension"
 npm "apify-cli"
 npm "brewlert"
 npm "firecrawl-cli"
+npm "tripit"
 npm "vercel"

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>net.gitman.brewfile-sync</string>
+  <key>ProgramArguments</key><array><string>{{ .chezmoi.homeDir | html }}/.local/bin/brewfile-sync</string></array>
+  <key>RunAtLoad</key><true/>
+  <key>StartInterval</key><integer>3600</integer>
+  <key>ProcessType</key><string>Background</string>
+  <key>EnvironmentVariables</key><dict>
+    <key>PATH</key><string>{{ .chezmoi.homeDir | html }}/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+  </dict>
+  <key>StandardOutPath</key><string>{{ .chezmoi.homeDir | html }}/Library/Logs/brewfile-sync.log</string>
+  <key>StandardErrorPath</key><string>{{ .chezmoi.homeDir | html }}/Library/Logs/brewfile-sync.log</string>
+</dict></plist>

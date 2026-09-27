@@ -26,3 +26,6 @@ Library/Application Support/Code/Backups/
 **/.npm/
 **/.pnpm-store/
 
+
+# Repository-only regression tests
+tests/

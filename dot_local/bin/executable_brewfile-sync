@@ -1,0 +1,86 @@
+#!/bin/bash
+# Snapshot installed packages into chezmoi and commit ONLY dot_Brewfile. Never push.
+set -euo pipefail
+export PATH="${PATH:-/usr/bin:/bin}:/opt/homebrew/bin:/usr/local/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+export HOMEBREW_NO_AUTO_UPDATE=1
+# Manual and launchd runs must collect the same package categories.
+for setting in $(compgen -v HOMEBREW_BUNDLE_DUMP_NO_); do unset "$setting"; done
+unset HOMEBREW_BUNDLE_NO_DESCRIBE
+
+log() { printf '%s %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*"; }
+fail() { log "ERROR: $*" >&2; exit 1; }
+trap 'rc=$?; log "ERROR: sync failed at line $LINENO (exit $rc)." >&2; exit "$rc"' ERR
+
+brewfile="$HOME/.Brewfile"
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/brewfile-sync"
+mkdir -p "$state_dir"
+lock="$state_dir/run.lock"
+# The kernel releases this lock even after a crash; an old lock file is harmless.
+exec 9>>"$lock"
+if /usr/bin/lockf -s -t 0 9; then
+    :
+else
+    lock_status=$?
+    if [ "$lock_status" -eq 75 ]; then
+        log 'Another sync is running; skipped.'
+        exit 0
+    fi
+    fail "Unable to acquire the run lock (exit $lock_status)."
+fi
+scratch=''
+cleanup() { [ -z "$scratch" ] || rm -rf "$scratch"; }
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM HUP
+
+for tool in brew chezmoi git; do command -v "$tool" >/dev/null || fail "$tool is not available in PATH."; done
+source_file=$(chezmoi source-path "$brewfile")
+source_file="$(cd "$(dirname "$source_file")" && pwd -P)/$(basename "$source_file")"
+repo=$(git -C "$(dirname "$source_file")" rev-parse --show-toplevel)
+[ "$source_file" = "$repo/dot_Brewfile" ] || fail 'Expected a plain dot_Brewfile in the chezmoi Git repository.'
+git -C "$repo" ls-files --error-unmatch -- dot_Brewfile >/dev/null
+for operation in MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD rebase-merge rebase-apply; do
+    operation_path=$(git -C "$repo" rev-parse --git-path "$operation")
+    [[ "$operation_path" = /* ]] || operation_path="$repo/$operation_path"
+    [ ! -e "$operation_path" ] || fail 'Git operation in progress; leaving the Brewfile unchanged.'
+done
+[ -z "$(git -C "$repo" ls-files --unmerged)" ] || fail 'Git has unresolved conflicts.'
+
+# Homebrew may silently omit optional package sources when their CLI is missing.
+# Verify the sources we already track before replacing a good snapshot.
+for pair in 'mas:mas' 'npm:npm' 'vscode:code'; do
+    kind=${pair%%:*}; tool=${pair#*:}
+    if command -v "$tool" >/dev/null; then
+        case "$tool" in
+            mas) mas list >/dev/null ;;
+            npm) npm list --global --depth=0 --json >/dev/null ;;
+            code) code --list-extensions >/dev/null ;;
+        esac
+    elif grep -Eq "^[[:space:]]*$kind[[:space:]]" "$brewfile"; then
+        fail "$tool is missing, but the Brewfile tracks $kind entries; keeping the previous snapshot."
+    fi
+done
+
+scratch=$(mktemp -d "$(dirname "$brewfile")/.brewfile-sync.XXXXXX")
+brew bundle dump --force --file="$scratch/Brewfile"
+[ -s "$scratch/Brewfile" ] || fail 'Homebrew produced an empty snapshot; keeping the previous Brewfile.'
+chmod 644 "$scratch/Brewfile"
+if ! cmp -s "$scratch/Brewfile" "$brewfile"; then
+    mv "$scratch/Brewfile" "$brewfile"
+fi
+
+# Use a minimal config so user-wide autoCommit/autoPush/hooks cannot include
+# unrelated files or push anything. Only this already-managed plain file is re-added.
+printf '[git]\nautoCommit = false\nautoPush = false\n' > "$scratch/chezmoi.toml"
+chezmoi --config "$scratch/chezmoi.toml" --source "$repo" --destination "$HOME" \
+    re-add "$brewfile"
+cmp -s "$brewfile" "$source_file" || fail 'Chezmoi source does not match the generated Brewfile.'
+if git -C "$repo" diff --quiet HEAD -- dot_Brewfile; then
+    log 'Brewfile is up to date; no commit needed.'
+    exit 0
+fi
+# --only preserves unrelated staged changes. Disable signing and hooks solely for
+# this unattended commit to avoid prompts or hooks staging additional paths.
+git -C "$repo" -c commit.gpgsign=false -c core.hooksPath=/dev/null \
+    commit --only -m 'Update Brewfile from installed packages' -- dot_Brewfile
+log 'Updated and committed dot_Brewfile only. Push remains manual.'

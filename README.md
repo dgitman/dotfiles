@@ -86,3 +86,39 @@ chezmoi init --apply git@github.com:dgitman/dotfiles.git
 This will clone the repo, render templates, write dotfiles into place, and
 run the `run_onchange_*` scripts (including `brew bundle --global`, which
 installs everything listed in `dot_Brewfile`).
+
+## Automatic Brewfile snapshots
+
+`~/.local/bin/brewfile-sync` refreshes `~/.Brewfile`, re-adds it to chezmoi,
+and commits **only `dot_Brewfile`** when its content changes. `brewsync` is the
+shell alias for the same script. It never pushes. Other staged and unstaged
+changes are preserved; merge/rebase conflicts stop the run. Automation commits
+are unsigned and bypass Git hooks so they cannot prompt for credentials or
+include additional files. Other Git commands retain the normal signing/hooks.
+
+The `net.gitman.brewfile-sync` LaunchAgent runs at login and every hour while
+macOS is awake. Logs: `~/Library/Logs/brewfile-sync.log`. The chezmoi
+`run_onchange_after_brewfile-sync-agent.sh.tmpl` hook loads/reloads the agent
+when its script or plist changes. A normal `chezmoi apply` installs it on a new
+Mac after the package-setup step. macOS may ask to allow background activity.
+
+The snapshot includes supported Homebrew formulae/casks/taps/trust settings,
+Mac App Store apps, VS Code extensions, and global npm packages visible to the
+scheduled PATH. Project-local dependencies and globals in other Node-version
+prefixes are not included. GUI installations are captured on the next run.
+
+Package collection is checked before replacing the current snapshot. A failed
+command, empty snapshot, or missing CLI for an already-tracked source stops the
+run rather than dropping that inventory. Logs explain failures. The script uses
+a lock to prevent overlap and a temporary file before replacing the Brewfile.
+
+```sh
+brewsync                                   # refresh and commit now
+launchctl print gui/$(id -u)/net.gitman.brewfile-sync
+python3 tests/test_brewfile_sync.py         # isolated mock-command tests on macOS
+```
+
+Source files: `dot_local/bin/executable_brewfile-sync`,
+`private_Library/LaunchAgents/net.gitman.brewfile-sync.plist.tmpl`, and the
+setup hook above. The job does not install/uninstall packages. A later full
+`chezmoi apply` can still run the repository's existing package-install hook.

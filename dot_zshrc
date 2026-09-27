@@ -3,8 +3,6 @@
 # ==============================================================================
 
 # Homebrew Configuration
-export HOMEBREW_BREWFILE_DESCRIBE=1   # Include package descriptions when dumping Brewfiles
-export HOMEBREW_BREWFILE_VSCODE=1     # Include VS Code extensions when dumping Brewfiles
 export HOMEBREW_AUTO_UPDATE_SECS=86400  # Only auto-update once per day (in seconds)
 
 # ==============================================================================
@@ -38,21 +36,7 @@ if type brew &>/dev/null; then
     path_prepend "$brew_prefix/opt/m4/bin"
     path_prepend "$brew_prefix/opt/icu4c@78/bin"
 
-    # Keep the chezmoi source-state Brewfile current after package changes.
-    brew() {
-        command brew "$@"
-        local brew_status=$?
 
-        if [ "$brew_status" -eq 0 ]; then
-            case "${1:-}" in
-                install|uninstall|remove|rm|reinstall|tap|untap)
-                    command brew bundle dump --force --global &&
-                        chezmoi re-add "$HOME/.Brewfile"
-                    ;;
-            esac
-        fi
-        return "$brew_status"
-    }
 fi
 
 # ==============================================================================
@@ -69,5 +53,7 @@ alias fix-fakechat="lsof -ti :8787 | xargs kill -9 2>/dev/null && echo 'Port 878
 # 1Password CLI plugin
 [[ -r "$HOME/.config/op/plugins.sh" ]] && source "$HOME/.config/op/plugins.sh"
 
-# Homebrew shortcuts
-alias brewdump="brew bundle dump --file=~/.Brewfile --force"
+# Clear previous wrappers when this file is reloaded in an existing shell.
+unfunction brew brewdump 2>/dev/null
+unalias brewdump 2>/dev/null
+alias brewsync='"$HOME/.local/bin/brewfile-sync"'

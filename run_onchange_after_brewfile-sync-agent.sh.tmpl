@@ -1,0 +1,19 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+set -euo pipefail
+# Script: {{ include "dot_local/bin/executable_brewfile-sync" | sha256sum }}
+# Agent: {{ include "private_Library/LaunchAgents/net.gitman.brewfile-sync.plist.tmpl" | sha256sum }}
+mkdir -p "$HOME/Library/Logs"
+agent="$HOME/Library/LaunchAgents/net.gitman.brewfile-sync.plist"
+service="gui/$(id -u)/net.gitman.brewfile-sync"
+plutil -lint "$agent"
+if launchctl print "$service" >/dev/null 2>&1; then
+    launchctl bootout "$service"
+    for ((attempt=0; attempt<40; attempt++)); do
+        launchctl print "$service" >/dev/null 2>&1 || break
+        sleep 0.25
+    done
+fi
+launchctl enable "$service"
+launchctl bootstrap "gui/$(id -u)" "$agent"
+{{ end -}}

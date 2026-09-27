@@ -1,0 +1,43 @@
+{
+  "accounts": {
+    "personal": {
+      "email": {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/wwrt5spnld5bo3ittbb5ggnqha/username" | toJson }},
+      "refreshToken": {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/wwrt5spnld5bo3ittbb5ggnqha/credential" | toJson }}
+    },
+    "work": {
+      "email": {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/3l4kcxpo7cdl46k5ripljkdrim/username" | toJson }},
+      "refreshToken": {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/3l4kcxpo7cdl46k5ripljkdrim/credential" | toJson }}
+    }
+  },
+  "groups": {
+    "Personal": "personal",
+    "Business": "work"
+  },
+  "lists": {
+    "Reminders": {
+      "account": "personal",
+      "googleListName": "My Tasks"
+    },
+    "DavEmalie Groceries": {
+      "account": "personal"
+    }
+  },
+  "remindersSource": "iCloud",
+  "newTaskDefaults": {
+    "dueTime": "09:00",
+    "alarm": true
+  },
+  "safety": {
+    "maxDeletesPerRun": 20,
+    "deleteLists": false
+  },
+  "completedHistoryDays": 30,
+  "google": {
+    "tokenStorage": "config",
+    "onePassword": {
+      "vault": "Private",
+      "itemPrefix": "remtasks"
+    },
+    "oauthClient": {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/ov4hnzqqqwqwugulqhskwhwwea/credential" | fromJson | toJson }}
+  }
+}

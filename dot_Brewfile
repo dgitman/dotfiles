@@ -3,7 +3,6 @@ tap "composiohq/tap", "https://github.com/composio-temp/homebrew-tap.git", trust
 tap "daptify14/tap"
 tap "integromat/tap"
 tap "oven-sh/bun", trusted: true
-tap "twilio/brew", trusted: true
 # Open-source formatting library for C++
 brew "fmt"
 # WHATWG-compliant and fast URL parser written in modern C++
@@ -12,14 +11,30 @@ brew "ada-url"
 brew "m4"
 # Automatic configure script builder
 brew "autoconf"
+# Mozilla CA certificate store
+brew "ca-certificates"
+# Cryptography and SSL/TLS Toolkit
+brew "openssl@3"
+# Extremely Fast Compression algorithm
+brew "lz4"
+# Library for decimal floating point arithmetic
+brew "mpdecimal"
+# Library for command-line editing
+brew "readline"
+# General-purpose data compression with high compression ratio
+brew "xz"
+# Zstandard is a real-time compression algorithm
+brew "zstd"
+# Interpreted, interactive, object-oriented programming language
+brew "python@3.14"
+# Official Amazon AWS command-line interface
+brew "awscli"
 # Generic-purpose lossless compression algorithm by Google
 brew "brotli"
 # Incredibly fast JavaScript runtime, bundler, test runner, and package manager
 brew "bun"
 # Asynchronous DNS library
 brew "c-ares"
-# Mozilla CA certificate store
-brew "ca-certificates"
 # Library for manipulating PNG images
 brew "libpng"
 # GNU internationalization (i18n) and localization (l10n) library
@@ -46,8 +61,6 @@ brew "emacs"
 brew "cask"
 # Manage your dotfiles across multiple diverse machines, securely
 brew "chezmoi"
-# Cryptography and SSL/TLS Toolkit
-brew "openssl@3"
 # AV1 decoder targeted to be small and fast
 brew "dav1d"
 # Select default apps for documents and URL schemes on macOS
@@ -58,18 +71,12 @@ brew "exiftool"
 brew "fdupes"
 # SDL2 compatibility layer that uses SDL3 behind the scenes
 brew "sdl2-compat"
-# General-purpose data compression with high compression ratio
-brew "xz"
 # Play, record, convert, and stream select audio and video codecs
 brew "ffmpeg"
 # GitHub command-line tool
 brew "gh"
 # C/C++ and Java libraries for Unicode and globalization
 brew "icu4c@78"
-# Extremely Fast Compression algorithm
-brew "lz4"
-# Zstandard is a real-time compression algorithm
-brew "zstd"
 # Double-Array Trie Library
 brew "libdatrie"
 # Distributed revision control system
@@ -84,8 +91,6 @@ brew "gitleaks"
 brew "libgpg-error"
 # Assuan IPC Library
 brew "libassuan"
-# Library for command-line editing
-brew "readline"
 # CLI for Drive, Gmail, Calendar, Sheets, Docs, Chat, Admin, and more
 brew "googleworkspace-cli"
 # C port of the HdrHistogram
@@ -100,10 +105,6 @@ brew "imagemagick"
 brew "imapsync"
 # Command-line tool to export and inspect local iMessage database
 brew "imessage-exporter"
-# Library for decimal floating point arithmetic
-brew "mpdecimal"
-# Interpreted, interactive, object-oriented programming language
-brew "python@3.14"
 # Tools for and transforming and inspecting PDF files
 brew "qpdf"
 # Regular expressions library
@@ -152,6 +153,8 @@ brew "ocrmypdf"
 brew "poppler"
 # Search PDFs for strings matching a regular expression
 brew "pdfgrep"
+# Execute binaries from Python packages in isolated environments
+brew "pipx"
 # Package compiler and linker metadata toolkit
 brew "pkgconf"
 # Monitor data's progress through a pipe
@@ -168,8 +171,6 @@ brew "rclone"
 brew "rename"
 # Powerful, clean, object-oriented scripting language
 brew "ruby@3.4"
-# Incremental parsing library
-brew "tree-sitter@0.25"
 # Find and verify credentials
 brew "trufflehog"
 # Extremely fast Python package installer and resolver, written in Rust
@@ -267,8 +268,6 @@ cask "notion"
 cask "postman"
 # Imaging utility to install operating systems to a microSD card
 cask "raspberry-pi-imager"
-# Move and resize windows using keyboard shortcuts or snap areas
-cask "rectangle"
 # Client for the Progress ShareFile storage service
 cask "sharefile"
 # Instant messaging application focusing on security
@@ -322,6 +321,7 @@ vscode "ms-python.vscode-pylance"
 vscode "ms-python.vscode-python-envs"
 vscode "ms-vscode-remote.remote-containers"
 vscode "openai.chatgpt"
+vscode "openai.codex-audio"
 vscode "postman.postman-for-vscode"
 vscode "shopify.theme-check-vscode"
 vscode "stripe.vscode-stripe"

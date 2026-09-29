@@ -230,8 +230,8 @@ cask "dropbox"
 # Collaborative team software
 cask "figma"
 cask "font-fira-code-nerd-font"
-# Fujitsu ScanSnap Scanner software
-cask "fujitsu-scansnap-home"
+# ScanSnap Scanner software
+cask "scansnap-home"
 # Set of tools to manage resources and applications hosted on Google Cloud
 cask "gcloud-cli"
 # Desktop client for GitHub repositories

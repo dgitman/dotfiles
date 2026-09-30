@@ -230,8 +230,6 @@ cask "dropbox"
 # Collaborative team software
 cask "figma"
 cask "font-fira-code-nerd-font"
-# ScanSnap Scanner software
-cask "scansnap-home"
 # Set of tools to manage resources and applications hosted on Google Cloud
 cask "gcloud-cli"
 # Desktop client for GitHub repositories
@@ -268,6 +266,8 @@ cask "notion"
 cask "postman"
 # Imaging utility to install operating systems to a microSD card
 cask "raspberry-pi-imager"
+# ScanSnap Scanner software
+cask "scansnap-home"
 # Client for the Progress ShareFile storage service
 cask "sharefile"
 # Instant messaging application focusing on security

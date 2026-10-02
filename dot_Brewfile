@@ -230,6 +230,8 @@ cask "dropbox"
 # Collaborative team software
 cask "figma"
 cask "font-fira-code-nerd-font"
+# Download accelerator and organiser
+cask "free-download-manager"
 # Set of tools to manage resources and applications hosted on Google Cloud
 cask "gcloud-cli"
 # Desktop client for GitHub repositories

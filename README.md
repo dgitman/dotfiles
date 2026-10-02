@@ -91,10 +91,11 @@ installs everything listed in `dot_Brewfile`).
 
 `~/.local/bin/brewfile-sync` refreshes `~/.Brewfile`, re-adds it to chezmoi,
 and commits **only `dot_Brewfile`** when its content changes. `brewsync` is the
-shell alias for the same script. It never pushes. Other staged and unstaged
-changes are preserved; merge/rebase conflicts stop the run. Automation commits
-are unsigned and bypass Git hooks so they cannot prompt for credentials or
-include additional files. Other Git commands retain the normal signing/hooks.
+shell alias for the same script. After a successful commit it pushes the current
+branch to its configured upstream. Other staged and unstaged changes are
+preserved; merge/rebase conflicts stop the run. Automation commits are unsigned
+and bypass Git hooks so they cannot prompt for credentials or include additional
+files. Other Git commands retain the normal signing/hooks.
 
 The `net.gitman.brewfile-sync` LaunchAgent runs at login and every hour while
 macOS is awake. Logs: `~/Library/Logs/brewfile-sync.log`. The chezmoi
@@ -113,7 +114,7 @@ run rather than dropping that inventory. Logs explain failures. The script uses
 a lock to prevent overlap and a temporary file before replacing the Brewfile.
 
 ```sh
-brewsync                                   # refresh and commit now
+brewsync                                   # refresh, commit, and push now
 launchctl print gui/$(id -u)/net.gitman.brewfile-sync
 python3 tests/test_brewfile_sync.py         # isolated mock-command tests on macOS
 ```

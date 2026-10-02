@@ -1,5 +1,5 @@
 #!/bin/bash
-# Snapshot installed packages into chezmoi and commit ONLY dot_Brewfile. Never push.
+# Snapshot installed packages into chezmoi, commit ONLY dot_Brewfile, then push.
 set -euo pipefail
 export PATH="${PATH:-/usr/bin:/bin}:/opt/homebrew/bin:/usr/local/bin:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 export HOMEBREW_NO_AUTO_UPDATE=1
@@ -83,4 +83,11 @@ fi
 # this unattended commit to avoid prompts or hooks staging additional paths.
 git -C "$repo" -c commit.gpgsign=false -c core.hooksPath=/dev/null \
     commit --only -m 'Update Brewfile from installed packages' -- dot_Brewfile
-log 'Updated and committed dot_Brewfile only. Push remains manual.'
+# Push the current branch to its configured upstream after a successful commit.
+if ! git -C "$repo" rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' >/dev/null 2>&1; then
+    fail 'Commit succeeded, but no upstream is configured for the current branch.'
+fi
+if ! git -C "$repo" push; then
+    fail 'Commit succeeded, but git push failed.'
+fi
+log 'Updated, committed, and pushed dot_Brewfile only.'

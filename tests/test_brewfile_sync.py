@@ -17,6 +17,11 @@ class BrewfileSyncTests(unittest.TestCase):
         (self.repo/'unrelated').write_text('initial\n')
         self.git('add','.'); self.git('-c','commit.gpgsign=false','commit','-qm','initial')
         self.initial=self.git('rev-parse','HEAD')
+        self.remote=self.root/'remote.git'
+        subprocess.check_call(['git','init','--bare','-q',str(self.remote)],env=self.env)
+        self.git('remote','add','origin',str(self.remote))
+        branch=self.git('branch','--show-current') or 'master'
+        self.git('push','-u','origin',branch)
         self.mock('brew', '''for arg do case "$arg" in --file=*) target=${arg#--file=};; esac; done
 printf '%s' "$TEST_SNAPSHOT" > "$target"
 exit "${TEST_BREW_RC:-0}"

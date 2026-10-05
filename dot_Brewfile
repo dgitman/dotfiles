@@ -254,6 +254,7 @@ cask "handbrake-app"
 cask "imazing"
 # Spot and merge differences in text and image files or folders
 cask "kaleidoscope"
+# AI assistant that captures meetings and work context
 cask "littlebird"
 # Provides updates to various Microsoft products
 cask "microsoft-auto-update"

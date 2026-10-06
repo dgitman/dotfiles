@@ -1,7 +1,6 @@
 tap "composio-temp/tap", "https://github.com/composio-temp/homebrew-tap.git", trusted: true
 tap "composiohq/tap", "https://github.com/composio-temp/homebrew-tap.git", trusted: true
 tap "daptify14/tap"
-tap "homebrew/cask", "git@github.com:dgitman/homebrew-cask.git", trusted: { casks: ["littlebird"] }
 tap "homebrew/core"
 tap "integromat/tap"
 tap "oven-sh/bun", trusted: true

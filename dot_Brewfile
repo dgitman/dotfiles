@@ -1,6 +1,7 @@
 tap "composio-temp/tap", "https://github.com/composio-temp/homebrew-tap.git", trusted: true
 tap "composiohq/tap", "https://github.com/composio-temp/homebrew-tap.git", trusted: true
 tap "daptify14/tap"
+tap "dgitman/cask-local", "/Users/dgitman/Developer/dgitman/homebrew-cask", trusted: true
 tap "homebrew/core"
 tap "integromat/tap"
 tap "oven-sh/bun", trusted: true

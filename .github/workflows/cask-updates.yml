@@ -60,3 +60,51 @@ jobs:
           gh auth setup-git
       - name: Check, validate, and submit one cask update
         run: python3 .github/scripts/bump-casks.py
+
+  notify:
+    if: always() && github.event_name != 'pull_request' && needs.validate.result == 'success'
+    needs: [validate, bump]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Find automated draft PRs
+        env:
+          GH_TOKEN: ${{ secrets.HOMEBREW_BUMP_TOKEN }}
+        run: |
+          gh pr list --repo Homebrew/homebrew-cask --author dgitman --state open --limit 100 \
+            --json number,title,url,isDraft,headRefName \
+            --jq '[.[] | select(.isDraft and (.headRefName | startswith("codex/bump-")))]' > drafts.json
+      - name: Notify contributor once per draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NOTIFICATION_REPO: ${{ github.repository }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+
+          def gh(*args):
+              return subprocess.check_output(["gh", *args], text=True).strip()
+
+          repo = os.environ["NOTIFICATION_REPO"]
+          for draft in json.loads(Path("drafts.json").read_text()):
+              title = "Review Homebrew draft PR #" + str(draft["number"])
+              existing = json.loads(gh("issue", "list", "--repo", repo, "--state", "all",
+                                       "--search", '"' + title + '" in:title', "--limit", "100",
+                                       "--json", "title"))
+              if any(issue["title"] == title for issue in existing):
+                  continue
+              body = Path(os.environ["RUNNER_TEMP"]) / "draft-notification.md"
+              body.write_text("@dgitman A Homebrew draft PR is ready for your review.\n\n"
+                              + draft["title"] + "\n\n" + draft["url"]
+                              + "\n\nReview the changes and zap paths before marking it ready. "
+                              "Answer maintainer questions yourself. Close this notification when done.\n")
+              url = gh("issue", "create", "--repo", repo, "--title", title,
+                       "--body-file", str(body))
+              with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as summary:
+                  summary.write("Draft notification: " + url + "\n\n")
+          PY

@@ -1,7 +1,7 @@
 # Hourly remote cask updates
 
-The workflow runs on a GitHub-hosted macOS runner at 17 minutes past each hour. It reads casks from `dot_Brewfile`; it does not
-install the full Brewfile or use the developer's Mac-local tap.
+The [cask updates workflow](workflows/cask-updates.yml) runs on a GitHub-hosted macOS runner at 17 minutes past each hour.
+It reads casks from `dot_Brewfile`; it does not install the full Brewfile or use the developer's Mac-local tap.
 
 Before activation, configure one of these authentication routes.
 
@@ -44,7 +44,7 @@ References:
 - https://www.1password.dev/service-accounts/get-started
 - https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
 
-Merge the workflow, then run **Hourly cask updates** manually from Actions and
+Merge the workflow, then run **Hourly cask updates** manually from [Actions](https://github.com/dgitman/dotfiles/actions/workflows/cask-updates.yml) and
 verify its result before replacing the local Codex automation. No migration is
 complete until that remote test succeeds.
 

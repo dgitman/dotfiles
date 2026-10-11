@@ -1,0 +1,62 @@
+name: Hourly cask updates
+on:
+  schedule:
+    - cron: '17 * * * *'
+      timezone: America/New_York
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/daily-cask-updates.yml'
+      - '.github/scripts/*casks*.py'
+permissions:
+  contents: read
+concurrency:
+  group: hourly-cask-updates
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - run: python3 -m unittest discover -s .github/scripts -p 'test_bump_casks.py'
+  bump:
+    if: github.event_name != 'pull_request'
+    needs: validate
+    runs-on: macos-latest
+    timeout-minutes: 180
+    env:
+      HOMEBREW_NO_INSTALL_FROM_API: '1'
+      HOMEBREW_NO_AUTO_UPDATE: '1'
+      HOMEBREW_NO_ENV_HINTS: '1'
+      HOMEBREW_NO_COLOR: '1'
+      GH_TOKEN: ${{ secrets.HOMEBREW_BUMP_TOKEN }}
+      HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.HOMEBREW_BUMP_TOKEN }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Load GitHub authentication from 1Password
+        if: vars.HOMEBREW_BUMP_SECRET_REFERENCE != ''
+        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.1.1
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          GH_TOKEN: ${{ vars.HOMEBREW_BUMP_SECRET_REFERENCE }}
+          HOMEBREW_GITHUB_API_TOKEN: ${{ vars.HOMEBREW_BUMP_SECRET_REFERENCE }}
+      - name: Check authentication
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::Configure 1Password authentication or add the HOMEBREW_BUMP_TOKEN repository secret."
+            exit 1
+          fi
+          test "$(gh api user --jq .login)" = dgitman
+      - name: Prepare Homebrew
+        run: |
+          brew update
+          brew tap --force homebrew/cask
+          gh auth setup-git
+      - name: Check, validate, and submit one cask update
+        run: python3 .github/scripts/bump-casks.py

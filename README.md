@@ -38,8 +38,15 @@ No raw secrets are committed. Credentials are referenced indirectly via:
 - The [1Password CLI shell plugin](https://developer.1password.com/docs/cli/shell-plugins/)
   (`~/.config/op/plugins.sh`), which wraps commands like `gh` to inject
   tokens (`GH_TOKEN`) from 1Password at invocation time.
-- `op://` references inside MCP server / Codex configs, resolved at
-  runtime by `op run`.
+- `onepasswordRead "op://…"` in MCP config templates, resolved by chezmoi
+  when rendering/applying the config. The generated private files contain the
+  credentials; MCP servers start directly without `op run` or `op read`.
+
+Unlock 1Password and enable its CLI integration before applying these templates.
+Run `chezmoi apply` again after rotating a credential, then restart the affected
+MCP client. This retrieves existing secrets; it does not generate new passwords.
+JSON encoding preserves quotes, backslashes, and newlines in credential values.
+Avoid sharing rendered configs or secret-bearing `chezmoi diff` output.
 
 ## GitHub CLI auth
 

@@ -60,6 +60,20 @@ exit 99
         self.assertEqual(self.git('rev-parse',':unrelated'),index)
         self.assertEqual((self.repo/'unrelated').read_text(),'unstaged\n')
         self.assertEqual((self.repo/'dot_Brewfile').read_bytes(),(self.home/'.Brewfile').read_bytes())
+    def test_home_paths_are_portable_and_other_urls_unchanged(self):
+        self.env['TEST_SNAPSHOT'] = ('tap "mine/local", "'+str(self.home)+'/Developer/tap", trusted: true\n'
+                                     'tap "other/local", "/Users/another/Developer/tap"\n'
+                                     'tap "remote/tap", "https://example.com/tap.git"\n')
+        self.run_sync()
+        expected = ('tap "mine/local", File.join(Dir.home, "Developer/tap"), trusted: true\n'
+                    'tap "other/local", "/Users/another/Developer/tap"\n'
+                    'tap "remote/tap", "https://example.com/tap.git"\n')
+        self.assertEqual((self.repo/'dot_Brewfile').read_text(), expected)
+        self.assertEqual((self.home/'.Brewfile').read_text(), expected)
+        head = self.git('rev-parse', 'HEAD')
+        self.run_sync()
+        self.assertEqual(self.git('rev-parse', 'HEAD'), head)
+
     def test_no_change_no_commit(self):
         self.env['TEST_SNAPSHOT']='brew "old"\n';self.run_sync()
         self.assertEqual(self.git('rev-parse','HEAD'),self.initial)

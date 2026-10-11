@@ -1,0 +1,48 @@
+#!/bin/bash
+# Finish Google Cloud authentication after restoring dotfiles.
+set -euo pipefail
+
+case "${1:-}" in
+    "") check_only=false ;;
+    --check) check_only=true ;;
+    *) echo "Usage: dotfiles-setup [--check]" >&2; exit 2 ;;
+esac
+if (( $# > 1 )); then
+    echo "Usage: dotfiles-setup [--check]" >&2
+    exit 2
+fi
+if ! command -v gcloud >/dev/null 2>&1; then
+    echo "Google Cloud CLI is missing. Apply the chezmoi package setup first." >&2
+    exit 1
+fi
+account=$(gcloud config get-value core/account 2>/dev/null)
+if [[ -z "$account" || "$account" == "(unset)" ]]; then
+    echo "No Google Cloud account is configured. Apply your tracked gcloud settings first." >&2
+    exit 1
+fi
+# An account preference alone does not mean credentials were restored.
+# Never print or retain the access token used to verify authentication.
+if gcloud auth print-access-token --account="$account" --quiet >/dev/null 2>/dev/null; then
+    echo "Google Cloud authentication works for $account."
+    exit 0
+fi
+echo "Google Cloud authentication could not be verified for $account."
+echo "Missing or expired credentials, connectivity, or account restrictions can cause this."
+if "$check_only"; then
+    echo "Run dotfiles-setup interactively to sign in, or retry after checking connectivity."
+    exit 1
+fi
+if [[ ! -t 0 ]]; then
+    echo "Run dotfiles-setup in an interactive terminal to finish sign-in." >&2
+    exit 1
+fi
+read -r -p "Sign in to Google Cloud now? [y/N] " answer
+case "$answer" in
+    y|Y|yes|YES)
+        # Let the user open the displayed link in their preferred browser.
+        gcloud auth login "$account" --no-launch-browser
+        gcloud auth print-access-token --account="$account" --quiet >/dev/null
+        echo "Google Cloud authentication verified."
+        ;;
+    *) echo "Sign-in skipped. Run dotfiles-setup when ready."; exit 1 ;;
+esac

@@ -6,7 +6,7 @@ Personal macOS configuration managed with [chezmoi](https://www.chezmoi.io/).
 
 Standard chezmoi naming conventions apply:
 
-- `dot_*` → `~/.*` (e.g. `dot_zshrc` → `~/.zshrc`)
+- `dot_*` → `~/.*` (e.g. `private_dot_zshrc.tmpl` → `~/.zshrc`)
 - `private_*` → written with `0600` permissions (used for files containing
   credential metadata or tokens, e.g. `private_config.toml.tmpl`)
 - `*.tmpl` → Go templates, rendered with values like `.chezmoi.homeDir`
@@ -15,7 +15,9 @@ Standard chezmoi naming conventions apply:
 
 Notable tracked files:
 
-- `dot_zshrc` — shell config, aliases, Homebrew integration
+- `private_dot_zshrc.tmpl` — shell config, aliases, Homebrew integration
+- `dot_local/bin/executable_dotfiles-setup` — post-rebuild Google Cloud
+  authentication check and optional interactive sign-in
 - `dot_Brewfile` — Homebrew formulae, casks, VS Code extensions, npm globals
 - `dot_config/gh/private_hosts.yml` — GitHub CLI config (`git_protocol = ssh`)
 - `dot_config/private_op/private_plugins/private_gh.json.tmpl` — 1Password
@@ -23,6 +25,8 @@ Notable tracked files:
 - `dot_codex/private_config.toml.tmpl` — Codex CLI/desktop config (plugins,
   trusted project paths, MCP servers)
 - `dot_claude/private_settings.json` — Claude Code settings
+- `dot_copilot/private_settings.json` — Copilot CLI user preferences;
+  automatic login/session state in `config.json` is not tracked
 - `dot_warp/settings.toml` — Warp terminal settings
 - `private_Library/.../private_claude_desktop_config.json.tmpl` — Claude
   Desktop MCP servers and preferences
@@ -63,6 +67,8 @@ chezmoi re-add            # pull local edits back into the source state
                            # (skipped automatically for .tmpl files —
                            #  those must be edited by hand)
 chezmoi status             # show pending drift between source/live/last-applied
+dotfiles-setup             # verify Google Cloud auth; offer sign-in if needed
+dotfiles-setup --check     # verify Google Cloud auth without prompting
 ```
 
 ## Health check
@@ -141,8 +147,11 @@ setup hook above. The job does not install/uninstall packages. A later full
 `dot_local/bin/executable_vcf_embedder.py` preserves the personal vCard photo
 embedding utility as `~/.local/bin/vcf_embedder.py`. It rewrites vCards in the
 selected directory and creates backups of changed files.
-`private_dot_aws/config` restores the default AWS region; AWS credentials are
-not tracked.
+`private_dot_aws/config` restores the default AWS region.
+`private_dot_aws/private_credentials.tmpl` restores the default AWS access key
+and secret access key from the AWS item in 1Password. Git stores only the
+references; chezmoi writes `~/.aws/credentials` with private permissions.
+Reapply after rotating the keys and never re-add the rendered credentials.
 
 `pipx-packages.json` records the installed pipx applications separately from the
 Brewfile. The current inventory is `ray[default]` version `2.58.0`, with no
@@ -188,3 +197,111 @@ launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/com.davidgitman.g
 
 The Contacts photo repair agent remains owned by its separate helper under
 `~/Documents/Codex/contacts-hourly-helper`; it is not included in this restore.
+
+## Magnet custom layout
+
+`magnet-stage-manager.json` preserves only the Stage Manager horizontal layout,
+identified by `C2DE2F7B-A5A5-4555-B11C-93D1AF1A7CC1`. Its restore hook merges
+that entry into `horizontalCommands` through macOS's preferences service,
+leaving other layouts and preferences unchanged. It preserves the existing
+storage type and does nothing if the saved entry already matches.
+
+On a new Mac, open Magnet once to initialize its defaults, quit Magnet, then
+run `chezmoi apply`. If a layout change is needed while Magnet is running, the
+hook stops with instructions to quit and retry. Edit the tracked JSON manually
+to capture later changes to this layout; `chezmoi re-add` does not capture it.
+
+## Google Cloud CLI configuration
+
+`dot_config/private_gcloud` restores the active `default` configuration and its
+account, project, and usage-reporting preference. These files contain account
+metadata, not authentication tokens. The empty `personal-profile` and
+`work-profile` configurations are not tracked. Sign in separately on a new Mac;
+tracking the account preference does not restore authentication.
+
+Google Cloud credential databases, access tokens, application-default
+credentials, logs, and generated state are excluded from this restore. Review
+new settings before re-adding configurations to avoid tracking credentials.
+
+## Post-rebuild setup command
+
+After `chezmoi apply`, open a new terminal and run:
+
+```sh
+dotfiles-setup
+```
+
+The command uses the account in your active gcloud configuration, verifies
+that it can obtain an access token, and offers to sign in if verification
+fails. Sign-in displays a URL to open in your preferred browser. Access tokens
+are discarded without being displayed. This command completes Google Cloud
+CLI authentication; it does not install packages or restore background jobs.
+
+For a noninteractive check:
+
+```sh
+dotfiles-setup --check
+```
+
+It exits successfully when authentication works and with a nonzero status when
+verification fails or setup is incomplete. A network problem can also cause
+verification to fail. Google Cloud Application Default Credentials, when needed
+by a project, require their own sign-in step.
+
+## Post-rebuild checklist
+
+1. Install and unlock 1Password, enable its CLI integration, and set up its SSH
+   agent before cloning private repositories or resolving secret references.
+2. Initialize chezmoi and apply the configuration. For Magnet, open it once and
+   quit it before retrying the apply if its restore hook requests that step.
+3. Open a new terminal and run `dotfiles-setup`. It verifies authentication for
+   the restored Google Cloud account and offers sign-in if verification fails.
+   It displays a login link for your preferred browser rather than opening a
+   browser automatically. `dotfiles-setup --check` only checks, without prompting.
+4. Restore Ray using the pipx command above, then complete the personal background
+   job prerequisites before loading their agents.
+5. Run `chezmoi status` and `chezmoi doctor` to check the restored configuration.
+
+Google Cloud verification discards the access token and never prints it.
+A failed verification can also mean a connectivity or account problem; it does
+not necessarily mean you are signed out. This setup command handles gcloud CLI
+login only. If a development project requires Application Default Credentials,
+complete its separate `gcloud auth application-default login` setup.
+AWS credentials are restored from 1Password by the tracked credentials template.
+
+## Afterglow preferences
+
+`afterglow-preferences.json` preserves the selected After Dark 10th Anniversary
+collection and Toaster 2k settings (control values `[25, 1, 80, 0]` and volume
+`1`). Its restore hook merges saved module settings with existing module
+settings through macOS's preferences service and changes only those settings
+and the selected collection. Other preferences, window positions, updater
+state, generated catalogs, and caches are unmanaged.
+
+After rebuilding, open Afterglow once to initialize its preferences, quit it,
+and run `chezmoi apply`. Reinstall the After Dark 10th Anniversary package using
+Afterglow's installer/import workflow to restore Hall of Fame and Toaster 2k;
+these module binaries and resources are not stored in this dotfiles repository.
+If Afterglow is running and settings need to change, the hook asks you to quit
+and retry. Edit the tracked JSON to preserve later changes; `chezmoi re-add`
+does not capture preferences managed by this hook.
+
+## Additional application preferences
+
+- `grok-preferences.json` preserves Grok Bot's update, appearance, network/tool,
+  meetings/messages, and custom instruction preferences. Its apply hook merges
+  these with existing settings, preserving account scopes, onboarding, and
+  migration state. Open Grok Bot once on a rebuilt machine and quit it before
+  applying preferences. Edit the saved JSON to capture future preference changes.
+- `private_dot_composio/private_config.json` preserves Composio developer and
+  security preferences. Account data and authentication files are not tracked.
+- `dot_docker/daemon.json` preserves Docker build-cache garbage collection
+  (20 GB) and its experimental-feature setting. Restart Docker Desktop to pick
+  up restored daemon settings.
+- `private_dot_cups/lpoptions` restores Brother_HL_L2460DW as the default printer.
+  Add that printer separately on a rebuilt Mac using the same queue name.
+- `dot_warp/tab_configs/startup_config.toml.tmpl` restores Warp's agent startup
+  tab with a portable home-directory path.
+
+`private_dot_boto` restores gsutil preferences from `~/.boto`. Its credential
+sections are empty; authentication is handled separately by Google Cloud CLI.

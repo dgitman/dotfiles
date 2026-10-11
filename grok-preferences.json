@@ -1,0 +1,11 @@
+{
+  "autoUpdateWhenIdleOptIn": true,
+  "botColorInChatEnabled": false,
+  "egressTunnelEnabled": false,
+  "localEgressAllowed": true,
+  "localToolPermission": "ask",
+  "mcpCustomInstructions": {},
+  "meetingsEnabled": false,
+  "messagesEnabled": false,
+  "webauthnProxyEnabled": true
+}

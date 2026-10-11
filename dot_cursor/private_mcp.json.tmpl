@@ -1,52 +1,8 @@
 {
   "mcpServers": {
-    "Bright Data": {
-      "command": "sh",
-      "args": [
-        "-c",
-        "exec npx mcp-remote \"https://mcp.brightdata.com/mcp?token=${BRIGHT_DATA_API_KEY}\""
-      ],
-      "env": {
-        "BRIGHT_DATA_API_KEY": {{ onepasswordRead "op://5muo7u2aqulocq4t75j7ykbw2u/527zuc4qn45pthp2vmha37bw2m/API Key" | toJson }}
-      }
-    },
-    "decilehub": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "mcp-remote",
-        "https://decilehub.com/mcp",
-        "--header",
-        "X-Decile-API-Key:${DECILE_HUB_API_KEY}"
-      ],
-      "env": {
-        "DECILE_HUB_API_KEY": {{ onepasswordRead "op://5muo7u2aqulocq4t75j7ykbw2u/nqqsk2hwmnjvdruchd3yhiqcde/m55byt3oa4lmghbbhfiyb4cvpe/gbaqzhma3vajp63dzow4cn6gpy" | toJson }}
-      }
-    },
-    "Make": {
-      "url": "https://mcp.make.com"
-    },
-    "Notion": {
-      "url": "https://mcp.notion.com/mcp"
-    },
-    "Postman": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "mcp-remote",
-        "https://mcp.postman.com/mcp",
-        "--header",
-        "Authorization: Bearer ${POSTMAN_API_KEY}"
-      ],
-      "env": {
-        "POSTMAN_API_KEY": {{ onepasswordRead "op://5muo7u2aqulocq4t75j7ykbw2u/52ueu3iii4m6jo3pnrqpl6npbm/Section_2da557f6211d4696893f3a05c5/r2an3t4ouxf7nnqb24ltalx5jy" | toJson }}
-      }
-    },
     "trakt": {
       "command": "uvx",
       "args": [
-        "--python",
-        "3.12",
         "--from",
         "git+https://github.com/wwiens/trakt_mcpserver",
         "trakt-mcp"
@@ -55,17 +11,6 @@
         "TRAKT_CLIENT_ID": {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/t7aiboqrptwqpqk6fe5em4ag7u/client_id" | toJson }},
         "TRAKT_CLIENT_SECRET": {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/t7aiboqrptwqpqk6fe5em4ag7u/client_secret" | toJson }}
       }
-    },
-    "Upwork": {
-      "url": "https://mcp.upwork.com/mcp"
-    },
-    "Workspace MCP - Business": {
-      "url": "https://private.workspacemcp.com/mcp?{{ .workEmail }}",
-      "headers": {}
-    },
-    "Workspace MCP - Personal": {
-      "url": "https://private.workspacemcp.com/mcp?{{ .personalEmail }}",
-      "headers": {}
     }
   }
 }

@@ -1,59 +1,47 @@
 # ==============================================================================
-# ENVIRONMENT VARIABLES
+# SYSTEM & ENVIRONMENT VARIABLES
 # ==============================================================================
+export HOMEBREW_AUTO_UPDATE_SECS=86400  # Only auto-update Homebrew once per day
 
-# Homebrew Configuration
-export HOMEBREW_AUTO_UPDATE_SECS=86400  # Only auto-update once per day (in seconds)
-
-# ==============================================================================
-# SHELL FUNCTIONS & PATH HELPERS
-# ==============================================================================
-
-# Ensure array elements stay unique (prevents path bloating)
+# Unique arrays prevent duplicate shell path entries
 typeset -U path fpath
 
-# Safely prepend valid directories to the path array
+# Helper function to prepend valid folders to your system PATH
 path_prepend() {
     [ -d "$1" ] || return 0
     path=("$1" $path)
 }
 
 # ==============================================================================
-# PATH & SYSTEM CONFIGURATIONS
+# CORE INTEGRATIONS
 # ==============================================================================
 
-# Custom binary and IDE search paths
-path_prepend "$HOME/.antigravity/antigravity/bin"
-path_prepend "$HOME/.antigravity-ide/antigravity-ide/bin"
-
-# Homebrew core integration
-if type brew &>/dev/null; then
-    brew_prefix="$(brew --prefix)"
-    path_prepend "$brew_prefix/bin"
-
-    # Keg-only formulae aren't symlinked into the main Homebrew prefix, so
-    # their bin directories must be added to PATH explicitly.
-    path_prepend "$brew_prefix/opt/m4/bin"
-    path_prepend "$brew_prefix/opt/icu4c@78/bin"
-
-
+# Homebrew Core Initialization (Sets up PATH and paths automatically)
+if [ -x /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
-
-# ==============================================================================
-# ALIASES & PLUGINS
-# ==============================================================================
-
-# Navigation shortcuts
-alias d="cd ~/Developer"
-alias dotfiles="cd ~/.local/share/chezmoi"
-
-# Kill whatever process is stuck listening on port 8787 (fakechat dev server)
-alias fix-fakechat="lsof -ti :8787 | xargs kill -9 2>/dev/null && echo 'Port 8787 cleared!'"
 
 # 1Password CLI plugin
 [[ -r "$HOME/.config/op/plugins.sh" ]] && source "$HOME/.config/op/plugins.sh"
 
-# Clear previous wrappers when this file is reloaded in an existing shell.
-unfunction brew brewdump 2>/dev/null
-unalias brewdump 2>/dev/null
-alias brewsync='"$HOME/.local/bin/brewfile-sync"'
+# Docker Desktop CLI completions
+if [ -d "${HOME}/.docker/completions" ]; then
+    fpath=(${HOME}/.docker/completions $fpath)
+fi
+
+# ==============================================================================
+# ALIASES & SHELL PREFERENCES
+# ==============================================================================
+alias d="cd ~/Developer"
+alias dotfiles="cd ~/.local/share/chezmoi"
+
+# History Optimization
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=10000
+SAVEHIST=10000
+
+setopt SHARE_HISTORY          # Share history across all open terminal windows
+setopt HIST_IGNORE_ALL_DUPS   # Don't record duplicate commands
+setopt HIST_REDUCE_BLANKS     # Remove extra spaces from history items
+setopt AUTO_CD                # Type a directory path without 'cd' to jump into it
+

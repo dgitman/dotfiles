@@ -1,0 +1,33 @@
+#!/bin/bash
+set -euo pipefail
+# Preferences: {{ include "grok-preferences.json" | sha256sum }}
+python3 - <<'PYTHON'
+import json
+import os
+from pathlib import Path
+import tempfile
+
+saved = json.loads(r'''{{ include "grok-preferences.json" }}''')
+path = Path.home() / ".grokbot/settings.json"
+# Initialize through the app so its schema and migration state are current.
+if not path.exists():
+    raise SystemExit("Open Grok Bot once, quit it, then rerun chezmoi apply.")
+current = json.loads(path.read_text())
+if not isinstance(current, dict):
+    raise SystemExit("Unexpected Grok settings format; no changes made.")
+merged = dict(current)
+merged.update(saved)
+if merged == current:
+    raise SystemExit(0)
+print("Restoring Grok preferences; quit Grok Bot before applying to avoid conflicting writes.")
+fd, temporary = tempfile.mkstemp(prefix=".settings-", dir=path.parent)
+try:
+    with os.fdopen(fd, "w") as output:
+        json.dump(merged, output, indent=2)
+        output.write("\n")
+    os.chmod(temporary, 0o600)
+    os.replace(temporary, path)
+finally:
+    if os.path.exists(temporary):
+        os.unlink(temporary)
+PYTHON

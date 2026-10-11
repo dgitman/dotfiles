@@ -1,18 +1,50 @@
-# Daily remote cask updates
+# Hourly remote cask updates
 
-The workflow runs on a GitHub-hosted macOS runner at 3:00 a.m. America/New_York,
-including daylight saving time. It reads casks from `dot_Brewfile`; it does not
+The workflow runs on a GitHub-hosted macOS runner at 17 minutes past each hour. It reads casks from `dot_Brewfile`; it does not
 install the full Brewfile or use the developer's Mac-local tap.
 
-Before activation, add a repository Actions secret named `HOMEBREW_BUMP_TOKEN`.
-It must authenticate as `dgitman`, read public Homebrew metadata, push branches
-to `dgitman/homebrew-cask`, and create pull requests in
-`Homebrew/homebrew-cask`. The automatic `GITHUB_TOKEN` is scoped to this
-repository and cannot perform those cross-repository writes. Use an appropriate
-GitHub personal access token or GitHub App credential, stored only as a secret;
-never commit it. The existing fork must be available.
+Before activation, configure one of these authentication routes.
 
-Merge the workflow, then run **Daily cask updates** manually from Actions and
+## Recommended: 1Password service account
+
+1. Create a GitHub personal access token (classic) as dgitman with the
+   `public_repo` scope and an expiration. This allows pushing to the public fork
+   and contributing PRs to public Homebrew repositories. Fine-grained tokens
+   currently do not support contributing to public repositories where the user
+   is not a member. No `workflow` scope is needed to change cask files.
+2. Store the token in a dedicated custom 1Password vault (not Private, Personal,
+   Employee or the default Shared vault). Service accounts cannot access those
+   built-in vaults. Use a concealed token field.
+3. Create a 1Password service account with only read access to that custom vault.
+4. In this repository's Actions secrets, store its service account token as
+   `OP_SERVICE_ACCOUNT_TOKEN`.
+5. In this repository's Actions variables, set
+   `HOMEBREW_BUMP_SECRET_REFERENCE` to the GitHub token field's secret reference.
+   Prefer vault/item IDs in that reference. The variable holds a reference,
+   not the token value.
+
+The pinned 1Password load-secrets action retrieves the token at runtime and
+exports it as `GH_TOKEN` and `HOMEBREW_GITHUB_API_TOKEN`. Its service account
+credential is limited to that load step. Values are masked in logs. This uses
+the documented vault-item integration, rather than a local environment mount.
+
+## Alternative: direct GitHub Actions secret
+
+Store the GitHub token as the repository Actions secret `HOMEBREW_BUMP_TOKEN`,
+and leave `HOMEBREW_BUMP_SECRET_REFERENCE` unset.
+
+Both routes must authenticate as `dgitman`, read public Homebrew metadata, push
+branches to `dgitman/homebrew-cask`, and create pull requests in
+`Homebrew/homebrew-cask`. The automatic `GITHUB_TOKEN` is scoped to this
+repository and cannot perform those cross-repository writes. The existing fork
+must be available. Never commit credentials.
+
+References:
+- https://www.1password.dev/ci-cd/github-actions
+- https://www.1password.dev/service-accounts/get-started
+- https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
+
+Merge the workflow, then run **Hourly cask updates** manually from Actions and
 verify its result before replacing the local Codex automation. No migration is
 complete until that remote test succeeds.
 

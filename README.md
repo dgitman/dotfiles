@@ -115,6 +115,11 @@ Mac App Store apps, VS Code extensions, and global npm packages visible to the
 scheduled PATH. Project-local dependencies and globals in other Node-version
 prefixes are not included. GUI installations are captured on the next run.
 
+Local paths under the current home directory are normalized to `Dir.home` or
+`File.join(Dir.home, …)` before comparison and commit. Homebrew can dump absolute
+paths again on every run without putting a machine-specific home path back into
+the tracked Brewfile. Remote URLs and paths outside the home directory are kept.
+
 Package collection is checked before replacing the current snapshot. A failed
 command, empty snapshot, or missing CLI for an already-tracked source stops the
 run rather than dropping that inventory. Logs explain failures. The script uses

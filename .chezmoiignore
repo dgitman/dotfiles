@@ -29,3 +29,6 @@ Library/Application Support/Code/Backups/
 
 # Repository-only regression tests
 tests/
+
+# Repository-only package inventory
+pipx-packages.json

@@ -1,0 +1,4 @@
+#!/bin/bash
+# Brewfile hash: {{ include "dot_Brewfile" | sha256sum }}
+echo "Syncing Homebrew packages from tracked Brewfile..."
+brew bundle --global || true

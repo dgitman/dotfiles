@@ -1,34 +1,23 @@
 {
-    "parallels-desktop.extension.path": "{{ .chezmoi.homeDir }}/.parallels-desktop-vscode",
-    "parallels-desktop.brew.path": "/opt/homebrew/bin/brew",
-    "parallels-desktop.git.path": "/opt/homebrew/bin/git",
-    "parallels-desktop.devops-service.path": "{{ .chezmoi.homeDir }}/.parallels-desktop-vscode/tools/prldevops",
-    "redhat.telemetry.enabled": true,
-    "[yaml]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "chat.instructionsFilesLocations": {
+        "~/.claude/rules": true,
+        "~/.copilot/instructions": true,
+        ".github/instructions": true
     },
-    "git.autofetch": true,
-    "git.confirmSync": false,
-    "claudeCode.preferredLocation": "panel",
+    "chat.mcp.gallery.enabled": true,
     "chat.plugins.marketplaces": [
         "github/copilot-plugins",
         "github/awesome-copilot#marketplace"
     ],
+    "claudeCode.preferredLocation": "panel",
     "editor.accessibilitySupport": "off",
-    "chat.mcp.gallery.enabled": true,
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    "redhat.telemetry.enabled": true,
     "[json]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
-    "chat.instructionsFilesLocations": {
-        ".github/instructions": true,
-        ".claude/rules": true,
-        "~/.copilot/instructions": true,
-        "~/.claude/rules": true,
-        "/var/folders/gy/zqy0dj8j7c1b7kvl_vptq8m00000gn/T/postman-collections-post-response.instructions.md": true,
-        "/var/folders/gy/zqy0dj8j7c1b7kvl_vptq8m00000gn/T/postman-collections-pre-request.instructions.md": true,
-        "/var/folders/gy/zqy0dj8j7c1b7kvl_vptq8m00000gn/T/postman-folder-post-response.instructions.md": true,
-        "/var/folders/gy/zqy0dj8j7c1b7kvl_vptq8m00000gn/T/postman-folder-pre-request.instructions.md": true,
-        "/var/folders/gy/zqy0dj8j7c1b7kvl_vptq8m00000gn/T/postman-http-request-post-response.instructions.md": true,
-        "/var/folders/gy/zqy0dj8j7c1b7kvl_vptq8m00000gn/T/postman-http-request-pre-request.instructions.md": true
+    "[yaml]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     }
 }

@@ -1,7 +1,7 @@
-name: Daily cask updates
+name: Hourly cask updates
 on:
   schedule:
-    - cron: '0 3 * * *'
+    - cron: '17 * * * *'
       timezone: America/New_York
   workflow_dispatch:
   pull_request:
@@ -11,7 +11,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: daily-cask-updates
+  group: hourly-cask-updates
   cancel-in-progress: false
 jobs:
   validate:
@@ -37,10 +37,19 @@ jobs:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           persist-credentials: false
+      - name: Load GitHub authentication from 1Password
+        if: vars.HOMEBREW_BUMP_SECRET_REFERENCE != ''
+        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.1.1
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          GH_TOKEN: ${{ vars.HOMEBREW_BUMP_SECRET_REFERENCE }}
+          HOMEBREW_GITHUB_API_TOKEN: ${{ vars.HOMEBREW_BUMP_SECRET_REFERENCE }}
       - name: Check authentication
         run: |
           if [ -z "$GH_TOKEN" ]; then
-            echo "::error::Add the HOMEBREW_BUMP_TOKEN repository secret before running this workflow."
+            echo "::error::Configure 1Password authentication or add the HOMEBREW_BUMP_TOKEN repository secret."
             exit 1
           fi
           test "$(gh api user --jq .login)" = dgitman

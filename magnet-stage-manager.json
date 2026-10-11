@@ -1,0 +1,45 @@
+{
+  "id": "C2DE2F7B-A5A5-4555-B11C-93D1AF1A7CC1",
+  "activationArea": {
+    "available": true,
+    "area": {
+      "segments": []
+    },
+    "enabled": false
+  },
+  "category": "custom",
+  "axis": "horizontal",
+  "name": "Stage Manager",
+  "visibleInMenuBar": {
+    "available": true,
+    "enabled": true
+  },
+  "targetArea": {
+    "available": true,
+    "area": {
+      "segments": [
+        {
+          "frame": [
+            [
+              3,
+              0
+            ],
+            [
+              21,
+              12
+            ]
+          ],
+          "id": "F89FFC1D-0120-4735-AAC3-37EFA6C31423"
+        }
+      ]
+    }
+  },
+  "keyboardShortcut": {
+    "available": true,
+    "enabled": false
+  },
+  "visibleInGreenButtonMenu": {
+    "available": true,
+    "enabled": true
+  }
+}

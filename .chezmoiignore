@@ -32,3 +32,12 @@ tests/
 
 # Repository-only package inventory
 pipx-packages.json
+
+# Magnet layout is merged by its restore hook, not copied into the home directory
+magnet-stage-manager.json
+
+# Afterglow preferences are merged by their restore hook
+afterglow-preferences.json
+
+# Grok preferences are merged without copying account/session state
+grok-preferences.json

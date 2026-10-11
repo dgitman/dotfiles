@@ -1,0 +1,46 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+set -euo pipefail
+# Layout: {{ include "magnet-stage-manager.json" | sha256sum }}
+python3 - <<'PYTHON'
+import json
+import plistlib
+import subprocess
+
+DOMAIN = "com.crowdcafe.windowmagnet"
+KEY = "horizontalCommands"
+layout = json.loads(r'''{{ include "magnet-stage-manager.json" }}''')
+
+# defaults talks to macOS's preferences service; do not overwrite its plist.
+result = subprocess.run(["defaults", "export", DOMAIN, "-"], capture_output=True)
+if result.returncode:
+    raise SystemExit("Open Magnet once to initialize its layouts, then rerun chezmoi apply.")
+prefs = plistlib.loads(result.stdout)
+if KEY not in prefs:
+    raise SystemExit("Magnet has no horizontal layouts yet; open it once, then rerun chezmoi apply.")
+raw = prefs[KEY]
+if not isinstance(raw, (bytes, str)):
+    raise SystemExit("Unexpected Magnet layout format; preferences were not changed.")
+commands = json.loads(raw)
+if not isinstance(commands, list) or any(not isinstance(item, dict) for item in commands):
+    raise SystemExit("Unexpected Magnet layout list; preferences were not changed.")
+positions = [i for i, item in enumerate(commands) if item.get("id") == layout["id"]]
+if len(positions) > 1:
+    raise SystemExit("Duplicate Stage Manager IDs; review Magnet settings before applying.")
+if positions:
+    if commands[positions[0]] == layout:
+        raise SystemExit(0)
+    commands[positions[0]] = layout
+else:
+    commands.append(layout)
+if subprocess.run(["pgrep", "-x", "Magnet"], stdout=subprocess.DEVNULL).returncode == 0:
+    raise SystemExit("Quit Magnet before restoring Stage Manager, then rerun chezmoi apply.")
+encoded = json.dumps(commands, separators=(",", ":"))
+if isinstance(raw, bytes):
+    args = ["-data", encoded.encode("utf-8").hex()]
+else:
+    args = ["-string", encoded]
+subprocess.run(["defaults", "write", DOMAIN, KEY, *args], check=True)
+print("Restored Magnet's Stage Manager layout. Open Magnet to use it.")
+PYTHON
+{{ end -}}

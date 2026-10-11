@@ -1,0 +1,39 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+set -euo pipefail
+# Preferences: {{ include "afterglow-preferences.json" | sha256sum }}
+python3 - <<'PYTHON'
+import json
+import plistlib
+import subprocess
+
+DOMAIN = "cloud.morphing.afterglow"
+saved = json.loads(r'''{{ include "afterglow-preferences.json" }}''')
+result = subprocess.run(["defaults", "export", DOMAIN, "-"], capture_output=True)
+if result.returncode:
+    raise SystemExit("Open Afterglow once, quit it, then rerun chezmoi apply.")
+prefs = plistlib.loads(result.stdout)
+raw = prefs.get("moduleSettings", b"{}")
+if not isinstance(raw, (bytes, str)):
+    raise SystemExit("Unexpected Afterglow module settings format; preferences were not changed.")
+modules = json.loads(raw)
+if not isinstance(modules, dict):
+    raise SystemExit("Unexpected Afterglow module settings; preferences were not changed.")
+merged = dict(modules)
+merged.update(saved["moduleSettings"])
+change_modules = merged != modules
+change_collection = prefs.get("selectedSubdirectory") != saved["selectedSubdirectory"]
+if not (change_modules or change_collection):
+    raise SystemExit(0)
+if subprocess.run(["pgrep", "-x", "Afterglow"], stdout=subprocess.DEVNULL).returncode == 0:
+    raise SystemExit("Quit Afterglow before restoring its preferences, then rerun chezmoi apply.")
+# Write only the selected collection and saved modules through macOS preferences.
+if change_modules:
+    encoded = json.dumps(merged, separators=(",", ":"))
+    args = ["-data", encoded.encode("utf-8").hex()] if isinstance(raw, bytes) else ["-string", encoded]
+    subprocess.run(["defaults", "write", DOMAIN, "moduleSettings", *args], check=True)
+if change_collection:
+    subprocess.run(["defaults", "write", DOMAIN, "selectedSubdirectory", "-string", saved["selectedSubdirectory"]], check=True)
+print("Restored Afterglow preferences. Reinstall the After Dark modules separately if needed.")
+PYTHON
+{{ end -}}

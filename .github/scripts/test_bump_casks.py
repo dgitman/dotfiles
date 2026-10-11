@@ -17,7 +17,23 @@ Open bump pull requests:  none
 """
 
 
+TEMPLATE = "-----\n\n<!-- Do not tick a checkbox if you haven’t performed its action. Honesty is indispensable for a smooth review process. -->\n<!-- Use [x] to mark item done before creation, or just click the checkboxes with device pointer after creation -->\n<!-- In the following questions `<cask>` is the token of the cask you're editing. -->\n\nAfter making any changes to a cask, existing or new, verify:\n\n- [ ] The submission is for [a stable version](https://docs.brew.sh/Acceptable-Casks#stable-versions) or [documented exception](https://docs.brew.sh/Acceptable-Casks#but-there-is-no-stable-version).\n- [ ] `brew audit --cask --online <cask>` is error-free.\n- [ ] `brew style --fix <cask>` reports no offenses.\n\nAdditionally, if adding a new cask:\n\n- [ ] Named the cask according to the [token reference](https://docs.brew.sh/Cask-Cookbook#token-reference).\n- [ ] Checked the cask was not [already refused](https://github.com/search?q=repo%3AHomebrew%2Fhomebrew-cask+is%3Aclosed+is%3Aunmerged+&type=pullrequests) (add your cask's name to the end of the search field).\n- [ ] `brew audit --cask --new <cask>` worked successfully.\n- [ ] `HOMEBREW_NO_INSTALL_FROM_API=1 brew install --cask <cask>` worked successfully.\n- [ ] `brew uninstall --cask <cask>` worked successfully.\n\n-----\n\n- [ ] I did not use AI/LLM to create this PR, or I disclosed the tool/model below and reviewed its output, including [`zap` stanza](https://docs.brew.sh/Cask-Cookbook#stanza-zap) paths; I did not attribute commits to AI and will answer maintainer questions and review comments myself without AI/LLM.\n\n<!-- If AI was used, explain below how it was used and how you verified the changes. Non-maintainers may only have one AI-assisted PR open at a time. See https://docs.brew.sh/Responsible-AI-Usage for guidance. -->\n\n-----\n"
+
+
 class SubmissionGates(unittest.TestCase):
+    def test_template_preserves_human_review_and_new_cask_checkboxes(self):
+        body = bump.draft_body(TEMPLATE, "26.0")
+        self.assertIn("- [x] `brew audit --cask --online <cask>` is error-free.", body)
+        self.assertIn("- [x] `brew style --fix <cask>` reports no offenses.", body)
+        self.assertIn("- [ ] The submission is for", body)
+        self.assertIn("- [ ] I did not use AI/LLM", body)
+        self.assertIn("- [ ] `brew audit --cask --new <cask>`", body)
+        self.assertEqual(body.count("- [x]"), 2)
+
+    def test_changed_template_fails_instead_of_inventing_checkboxes(self):
+        with self.assertRaises(ValueError):
+            bump.draft_body("Unexpected template", "26.0")
+
     def test_no_downgrade_or_arch_variant(self):
         self.assertIsNone(bump.candidate(PREVIEW + "Current version is newer than upstream"))
         self.assertIsNone(bump.candidate(PREVIEW + "                          intel: 3.0\n"))
@@ -31,6 +47,9 @@ class SubmissionGates(unittest.TestCase):
     def exercise(self, failed_command):
         calls = []
         with tempfile.TemporaryDirectory() as temp:
+            template_path = Path(temp) / ".github" / "PULL_REQUEST_TEMPLATE.md"
+            template_path.parent.mkdir()
+            template_path.write_text(TEMPLATE)
             def fake_run(*args, cwd=None):
                 calls.append(args)
                 if args[:2] == ("brew", "--repository"):

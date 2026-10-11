@@ -113,10 +113,10 @@ https_validate_certificates = True
 # If you need a user/password with this proxy, edit and uncomment
 # those lines as well. If your organization also disallows DNS
 # lookups by client machines, set proxy_rdns to True (the default).
-# If you have installed gsutil through the Cloud SDK and have 
-# configured proxy settings in gcloud, those proxy settings will 
-# override any other options (including those set here, along with 
-# any settings in proxy-related environment variables). Otherwise, 
+# If you have installed gsutil through the Cloud SDK and have
+# configured proxy settings in gcloud, those proxy settings will
+# override any other options (including those set here, along with
+# any settings in proxy-related environment variables). Otherwise,
 # if proxy_host and proxy_port are not specified in this file and
 # one of the OS environment variables http_proxy, https_proxy, or
 # HTTPS_PROXY is defined, gsutil will use the proxy server specified

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.davidgitman.gitman-messages-sync.incremental</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>{{ .chezmoi.homeDir | html }}/Developer/dgitman/gitman-messages-sync/scripts/Gitman Messages Sync Hourly</string>
+    <string>sync</string>
+    <string>--mode</string>
+    <string>incremental</string>
+    <string>--apply</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>{{ .chezmoi.homeDir | html }}/Developer/dgitman/gitman-messages-sync</string>
+  <key>StartInterval</key>
+  <integer>3600</integer>
+  <key>ProcessType</key>
+  <string>Background</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>GITMAN_SYNC_ALLOW_WRITES</key>
+    <string>YES</string>
+    <key>PYTHONUNBUFFERED</key>
+    <string>1</string>
+  </dict>
+  <key>StandardOutPath</key>
+  <string>{{ .chezmoi.homeDir | html }}/Library/Logs/GitmanMessagesSync/incremental.log</string>
+  <key>StandardErrorPath</key>
+  <string>{{ .chezmoi.homeDir | html }}/Library/Logs/GitmanMessagesSync/incremental.error.log</string>
+</dict>
+</plist>

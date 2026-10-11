@@ -1,0 +1,15 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+set -euo pipefail
+# Brewfile hash: {{ include "dot_Brewfile" | sha256sum }}
+
+# Before scripts run before ~/.Brewfile is updated, so install from source state.
+brewfile=$(mktemp "${TMPDIR:-/tmp}/chezmoi-Brewfile.XXXXXX")
+trap 'rm -f "$brewfile"' EXIT
+cat > "$brewfile" <<'CHEZMOI_BREWFILE'
+{{ include "dot_Brewfile" }}
+CHEZMOI_BREWFILE
+
+echo "Syncing Homebrew packages from tracked Brewfile..."
+brew bundle --file="$brewfile"
+{{ end -}}

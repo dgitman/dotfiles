@@ -1,0 +1,11 @@
+{
+  "packages": [
+    {
+      "package": "ray[default]",
+      "version": "2.58.0",
+      "includeDependencies": false,
+      "pipArgs": [],
+      "suffix": ""
+    }
+  ]
+}

@@ -17,7 +17,7 @@ Notable tracked files:
 
 - `dot_zshrc` — shell config, aliases, Homebrew integration
 - `dot_Brewfile` — Homebrew formulae, casks, VS Code extensions, npm globals
-- `dot_config/private_gh/private_hosts.yml` — GitHub CLI config (`git_protocol = ssh`)
+- `dot_config/gh/private_hosts.yml` — GitHub CLI config (`git_protocol = ssh`)
 - `dot_config/private_op/private_plugins/private_gh.json.tmpl` — 1Password
   shell plugin metadata for `gh` (references a vault item, not a raw token)
 - `dot_codex/private_config.toml.tmpl` — Codex CLI/desktop config (plugins,
@@ -27,9 +27,8 @@ Notable tracked files:
 - `private_Library/.../private_claude_desktop_config.json.tmpl` — Claude
   Desktop MCP servers and preferences
 - `run_onchange_before_install-packages-darwin.sh.tmpl` — runs
-  `brew bundle --global` whenever `dot_Brewfile` changes
-- `run_onchange_after_macos-update.sh.tmpl` — records the current macOS
-  build version
+  Homebrew Bundle from the tracked source whenever `dot_Brewfile` changes;
+  installation failures stop the apply and are retried on the next apply
 
 ## Secrets
 
@@ -91,14 +90,15 @@ chezmoi init --apply git@github.com:dgitman/dotfiles.git
 ```
 
 This will clone the repo, render templates, write dotfiles into place, and
-run the `run_onchange_*` scripts (including `brew bundle --global`, which
-installs everything listed in `dot_Brewfile`).
+run the `run_onchange_*` scripts, including package installation from
+`dot_Brewfile`. The package hook uses a temporary copy of the tracked Brewfile
+because it runs before the home-directory files are updated.
 
 ## Automatic Brewfile snapshots
 
 `~/.local/bin/brewfile-sync` refreshes `~/.Brewfile`, re-adds it to chezmoi,
-and commits **only `dot_Brewfile`** when its content changes. `brewsync` is the
-shell alias for the same script. After a successful commit it pushes the current
+and commits **only `dot_Brewfile`** when its content changes. Run `brewfile-sync`
+from your shell to trigger it manually. After a successful commit it pushes the current
 branch to its configured upstream. Other staged and unstaged changes are
 preserved; merge/rebase conflicts stop the run. Automation commits are unsigned
 and bypass Git hooks so they cannot prompt for credentials or include additional
@@ -126,7 +126,7 @@ run rather than dropping that inventory. Logs explain failures. The script uses
 a lock to prevent overlap and a temporary file before replacing the Brewfile.
 
 ```sh
-brewsync                                   # refresh, commit, and push now
+brewfile-sync                              # refresh, commit, and push now
 launchctl print gui/$(id -u)/net.gitman.brewfile-sync
 python3 tests/test_brewfile_sync.py         # isolated mock-command tests on macOS
 ```
@@ -135,3 +135,56 @@ Source files: `dot_local/bin/executable_brewfile-sync`,
 `private_Library/LaunchAgents/net.gitman.brewfile-sync.plist.tmpl`, and the
 setup hook above. The job does not install/uninstall packages. A later full
 `chezmoi apply` can still run the repository's existing package-install hook.
+
+## Additional restore files
+
+`dot_local/bin/executable_vcf_embedder.py` preserves the personal vCard photo
+embedding utility as `~/.local/bin/vcf_embedder.py`. It rewrites vCards in the
+selected directory and creates backups of changed files.
+`private_dot_aws/config` restores the default AWS region; AWS credentials are
+not tracked.
+
+`pipx-packages.json` records the installed pipx applications separately from the
+Brewfile. The current inventory is `ray[default]` version `2.58.0`, with no
+injected packages or dependency applications exposed. After Homebrew setup,
+restore it with:
+
+```sh
+pipx install 'ray[default]==2.58.0'
+```
+
+This recreates the `ray`, `serve`, and `tune` commands. Update the inventory when
+changing pipx packages; the hourly Brewfile snapshot does not collect them.
+
+## Restoring personal background jobs
+
+chezmoi preserves portable LaunchAgent templates for Remtasks and the hourly
+and daily Messages Sync jobs. Applying their files does not load or restart
+these jobs. Their application code, Python environments, permissions, and log
+directories must be restored separately before loading them.
+
+For Remtasks, restore `~/Developer/dgitman/apple-reminders-google-tasks-sync`,
+then follow that project's README to create its signing identity and run
+`scripts/install.sh`. Apply the tracked Remtasks config after installation,
+grant Full Disk Access to the installed binary, and run `remtasks doctor`.
+The project command `remtasks install-agent` loads its daemon; the tracked
+plist preserves the current five-minute interval.
+
+For Messages Sync, restore `~/Developer/dgitman/gitman-messages-sync`, set up its
+Python environment following the project README, apply its tracked config,
+and grant Full Disk Access to its launchers. Confirm the Mac timezone is
+`America/New_York` and complete the project's controlled write checks before
+loading the jobs. The tracked plists retain the current write gates: hourly
+incremental sync and reconciliation daily at 2 a.m. local time.
+
+Once those prerequisites are complete, the Messages Sync jobs can be loaded
+with:
+
+```sh
+mkdir -p "$HOME/Library/Logs/GitmanMessagesSync"
+launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/com.davidgitman.gitman-messages-sync.incremental.plist"
+launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/com.davidgitman.gitman-messages-sync.reconcile.plist"
+```
+
+The Contacts photo repair agent remains owned by its separate helper under
+`~/Documents/Codex/contacts-hourly-helper`; it is not included in this restore.

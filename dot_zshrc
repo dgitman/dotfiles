@@ -25,8 +25,8 @@ fi
 [[ -r "$HOME/.config/op/plugins.sh" ]] && source "$HOME/.config/op/plugins.sh"
 
 # Docker Desktop CLI completions
-if [ -d "${HOME}/.docker/completions" ]; then
-    fpath=(${HOME}/.docker/completions $fpath)
+if [ -d "$HOME/.docker/completions" ]; then
+    fpath=("$HOME/.docker/completions" $fpath)
 fi
 
 # ==============================================================================

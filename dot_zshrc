@@ -6,12 +6,6 @@ export HOMEBREW_AUTO_UPDATE_SECS=86400  # Only auto-update Homebrew once per day
 # Unique arrays prevent duplicate shell path entries
 typeset -U path fpath
 
-# Helper function to prepend valid folders to your system PATH
-path_prepend() {
-    [ -d "$1" ] || return 0
-    path=("$1" $path)
-}
-
 # ==============================================================================
 # CORE INTEGRATIONS
 # ==============================================================================

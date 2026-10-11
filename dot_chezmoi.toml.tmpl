@@ -2,7 +2,7 @@
     mode = "account"
 
 [data]
-    computerName = "David’s MacBook Pro"
+    computerName = {{ output "scutil" "--get" "ComputerName" | trim | quote }}
     personalEmail = {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/nijakk5lonp577fq6ha5avc3v4/username" | quote }}
     workEmail = {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/qpwizlxov5vwmrbeytqvha7xu4/username" | quote }}
 

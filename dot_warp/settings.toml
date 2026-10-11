@@ -26,6 +26,7 @@ file_based_mcp_enabled = false
 apply_code_diffs = "agent_decides"
 ask_user_question = "ask_except_in_auto_approve"
 autosync_plans_to_warp_drive = true
+base_model = "auto-efficient"
 cli_agent_model = "cli-agent-auto"
 command_allowlist = []
 command_denylist = [

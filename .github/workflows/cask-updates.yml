@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - '.github/workflows/daily-cask-updates.yml'
+      - '.github/workflows/cask-updates.yml'
       - '.github/scripts/*casks*.py'
 permissions:
   contents: read

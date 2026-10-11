@@ -50,6 +50,25 @@ def search(query):
                "-f", "q=" + query, "--jq", ".total_count").strip() != "0"
 
 
+def draft_body(template, macos_version):
+    # Keep upstream wording and all human-review checkboxes intact.
+    for checklist in (
+        "- [ ] `brew audit --cask --online <cask>` is error-free.",
+        "- [ ] `brew style --fix <cask>` reports no offenses.",
+    ):
+        if checklist not in template:
+            raise ValueError("Upstream cask template changed; review its checklist")
+        template = template.replace(checklist, checklist.replace("[ ]", "[x]"), 1)
+    return (
+        "Built and tested on macOS " + macos_version + ".\n\n"
+        + template.rstrip() + "\n\n"
+        + "Homebrew generated the version/checksum changes. Codex (GPT-6) assisted "
+        "with the automation. Online audit, style, installation and uninstall checks "
+        "passed automatically. Contributor review of the release and unchanged zap "
+        "paths is pending; maintainer replies will be written by the contributor.\n"
+    )
+
+
 def main():
     # Conservatively keep only one automated upstream PR open, including drafts.
     if search("repo:" + UPSTREAM + " is:pr is:open author:dgitman"):
@@ -113,16 +132,10 @@ def main():
             # Commit the exact tested file instead of re-running upstream detection.
             run("git", "push", "https://github.com/" + FORK + ".git", "HEAD:refs/heads/" + branch, cwd=tap)
             body = Path(os.environ["RUNNER_TEMP"]) / "cask-pr-body.md"
-            body.write_text(
-                "Built and tested on macOS " + run("sw_vers", "-productVersion").strip() + ".\n\n"
-                "- [x] Online cask audit passed.\n"
-                "- [x] Style check passed.\n"
-                "- [x] Install and uninstall passed.\n"
-                "- [ ] Contributor reviewed the version, diff, and unchanged zap paths.\n\n"
-                "Homebrew generated the version/checksum changes. Codex (GPT-6) assisted "
-                "with the automation; the checks above ran automatically. "
-                "Contributor review is pending; maintainer replies will be written by the contributor.\n"
-            )
+            body.write_text(draft_body(
+                (tap / ".github" / "PULL_REQUEST_TEMPLATE.md").read_text(),
+                run("sw_vers", "-productVersion").strip(),
+            ))
             url = run("gh", "pr", "create", "--repo", UPSTREAM, "--head", "dgitman:" + branch,
                       "--title", title, "--body-file", str(body), "--draft").strip()
             summary("Created draft for contributor review: " + url)

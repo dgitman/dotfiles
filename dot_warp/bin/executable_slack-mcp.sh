@@ -1,9 +1,9 @@
 #!/bin/bash
-# Warp Slack MCP: resolve 1Password secrets, then run mcp-remote with static OAuth (no DCR).
+# Warp Slack MCP: use credentials from the chezmoi-rendered MCP config to run mcp-remote with static OAuth (no DCR).
 set -euo pipefail
 
-CLIENT_ID="$(op read "op://5muo7u2aqulocq4t75j7ykbw2u/gsdcuv36e5755pehj3ddswmo5m/client_id")"
-CLIENT_SECRET="$(op read "op://5muo7u2aqulocq4t75j7ykbw2u/gsdcuv36e5755pehj3ddswmo5m/client_secret")"
+CLIENT_ID="${CLIENT_ID:?MCP config must supply CLIENT_ID}"
+CLIENT_SECRET="${CLIENT_SECRET:?MCP config must supply CLIENT_SECRET}"
 PORT="${SLACK_MCP_OAUTH_PORT:-3456}"
 
 # Slack app Redirect URL must include:

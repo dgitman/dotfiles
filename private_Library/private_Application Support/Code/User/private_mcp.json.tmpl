@@ -11,17 +11,13 @@
       "type": "http"
     },
     "Bright Data": {
-      "command": "/opt/homebrew/bin/op",
+      "command": "sh",
       "args": [
-        "run",
-        "--no-masking",
-        "--",
-        "sh",
         "-c",
         "exec npx mcp-remote \"https://mcp.brightdata.com/mcp?token=${BRIGHT_DATA_API_KEY}\""
       ],
       "env": {
-        "BRIGHT_DATA_API_KEY": "op://5muo7u2aqulocq4t75j7ykbw2u/527zuc4qn45pthp2vmha37bw2m/API Key"
+        "BRIGHT_DATA_API_KEY": {{ onepasswordRead "op://5muo7u2aqulocq4t75j7ykbw2u/527zuc4qn45pthp2vmha37bw2m/API Key" | toJson }}
       },
       "type": "stdio"
     },
@@ -46,12 +42,8 @@
       "url": "https://observability.mcp.cloudflare.com/mcp"
     },
     "decilehub": {
-      "command": "/opt/homebrew/bin/op",
+      "command": "npx",
       "args": [
-        "run",
-        "--no-masking",
-        "--",
-        "npx",
         "-y",
         "mcp-remote",
         "https://decilehub.com/mcp",
@@ -59,7 +51,7 @@
         "X-Decile-API-Key:${DECILE_HUB_API_KEY}"
       ],
       "env": {
-        "DECILE_HUB_API_KEY": "op://5muo7u2aqulocq4t75j7ykbw2u/nqqsk2hwmnjvdruchd3yhiqcde/API Key"
+        "DECILE_HUB_API_KEY": {{ onepasswordRead "op://5muo7u2aqulocq4t75j7ykbw2u/nqqsk2hwmnjvdruchd3yhiqcde/m55byt3oa4lmghbbhfiyb4cvpe/gbaqzhma3vajp63dzow4cn6gpy" | toJson }}
       },
       "type": "stdio"
     },
@@ -100,7 +92,11 @@
     "Slack": {
       "command": "{{ .chezmoi.homeDir }}/.warp/bin/slack-mcp.sh",
       "args": [],
-      "type": "stdio"
+      "type": "stdio",
+      "env": {
+        "CLIENT_ID": {{ onepasswordRead "op://5muo7u2aqulocq4t75j7ykbw2u/gsdcuv36e5755pehj3ddswmo5m/client_id" | toJson }},
+        "CLIENT_SECRET": {{ onepasswordRead "op://5muo7u2aqulocq4t75j7ykbw2u/gsdcuv36e5755pehj3ddswmo5m/client_secret" | toJson }}
+      }
     },
     "Stripe": {
       "type": "http",
@@ -111,12 +107,8 @@
       "type": "http"
     },
     "Trakt MCP": {
-      "command": "/opt/homebrew/bin/op",
+      "command": "uvx",
       "args": [
-        "run",
-        "--no-masking",
-        "--",
-        "uvx",
         "--python",
         "3.12",
         "--from",
@@ -124,8 +116,8 @@
         "trakt-mcp"
       ],
       "env": {
-        "TRAKT_CLIENT_ID": "op://ts4jmaranagdjfxrtkfukeglcm/t7aiboqrptwqpqk6fe5em4ag7u/client_id",
-        "TRAKT_CLIENT_SECRET": "op://ts4jmaranagdjfxrtkfukeglcm/t7aiboqrptwqpqk6fe5em4ag7u/client_secret"
+        "TRAKT_CLIENT_ID": {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/t7aiboqrptwqpqk6fe5em4ag7u/client_id" | toJson }},
+        "TRAKT_CLIENT_SECRET": {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/t7aiboqrptwqpqk6fe5em4ag7u/client_secret" | toJson }}
       },
       "type": "stdio"
     },
@@ -151,20 +143,16 @@
       "type": "http"
     },
     "X": {
-      "command": "/opt/homebrew/bin/op",
+      "command": "npx",
       "args": [
-        "run",
-        "--no-masking",
-        "--",
-        "npx",
         "-y",
         "@xdevplatform/xurl",
         "mcp",
         "https://api.x.com/mcp"
       ],
       "env": {
-        "CLIENT_ID": "op://ts4jmaranagdjfxrtkfukeglcm/mnubbxp5r4vbrlbyow6nfem5wi/client_id",
-        "CLIENT_SECRET": "op://ts4jmaranagdjfxrtkfukeglcm/mnubbxp5r4vbrlbyow6nfem5wi/client_secret"
+        "CLIENT_ID": {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/mnubbxp5r4vbrlbyow6nfem5wi/client_id" | toJson }},
+        "CLIENT_SECRET": {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/mnubbxp5r4vbrlbyow6nfem5wi/client_secret" | toJson }}
       },
       "type": "stdio"
     },

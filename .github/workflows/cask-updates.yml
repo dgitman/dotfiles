@@ -4,6 +4,11 @@ on:
     - cron: '17 * * * *'
       timezone: America/New_York
   workflow_dispatch:
+    inputs:
+      test_notification:
+        description: Send a test GitHub mention notification
+        type: boolean
+        default: false
   pull_request:
     paths:
       - '.github/workflows/cask-updates.yml'
@@ -22,7 +27,7 @@ jobs:
           persist-credentials: false
       - run: python3 -m unittest discover -s .github/scripts -p 'test_bump_casks.py'
   bump:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && !inputs.test_notification
     needs: validate
     runs-on: macos-latest
     timeout-minutes: 180
@@ -62,7 +67,7 @@ jobs:
         run: python3 .github/scripts/bump-casks.py
 
   notify:
-    if: always() && github.event_name != 'pull_request' && needs.validate.result == 'success'
+    if: always() && github.event_name != 'pull_request' && !inputs.test_notification && needs.validate.result == 'success'
     needs: [validate, bump]
     runs-on: ubuntu-latest
     permissions:
@@ -108,3 +113,18 @@ jobs:
               with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as summary:
                   summary.write("Draft notification: " + url + "\n\n")
           PY
+
+  test-notification:
+    if: github.event_name == 'workflow_dispatch' && inputs.test_notification
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Send a test mention from GitHub's bot
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NOTIFICATION_REPO: ${{ github.repository }}
+        run: |
+          gh issue create --repo "$NOTIFICATION_REPO" \
+            --title "Test: Homebrew draft PR notification" \
+            --body "@dgitman This is a test of the notification for new Homebrew draft PRs. Please confirm whether you received the GitHub email alert. No cask update was created by this test."

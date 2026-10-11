@@ -1,0 +1,28 @@
+name: Delete merged Homebrew branches
+on:
+  schedule:
+    - cron: '47 * * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Preview branches without deleting
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: hourly-cask-updates
+  cancel-in-progress: false
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Delete branches whose exact tip was merged upstream
+        env:
+          GH_TOKEN: ${{ secrets.HOMEBREW_BUMP_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run || false }}
+        run: python3 .github/scripts/delete-merged-cask-branches.py

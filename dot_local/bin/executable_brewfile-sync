@@ -33,7 +33,7 @@ trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM HUP
 
-for tool in brew chezmoi git; do command -v "$tool" >/dev/null || fail "$tool is not available in PATH."; done
+for tool in brew chezmoi git ruby; do command -v "$tool" >/dev/null || fail "$tool is not available in PATH."; done
 source_file=$(chezmoi source-path "$brewfile")
 source_file="$(cd "$(dirname "$source_file")" && pwd -P)/$(basename "$source_file")"
 repo=$(git -C "$(dirname "$source_file")" rev-parse --show-toplevel)
@@ -64,6 +64,30 @@ done
 scratch=$(mktemp -d "$(dirname "$brewfile")/.brewfile-sync.XXXXXX")
 brew bundle dump --force --file="$scratch/Brewfile"
 [ -s "$scratch/Brewfile" ] || fail 'Homebrew produced an empty snapshot; keeping the previous Brewfile.'
+# Homebrew dumps local tap URLs as absolute paths. Normalize quoted paths
+# beneath this home directory before comparing, re-adding, or committing.
+# Treat the dump as text; never execute it to perform this conversion.
+ruby - "$scratch/Brewfile" "$HOME" <<'RUBY'
+require "json"
+file, home = ARGV
+home = home.sub(%r{/+$}, "")
+text = File.read(file)
+text = text.gsub(/"(?:\\.|[^"\\])*"/) do |literal|
+  begin
+    value = JSON.parse(literal)
+  rescue JSON::ParserError
+    next literal
+  end
+  if value == home
+    "Dir.home"
+  elsif value.start_with?(home + "/")
+    "File.join(Dir.home, #{JSON.generate(value[(home.length + 1)..-1])})"
+  else
+    literal
+  end
+end
+File.write(file, text)
+RUBY
 chmod 644 "$scratch/Brewfile"
 if ! cmp -s "$scratch/Brewfile" "$brewfile"; then
     mv "$scratch/Brewfile" "$brewfile"

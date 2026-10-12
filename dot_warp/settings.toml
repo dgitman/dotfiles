@@ -108,6 +108,12 @@ font_name = "FiraCode Nerd Font"
 [appearance.blocks]
 should_show_ssh_block = false
 
+[appearance.themes]
+system_theme = false
+
+[appearance.panes]
+should_dim_inactive_panes = false
+
 [notifications]
 toast_duration_secs = 8
 
@@ -122,6 +128,10 @@ play_notification_sound = true
 
 [general]
 login_item = false
+quit_on_last_window_closed = true
 
 [accessibility]
 accessibility_verbosity = "concise"
+
+[account]
+is_settings_sync_enabled = true

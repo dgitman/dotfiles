@@ -2,7 +2,7 @@
 # SYSTEM & ENVIRONMENT VARIABLES
 # ==============================================================================
 export HOMEBREW_AUTO_UPDATE_SECS=86400  # Only auto-update Homebrew once per day
-export HOMEBREW_GITHUB_API_TOKEN='{{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/ilisfoloivekdguzpnjepypsbi/ye2p7imu36mqsdat7yqouvop5u/qqvspgtksd2kf4owqk7gi37kq4" | replace "'" "'\"'\"'" }}'
+export HOMEBREW_GITHUB_API_TOKEN='{{ onepasswordRead "op://Private/ilisfoloivekdguzpnjepypsbi/token" | replace "'" "'\"'\"'" }}'
 
 # Unique arrays prevent duplicate shell path entries
 typeset -U path fpath
@@ -15,6 +15,10 @@ typeset -U path fpath
 if [ -x /opt/homebrew/bin/brew ]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
+
+# homebrew Shell Completions
+autoload -Uz compinit
+compinit
 
 # 1Password CLI plugin
 [[ -r "$HOME/.config/op/plugins.sh" ]] && source "$HOME/.config/op/plugins.sh"
@@ -41,3 +45,16 @@ setopt HIST_IGNORE_ALL_DUPS   # Don't record duplicate commands
 setopt HIST_REDUCE_BLANKS     # Remove extra spaces from history items
 setopt AUTO_CD                # Type a directory path without 'cd' to jump into it
 
+# ==============================================================================
+# CUSTOM FUNCTIONS
+# ==============================================================================
+
+# Strip all active APIs from a given GCP project ID
+gcp-strip-apis() {
+    if [ -z "$1" ]; then
+        echo "❌ Error: Please provide a project ID. Example: gcp-strip-apis my-project-id"
+        return 1
+    fi
+    echo "⚠️ Stripping all enabled APIs from project: $1..."
+    gcloud services disable $(gcloud services list --enabled --project="$1" --format="value(config.name)") --project="$1" --force
+}

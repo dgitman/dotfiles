@@ -1,0 +1,130 @@
+name: Hourly cask updates
+on:
+  schedule:
+    - cron: '17 * * * *'
+      timezone: America/New_York
+  workflow_dispatch:
+    inputs:
+      test_notification:
+        description: Send a test GitHub mention notification
+        type: boolean
+        default: false
+  pull_request:
+    paths:
+      - '.github/workflows/cask-updates.yml'
+      - '.github/scripts/*casks*.py'
+permissions:
+  contents: read
+concurrency:
+  group: hourly-cask-updates
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - run: python3 -m unittest discover -s .github/scripts -p 'test_bump_casks.py'
+  bump:
+    if: github.event_name != 'pull_request' && !inputs.test_notification
+    needs: validate
+    runs-on: macos-latest
+    timeout-minutes: 180
+    env:
+      HOMEBREW_NO_INSTALL_FROM_API: '1'
+      HOMEBREW_NO_AUTO_UPDATE: '1'
+      HOMEBREW_NO_ENV_HINTS: '1'
+      HOMEBREW_NO_COLOR: '1'
+      GH_TOKEN: ${{ secrets.HOMEBREW_BUMP_TOKEN }}
+      HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.HOMEBREW_BUMP_TOKEN }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Load GitHub authentication from 1Password
+        if: vars.HOMEBREW_BUMP_SECRET_REFERENCE != ''
+        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.1.1
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          GH_TOKEN: ${{ vars.HOMEBREW_BUMP_SECRET_REFERENCE }}
+          HOMEBREW_GITHUB_API_TOKEN: ${{ vars.HOMEBREW_BUMP_SECRET_REFERENCE }}
+      - name: Check authentication
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::Configure 1Password authentication or add the HOMEBREW_BUMP_TOKEN repository secret."
+            exit 1
+          fi
+          test "$(gh api user --jq .login)" = dgitman
+      - name: Prepare Homebrew
+        run: |
+          brew update
+          brew tap --force homebrew/cask
+          gh auth setup-git
+      - name: Check, validate, and submit one cask update
+        run: python3 .github/scripts/bump-casks.py
+
+  notify:
+    if: always() && github.event_name != 'pull_request' && !inputs.test_notification && needs.validate.result == 'success'
+    needs: [validate, bump]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Find automated draft PRs
+        env:
+          GH_TOKEN: ${{ secrets.HOMEBREW_BUMP_TOKEN }}
+        run: |
+          gh pr list --repo Homebrew/homebrew-cask --author dgitman --state open --limit 100 \
+            --json number,title,url,isDraft,headRefName \
+            --jq '[.[] | select(.isDraft and (.headRefName | startswith("codex/bump-")))]' > drafts.json
+      - name: Notify contributor once per draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NOTIFICATION_REPO: ${{ github.repository }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+
+          def gh(*args):
+              return subprocess.check_output(["gh", *args], text=True).strip()
+
+          repo = os.environ["NOTIFICATION_REPO"]
+          for draft in json.loads(Path("drafts.json").read_text()):
+              title = "Review Homebrew draft PR #" + str(draft["number"])
+              existing = json.loads(gh("issue", "list", "--repo", repo, "--state", "all",
+                                       "--search", '"' + title + '" in:title', "--limit", "100",
+                                       "--json", "title"))
+              if any(issue["title"] == title for issue in existing):
+                  continue
+              body = Path(os.environ["RUNNER_TEMP"]) / "draft-notification.md"
+              body.write_text("@dgitman A Homebrew draft PR is ready for your review.\n\n"
+                              + draft["title"] + "\n\n" + draft["url"]
+                              + "\n\nReview the changes and zap paths before marking it ready. "
+                              "Answer maintainer questions yourself. Close this notification when done.\n")
+              url = gh("issue", "create", "--repo", repo, "--title", title,
+                       "--body-file", str(body))
+              with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as summary:
+                  summary.write("Draft notification: " + url + "\n\n")
+          PY
+
+  test-notification:
+    if: github.event_name == 'workflow_dispatch' && inputs.test_notification
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Send a test mention from GitHub's bot
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NOTIFICATION_REPO: ${{ github.repository }}
+        run: |
+          gh issue create --repo "$NOTIFICATION_REPO" \
+            --title "Test: Homebrew draft PR notification" \
+            --body "@dgitman This is a test of the notification for new Homebrew draft PRs. Please confirm whether you received the GitHub email alert. No cask update was created by this test."

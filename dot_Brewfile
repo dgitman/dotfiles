@@ -163,6 +163,8 @@ brew "pkgconf"
 brew "pv"
 # Interpreted, interactive, object-oriented programming language
 brew "python@3.13"
+# Python interface to Tcl/Tk
+brew "python-tk@3.13"
 # Install various Ruby versions and implementations
 brew "ruby-build"
 # Ruby version manager

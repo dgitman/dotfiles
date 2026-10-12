@@ -8,7 +8,7 @@ export HOMEBREW_GITHUB_API_TOKEN='{{ onepasswordRead "op://Private/ilisfoloivekd
 typeset -U path fpath
 
 # ==============================================================================
-# CORE INTEGRATIONS
+# CORE INTEGRATIONS & PATHS
 # ==============================================================================
 
 # Homebrew Core Initialization (Sets up PATH and paths automatically)
@@ -16,16 +16,37 @@ if [ -x /opt/homebrew/bin/brew ]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
-# homebrew Shell Completions
-autoload -Uz compinit
-compinit
-
-# 1Password CLI plugin
-[[ -r "$HOME/.config/op/plugins.sh" ]] && source "$HOME/.config/op/plugins.sh"
+# Homebrew Shell Completions Setup
+if type brew &>/dev/null; then
+    fpath=("$(brew --prefix)/share/zsh/site-functions" $fpath)
+fi
 
 # Docker Desktop CLI completions
 if [ -d "$HOME/.docker/completions" ]; then
     fpath=("$HOME/.docker/completions" $fpath)
+fi
+
+# Fast, Cached Completion Initialization (Regenerates once a day for speed)
+autoload -Uz compinit
+for dump in "$HOME/.zcompdump"(N.mh+24); do
+  compinit
+  break
+done
+compinit -C
+
+# ==============================================================================
+# ZSH PLUGINS (Syntax Highlighting & Autosuggestions)
+# ==============================================================================
+# Make sure to run 'brew install zsh-syntax-highlighting zsh-autosuggestions'
+
+if type brew &>/dev/null; then
+    if [ -f "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]; then
+        source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+    fi
+
+    if [ -f "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]; then
+        source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+    fi
 fi
 
 # ==============================================================================

@@ -181,6 +181,10 @@ brew "uv"
 brew "watch"
 # Internet file retriever
 brew "wget"
+# Fish-like fast/unobtrusive autosuggestions for zsh
+brew "zsh-autosuggestions"
+# Fish shell like syntax highlighting for zsh
+brew "zsh-syntax-highlighting"
 # CLI for Composio: connect AI agents to 250+ apps and tools
 brew "composiohq/tap/composio"
 # A command-line tool for Make automation platform

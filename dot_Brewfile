@@ -254,6 +254,8 @@ cask "google-gemini"
 cask "grammarly-desktop"
 # AI teammates that work across your apps and tools
 cask "grok-bot"
+# Extensible coding agent for the terminal
+cask "grok-build"
 # Open-source video transcoder
 cask "handbrake-app"
 # iPhone management application

@@ -5,6 +5,7 @@ tap "dgitman/cask-local", File.join(Dir.home, "Developer/dgitman/homebrew-cask")
 tap "homebrew/core"
 tap "integromat/tap"
 tap "oven-sh/bun", trusted: true
+tap "pagecrawl/tap"
 # Open-source formatting library for C++
 brew "fmt"
 # C/C++ and Java libraries for Unicode and globalization
@@ -191,6 +192,8 @@ brew "zsh-syntax-highlighting"
 brew "composiohq/tap/composio"
 # A command-line tool for Make automation platform
 brew "integromat/tap/make-cli", trusted: true
+# Route your own PageCrawl checks through a computer you own
+brew "pagecrawl/tap/pagecrawl-relay", trusted: true
 # Password manager that keeps all passwords secure behind one password
 cask "1password"
 # Command-line helper for the 1Password password manager

@@ -8,8 +8,8 @@
         "trakt-mcp"
       ],
       "env": {
-        "TRAKT_CLIENT_ID": {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/t7aiboqrptwqpqk6fe5em4ag7u/client_id" | toJson }},
-        "TRAKT_CLIENT_SECRET": {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/t7aiboqrptwqpqk6fe5em4ag7u/client_secret" | toJson }}
+        "TRAKT_CLIENT_ID": "REDACTED-TRAKT-CLIENT-ID",
+        "TRAKT_CLIENT_SECRET": "REDACTED-TRAKT-CLIENT-SECRET"
       }
     },
     "Capsolver": {
@@ -18,11 +18,11 @@
         "capsolver-mcp"
       ],
       "env": {
-        "CAPSOLVER_API_KEY": {{ onepasswordRead "op://5muo7u2aqulocq4t75j7ykbw2u/bdcvenrvwr2gn66zwwhabfe2tm/26443wvz5orwcddeckk3dqxqre/ro4ejmced5sbqpacz6yrwr7l5y" | toJson }}
+        "CAPSOLVER_API_KEY": "REDACTED-CAPSOLVER-API-KEY"
       }
     }
   },
-  "coworkUserFilesPath": "{{ .chezmoi.homeDir }}/Claude",
+  "coworkUserFilesPath": "~/Claude",
   "preferences": {
     "coworkBrowserToolsEnabled": true,
     "coworkPreferredBrowser": "built_in",
@@ -33,10 +33,10 @@
     "launchPreviewSessionScopedSessions": [],
     "launchChromeImportPrompt": "done",
     "localAgentModeTrustedFolders": [
-      "{{ .chezmoi.homeDir }}/Developer/dgitman/shiragitman.com",
-      "{{ .chezmoi.homeDir }}/.local/share/chezmoi",
-      "{{ .chezmoi.homeDir }}/Developer",
-      "{{ .chezmoi.homeDir }}/Library/CloudStorage/GoogleDrive-personal@example.com/My Drive/Personal/Legal/Temporary Child Custody 24CV009376-910"
+      "~/Developer/dgitman/shiragitman.com",
+      "~/.local/share/chezmoi",
+      "~/Developer",
+      "~/Library/CloudStorage/GoogleDrive-personal@example.com/My Drive/Personal/Legal/Temporary Child Custody 24CV009376-910"
     ],
     "folderTccProbeResults": {
       "desktop": "granted",
@@ -46,15 +46,10 @@
       "appVersion": "1.22209.3"
     },
     "remoteSessionFolderGrants": {
-      "session_01Ct2ew6Hd41CgDgp4MaWqof": [
-        "{{ .chezmoi.homeDir }}/Downloads",
-        "{{ .chezmoi.homeDir }}/Developer/dgitman/custody",
-        "{{ .chezmoi.homeDir }}/Library/CloudStorage/GoogleDrive-other@example.com/My Drive/Personal/Legal/Temporary Child Custody 24CV009376-910/Laura's Parenting/Exhibits"
-      ],
       "session_01GkGerVapVXQhgWVqi2vrUG": [
-        "{{ .chezmoi.homeDir }}/Library/CloudStorage/GoogleDrive-personal@example.com/My Drive/Personal/Legal/Temporary Child Custody 24CV009376-910",
-        "{{ .chezmoi.homeDir }}/Downloads",
-        "{{ .chezmoi.homeDir }}/Developer/dgitman/custody"
+        "~/Library/CloudStorage/GoogleDrive-personal@example.com/My Drive/Personal/Legal/Temporary Child Custody 24CV009376-910",
+        "~/Downloads",
+        "~/Developer/dgitman/custody"
       ]
     },
     "coworkLegacyRootGrantsPruned": true,
@@ -63,7 +58,6 @@
     "coworkHipaaRestricted": false,
     "orgWorkAcrossAppsDisabled": false,
     "ccdScheduledTasksEnabled": true,
-    "storeReadCacheLatched": true,
     "sidebarMode": "chat",
     "bypassPermissionsOptInByAccount": {
       "c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": true
@@ -310,10 +304,10 @@
         "version": 0
       },
       "epitaxy-perm-mode-acks.c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": [
-        "{{ .chezmoi.homeDir }}/Developer/dgitman/firecrawl:auto"
+        "~/Developer/dgitman/firecrawl:auto"
       ],
       "epitaxy-folder-permission-mode.c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": {
-        "{{ .chezmoi.homeDir }}/Developer/dgitman/firecrawl": "auto"
+        "~/Developer/dgitman/firecrawl": "auto"
       },
       "epitaxy-auto-mode-consented.c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": true,
       "epitaxy-auto-default-notice-seen.c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": true,
@@ -334,6 +328,7 @@
             {
               "id": "pinned",
               "kind": "pinned",
+              "v": 2,
               "name": "",
               "order": 0,
               "sortBy": "recency",
@@ -348,6 +343,7 @@
             {
               "id": "routines",
               "kind": "routines",
+              "v": 2,
               "name": "",
               "order": 1,
               "sortBy": "recency",
@@ -360,55 +356,11 @@
               "shown": false
             },
             {
-              "id": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-              "kind": "manual",
-              "name": "Because Ventures",
-              "order": 2,
-              "sortBy": "recency",
-              "ascending": false,
-              "show": {
-                "metadata": false,
-                "emptyGroups": false
-              },
-              "collapsed": true,
-              "shown": true,
-              "members": []
-            },
-            {
               "id": "cg-fbff5dd2-801f-4912-82e6-bc8e5df44b72",
               "kind": "manual",
+              "v": 2,
               "name": "Legal",
-              "order": 3,
-              "sortBy": "recency",
-              "ascending": false,
-              "show": {
-                "metadata": false,
-                "emptyGroups": false
-              },
-              "collapsed": false,
-              "shown": true,
-              "members": []
-            },
-            {
-              "id": "cg-181f55e1-ed12-4ce0-90da-33c8f2021598",
-              "kind": "manual",
-              "name": "Developer Tools",
-              "order": 4,
-              "sortBy": "recency",
-              "ascending": false,
-              "show": {
-                "metadata": false,
-                "emptyGroups": false
-              },
-              "collapsed": true,
-              "shown": true,
-              "members": []
-            },
-            {
-              "id": "cg-3eb21ca0-afb4-488d-8a1f-305a0f6c93ef",
-              "kind": "manual",
-              "name": "Personal Automation",
-              "order": 5,
+              "order": 2,
               "sortBy": "recency",
               "ascending": false,
               "show": {
@@ -422,7 +374,56 @@
             {
               "id": "cg-90813fa1-8966-4c66-a6b6-6d3ee55068a1",
               "kind": "manual",
+              "v": 2,
               "name": "Personal Coding",
+              "order": 3,
+              "sortBy": "recency",
+              "ascending": false,
+              "show": {
+                "metadata": false,
+                "emptyGroups": false
+              },
+              "collapsed": true,
+              "shown": true,
+              "members": []
+            },
+            {
+              "id": "cg-3eb21ca0-afb4-488d-8a1f-305a0f6c93ef",
+              "kind": "manual",
+              "v": 2,
+              "name": "Personal Automation",
+              "order": 4,
+              "sortBy": "recency",
+              "ascending": false,
+              "show": {
+                "metadata": false,
+                "emptyGroups": false
+              },
+              "collapsed": true,
+              "shown": true,
+              "members": []
+            },
+            {
+              "id": "cg-181f55e1-ed12-4ce0-90da-33c8f2021598",
+              "kind": "manual",
+              "v": 2,
+              "name": "Developer Tools",
+              "order": 5,
+              "sortBy": "recency",
+              "ascending": false,
+              "show": {
+                "metadata": false,
+                "emptyGroups": false
+              },
+              "collapsed": true,
+              "shown": true,
+              "members": []
+            },
+            {
+              "id": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
+              "kind": "manual",
+              "v": 2,
+              "name": "Because Ventures",
               "order": 6,
               "sortBy": "recency",
               "ascending": false,
@@ -437,6 +438,7 @@
             {
               "id": "cg-b9ab9e00-c236-4bcd-abc9-83292a7e8780",
               "kind": "manual",
+              "v": 2,
               "name": "Websites",
               "order": 7,
               "sortBy": "recency",
@@ -452,6 +454,7 @@
             {
               "id": "sessions",
               "kind": "sessions",
+              "v": 2,
               "name": "",
               "order": 8,
               "groupBy": "environment",

@@ -7,6 +7,10 @@ tap "integromat/tap"
 tap "oven-sh/bun", trusted: true
 # Open-source formatting library for C++
 brew "fmt"
+# C/C++ and Java libraries for Unicode and globalization
+brew "icu4c@78"
+# Unicode conversion routines, fast
+brew "simdutf"
 # WHATWG-compliant and fast URL parser written in modern C++
 brew "ada-url"
 # Macro processing language
@@ -25,8 +29,6 @@ brew "readline"
 brew "xz"
 # Zstandard is a real-time compression algorithm
 brew "zstd"
-# Interpreted, interactive, object-oriented programming language
-brew "python@3.14"
 # Official Amazon AWS command-line interface
 brew "awscli"
 # Generic-purpose lossless compression algorithm by Google
@@ -75,8 +77,6 @@ brew "sdl2-compat"
 brew "ffmpeg"
 # GitHub command-line tool
 brew "gh"
-# C/C++ and Java libraries for Unicode and globalization
-brew "icu4c@78"
 # Double-Array Trie Library
 brew "libdatrie"
 # Distributed revision control system
@@ -107,6 +107,8 @@ brew "imapsync"
 brew "imessage-exporter"
 # Cryptography and SSL/TLS Toolkit
 brew "openssl@3"
+# Interpreted, interactive, object-oriented programming language
+brew "python@3.14"
 # Tools for and transforming and inspecting PDF files
 brew "qpdf"
 # Regular expressions library
@@ -135,8 +137,6 @@ brew "llhttp"
 brew "lua"
 # Mac App Store command-line interface
 brew "mas"
-# Unicode conversion routines, fast
-brew "simdutf"
 # C++ lexer for extracting named exports from CommonJS modules
 brew "merve"
 # Library of byte handling functions extracted from Node.js core

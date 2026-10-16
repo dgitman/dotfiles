@@ -116,11 +116,11 @@ done, so it is safe to re-run:
    a password prompt and a Command Line Tools download.
 2. Installs the 1Password app, the 1Password CLI (`1password-cli`, matching
    `dot_Brewfile`), and chezmoi with Homebrew.
-3. Opens 1Password and waits until the CLI can reach it. When prompted:
-   sign in and unlock, then in **Settings → Developer** turn on
-   **Integrate with 1Password CLI** and **Use the SSH agent**. Press Return to
-   continue. If the CLI still reports that you are not signed in, type `p` to
-   sign in with your 1Password password instead (`eval "$(op signin)"`).
+3. Opens 1Password and pauses. Sign in and unlock, then in
+   **Settings → Developer** turn on **Integrate with 1Password CLI** and
+   **Use the SSH agent**, and press Return. If chezmoi later reports that the
+   1Password CLI is not signed in, run `eval "$(op signin)"` and re-run the
+   bootstrap command in the same terminal.
 4. Runs `chezmoi init --apply https://github.com/dgitman/dotfiles.git`. chezmoi
    asks for the personal and work emails, reads secrets from 1Password, writes
    the dotfiles, and runs the `run_onchange_*` hooks, including `brew bundle`

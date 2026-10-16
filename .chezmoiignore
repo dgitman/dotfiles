@@ -2,6 +2,7 @@
 # REPO-ONLY DOCUMENTATION (not applied to the home directory)
 # ==============================================================================
 README.md
+bootstrap.sh
 
 # ==============================================================================
 # DEVELOPER WORKSPACE & IDE TRANSIENT DATA

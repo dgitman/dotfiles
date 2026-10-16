@@ -83,12 +83,6 @@ clone_repos() {
     done
   done
   echo "$cloned new repos cloned into ~/Developer."
-
-  # The Brewfile's local tap is skipped until its repo exists.
-  local cask_repo="$HOME/Developer/dgitman/homebrew-cask"
-  if [ -d "$cask_repo" ] && ! brew tap | grep -qx "dgitman/cask-local"; then
-    brew tap dgitman/cask-local "$cask_repo"
-  fi
 }
 
 # Add the Brother printer over AirPrint (no driver needed) if it is on the network.
@@ -215,7 +209,7 @@ main() {
 
   # 5. Steps the README used to list as manual.
   info "Cloning GitHub repos"
-  clone_repos
+  clone_repos || echo "Repo cloning did not finish; re-run to retry."
 
   info "Adding the printer"
   add_printer || true
@@ -240,7 +234,7 @@ main() {
   gcloud_signin || echo "Google Cloud sign-in not finished; run: gcloud auth login"
 
   info "Personal background jobs"
-  background_jobs
+  background_jobs || true
 
   info "Done"
 }

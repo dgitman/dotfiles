@@ -32,8 +32,8 @@ Notable tracked files:
 - `run_onchange_before_install-packages-darwin.sh.tmpl` — runs
   Homebrew Bundle from the tracked source whenever `dot_Brewfile` changes;
   installation failures stop the apply and are retried on the next apply.
-  It skips `tap "homebrew/core"` and local-path taps whose directory does not
-  exist yet (e.g. `dgitman/cask-local` before `~/Developer` is restored)
+  It skips `tap "homebrew/core"` and local-path development taps such as
+  `dgitman/cask-local` (a homebrew-cask fork Homebrew rejects as a tap)
 - `run_onchange_after_00-initialize-app-preferences.sh.tmpl` — on first
   apply, opens Afterglow, Grok Bot, and Magnet once and quits them so the
   preference hooks below have existing settings to merge into
@@ -136,8 +136,7 @@ done, so it is safe to re-run:
 6. Finishes the steps that used to be manual:
    - clones every non-archived repo of `dgitman` and `because-ventures` into
      `~/Developer/<owner>/<repo>` over SSH (existing folders are left alone;
-     the dotfiles repo itself is skipped), then adds the `dgitman/cask-local`
-     tap once `homebrew-cask` is present;
+     the dotfiles repo itself is skipped);
    - adds the Brother HL-L2460DW over AirPrint as `Brother_HL_L2460DW` if it is
      on the network;
    - offers to download the After Dark 10th Anniversary disc image from

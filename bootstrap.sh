@@ -264,6 +264,9 @@ main() {
     echo "this script or \`chezmoi apply\`; finished steps are skipped." >&2
     exit 1
   fi
+  # Regenerate ~/.config/chezmoi/chezmoi.toml in case .chezmoi.toml.tmpl changed;
+  # answers to its one-time prompts are kept.
+  chezmoi init
   chezmoi git -- remote set-url origin "git@github.com:$REPO.git"
 
   # 5. Steps the README used to list as manual.

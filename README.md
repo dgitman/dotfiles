@@ -62,6 +62,13 @@ Avoid sharing rendered configs or secret-bearing `chezmoi diff` output.
 - `git_protocol` is set to `ssh` — both `gh` and all repos under
   `~/Developer` use SSH remotes (`git@github.com:...`), not HTTPS.
 
+## Editor
+
+`.chezmoi.toml.tmpl` sets VS Code (`code`) as the editor for `chezmoi edit`, the
+viewer for `chezmoi diff`, and the three-way merge tool for `chezmoi merge`.
+After changing that template, run `chezmoi init` to regenerate
+`~/.config/chezmoi/chezmoi.toml` (`bootstrap.sh` does this on every run).
+
 ## Common commands
 
 ```zsh

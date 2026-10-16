@@ -170,7 +170,8 @@ background_jobs() {
   # Remtasks: check, then offer to start its agent.
   if ! $rem_loaded && [ -x "$rem_bin" ]; then
     echo "Running remtasks doctor (allow Reminders access if macOS asks)..."
-    "$HOME/.local/bin/remtasks" doctor || true
+    "$HOME/.local/bin/remtasks" doctor ||
+      echo "A \"Reminders database not readable\" FAIL here is expected unless Terminal has Full Disk Access; the agent uses the app's own access."
     read -r -p "Start Remtasks background sync on this Mac? Stop it on the old Mac first. [y/N] " answer
     case "$answer" in
       y|Y|yes|YES) "$HOME/.local/bin/remtasks" install-agent --interval 300 || true ;;
@@ -181,7 +182,8 @@ background_jobs() {
   # Messages Sync: read-only source check, timezone check, then offer to load its jobs.
   if ! $msg_loaded && [ -x "$msg_repo/.venv/bin/gitman-messages-sync" ]; then
     echo "Checking the Messages database (read-only, no Google access)..."
-    "$msg_repo/scripts/run.sh" validate-source || echo "Source check failed; check Full Disk Access."
+    "$msg_repo/scripts/run.sh" validate-source ||
+      echo "Check could not read Messages from Terminal. Expected unless Terminal has Full Disk Access; the jobs use the launchers' access."
     local tz; tz=$(readlink /etc/localtime | sed 's|.*/zoneinfo/||')
     [ "$tz" = "America/New_York" ] || echo "Warning: Mac timezone is $tz; Messages Sync expects America/New_York."
     read -r -p "Load the Messages Sync jobs (live writes to Sheets/Drive)? Stop them on the old Mac first. [y/N] " answer

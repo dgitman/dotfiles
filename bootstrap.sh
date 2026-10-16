@@ -54,12 +54,11 @@ main() {
   echo "  1. Sign in to 1Password and unlock it."
   echo "  2. Settings > Developer: turn on \"Integrate with 1Password CLI\"."
   echo "  3. Settings > Developer: turn on \"Use the SSH agent\" (for git over SSH)."
-  echo "  4. System Settings > Privacy & Security > Full Disk Access: turn on your"
-  echo "     terminal app (Terminal). Without it, op reports \"not signed in\"."
-  echo "     If macOS offers to quit and reopen Terminal, choose Later, or reopen"
-  echo "     it and run this command again."
+  echo "  4. If macOS asks to let Terminal access data from other apps, click Allow."
+  echo "     Without it, op reports \"not signed in\". To change it later: System"
+  echo "     Settings > Privacy & Security > Files & Folders > Terminal > turn on"
+  echo "     \"Data shared by 1Password Launcher and affiliated apps\"."
   open -a 1Password || true
-  open "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles" || true
   read -r -p "Press Return when done... " _
 
   # 4. Clone and apply. HTTPS needs no SSH key; the remote is switched to SSH

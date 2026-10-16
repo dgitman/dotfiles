@@ -31,9 +31,6 @@ Library/Application Support/Code/Backups/
 # Repository-only regression tests
 tests/
 
-# Repository-only package inventory
-pipx-packages.json
-
 # Magnet layout is merged by its restore hook, not copied into the home directory
 magnet-stage-manager.json
 

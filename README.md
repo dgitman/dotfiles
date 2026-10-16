@@ -118,10 +118,12 @@ done, so it is safe to re-run:
    `dot_Brewfile`), and chezmoi with Homebrew.
 3. Opens 1Password and pauses. Sign in and unlock, then in
    **Settings → Developer** turn on **Integrate with 1Password CLI** and
-   **Use the SSH agent**. In **System Settings → Privacy & Security → Full
-   Disk Access**, turn on Terminal (the script opens that page); without it
-   `op` reports "You are not currently signed in" even with the app unlocked.
-   Then press Return. If chezmoi later reports that the
+   **Use the SSH agent**, then press Return. When macOS asks whether Terminal
+   may access data from other apps, click **Allow**. Without it `op` reports
+   "You are not currently signed in" even with the app unlocked. If the prompt
+   was missed or denied, go to **System Settings → Privacy & Security → Files &
+   Folders → Terminal** and turn on **Data shared by 1Password Launcher and
+   affiliated apps**. The toggle appears there after `op` has tried once. If chezmoi later reports that the
    1Password CLI is not signed in, run `eval "$(op signin)"` and re-run the
    bootstrap command in the same terminal.
 4. Runs `chezmoi init --apply https://github.com/dgitman/dotfiles.git`. chezmoi
@@ -158,8 +160,10 @@ brew install --cask 1password 1password-cli
 brew install chezmoi
 
 # 3. Open 1Password, sign in, and enable Settings → Developer →
-#    "Integrate with 1Password CLI" and "Use the SSH agent". Give Terminal
-#    Full Disk Access (System Settings → Privacy & Security). Then confirm:
+#    "Integrate with 1Password CLI" and "Use the SSH agent". Then confirm, and
+#    allow Terminal to access data from other apps if macOS asks (Privacy &
+#    Security → Files & Folders → Terminal → "Data shared by 1Password Launcher
+#    and affiliated apps"):
 op vault list
 
 # 4. Clone and apply
@@ -322,8 +326,8 @@ by a project, require their own sign-in step.
 
 ## Post-rebuild checklist
 
-1. Install and unlock 1Password, enable its CLI integration, give Terminal
-   Full Disk Access, and set up its SSH agent before cloning private repositories or resolving secret references.
+1. Install and unlock 1Password, enable its CLI integration, allow Terminal
+   to access 1Password's shared data (Files & Folders), and set up its SSH agent before cloning private repositories or resolving secret references.
    `bootstrap.sh` handles this step and the next.
 2. Initialize chezmoi and apply the configuration. For Magnet, open it once and
    quit it before retrying the apply if its restore hook requests that step.

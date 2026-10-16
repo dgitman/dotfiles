@@ -22,6 +22,38 @@ load_brew() {
   done
 }
 
+# Verify the restored Google Cloud account can get an access token; offer
+# sign-in if not. Tokens are discarded, never printed. Returns nonzero when
+# sign-in is incomplete.
+gcloud_signin() {
+  if ! command -v gcloud >/dev/null 2>&1; then
+    echo "Google Cloud CLI is missing; skipping sign-in."
+    return 1
+  fi
+  local account answer
+  account=$(gcloud config get-value core/account 2>/dev/null || true)
+  if [ -z "$account" ] || [ "$account" = "(unset)" ]; then
+    echo "No Google Cloud account is configured; skipping sign-in."
+    return 1
+  fi
+  if gcloud auth print-access-token --account="$account" --quiet >/dev/null 2>&1; then
+    echo "Google Cloud authentication works for $account."
+    return 0
+  fi
+  echo "Google Cloud authentication could not be verified for $account"
+  echo "(missing or expired credentials, connectivity, or account restrictions)."
+  read -r -p "Sign in to Google Cloud now? [y/N] " answer
+  case "$answer" in
+    y|Y|yes|YES)
+      # Shows a link to open in your preferred browser.
+      gcloud auth login "$account" --no-launch-browser &&
+        gcloud auth print-access-token --account="$account" --quiet >/dev/null &&
+        echo "Google Cloud authentication verified."
+      ;;
+    *) return 1 ;;
+  esac
+}
+
 main() {
   [ "$(uname -s)" = "Darwin" ] || fail "this bootstrap only supports macOS."
   [ "$(id -u)" -ne 0 ] || fail "run as your normal user, not root."
@@ -92,7 +124,7 @@ main() {
   # 5. Google Cloud sign-in. It exits at once when already signed in; a declined
   #    or failed sign-in does not undo the restore.
   info "Checking Google Cloud sign-in"
-  "$HOME/.local/bin/dotfiles-setup" || echo "Run dotfiles-setup later to finish Google Cloud sign-in."
+  gcloud_signin || echo "Google Cloud sign-in not finished; run: gcloud auth login"
 
   info "Done"
   echo "Next steps (see README \"Post-rebuild checklist\"):"

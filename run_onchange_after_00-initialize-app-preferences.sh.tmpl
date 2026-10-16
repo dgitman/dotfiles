@@ -1,0 +1,43 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+# Runs after Homebrew Bundle and before the Afterglow, Grok, and Magnet
+# preference hooks (scripts run in name order). Those hooks merge into
+# preferences the apps create on first launch, so launch each app that has
+# never run, wait for its preferences to appear, then quit it.
+# Problems are reported but never stop the apply; the later hooks still check.
+set -uo pipefail
+
+TIMEOUT=120
+
+# initialize <app name> <test command...>
+initialize() {
+  local app="$1"; shift
+  "$@" >/dev/null 2>&1 && return
+  if ! open -Ra "$app" 2>/dev/null; then
+    echo "$app is not installed yet; skipping first-launch setup."
+    return
+  fi
+  echo "Opening $app once to create its preferences (if macOS asks, click Open)..."
+  open -g -a "$app" || { echo "Could not open $app."; return; }
+  local waited=0
+  until "$@" >/dev/null 2>&1; do
+    if [ "$waited" -ge "$TIMEOUT" ]; then
+      echo "$app did not create its preferences within ${TIMEOUT}s; open it manually."
+      break
+    fi
+    sleep 2; waited=$((waited + 2))
+  done
+  sleep 2  # let the app finish writing before it quits
+  osascript -e "quit app \"$app\"" >/dev/null 2>&1 || true
+  waited=0
+  while pgrep -xq "$app" && [ "$waited" -lt 20 ]; do
+    sleep 1; waited=$((waited + 1))
+  done
+  pgrep -xq "$app" && echo "$app is still running; quit it before the next apply."
+}
+
+initialize "Afterglow" defaults read cloud.morphing.afterglow
+initialize "Grok Bot" test -f "$HOME/.grokbot/settings.json"
+initialize "Magnet" defaults read com.crowdcafe.windowmagnet horizontalCommands
+exit 0
+{{ end -}}

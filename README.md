@@ -33,7 +33,9 @@ Notable tracked files:
   Desktop MCP servers and preferences
 - `run_onchange_before_install-packages-darwin.sh.tmpl` — runs
   Homebrew Bundle from the tracked source whenever `dot_Brewfile` changes;
-  installation failures stop the apply and are retried on the next apply
+  installation failures stop the apply and are retried on the next apply.
+  It skips `tap "homebrew/core"` and local-path taps whose directory does not
+  exist yet (e.g. `dgitman/cask-local` before `~/Developer` is restored)
 - `run_onchange_after_00-initialize-app-preferences.sh.tmpl` — on first
   apply, opens Afterglow, Grok Bot, and Magnet once and quits them so the
   preference hooks below have existing settings to merge into
@@ -117,7 +119,8 @@ done, so it is safe to re-run:
 3. Opens 1Password and waits until the CLI can reach it. When prompted:
    sign in and unlock, then in **Settings → Developer** turn on
    **Integrate with 1Password CLI** and **Use the SSH agent**. Press Return to
-   continue.
+   continue. If the CLI still reports that you are not signed in, type `p` to
+   sign in with your 1Password password instead (`eval "$(op signin)"`).
 4. Runs `chezmoi init --apply https://github.com/dgitman/dotfiles.git`. chezmoi
    asks for the personal and work emails, reads secrets from 1Password, writes
    the dotfiles, and runs the `run_onchange_*` hooks, including `brew bundle`

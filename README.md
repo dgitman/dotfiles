@@ -133,7 +133,9 @@ done, so it is safe to re-run:
 5. Switches the chezmoi repo's `origin` to SSH
    (`git@github.com:dgitman/dotfiles.git`) so `brewfile-sync` can push through
    the 1Password SSH agent.
-6. Checks Google Cloud sign-in for the restored gcloud account and offers
+6. Installs the pipx apps listed in `pipx-packages.json` that are missing,
+   then runs `chezmoi status` and `chezmoi doctor` and shows only problems.
+7. Checks Google Cloud sign-in for the restored gcloud account and offers
    sign-in if needed, showing a login link for your preferred browser (it only
    prints a confirmation when already signed in).
 
@@ -235,7 +237,7 @@ Reapply after rotating the keys and never re-add the rendered credentials.
 `pipx-packages.json` records the installed pipx applications separately from the
 Brewfile. The current inventory is `ray[default]` version `2.58.0`, with no
 injected packages or dependency applications exposed. After Homebrew setup,
-restore it with:
+`bootstrap.sh` installs it automatically; to restore it by hand:
 
 ```sh
 pipx install 'ray[default]==2.58.0'
@@ -311,9 +313,10 @@ new settings before re-adding configurations to avoid tracking credentials.
    quit it before retrying the apply if its restore hook requests that step.
 3. Sign in to Google Cloud. `bootstrap.sh` checks this and offers sign-in; to
    do it later, run `gcloud auth login`.
-4. Restore Ray using the pipx command above, then complete the personal background
-   job prerequisites before loading their agents.
-5. Run `chezmoi status` and `chezmoi doctor` to check the restored configuration.
+4. Ray (pipx) and the `chezmoi status` / `chezmoi doctor` checks are run by
+   `bootstrap.sh`. Complete the personal background job prerequisites before
+   loading their agents.
+5. Re-run `chezmoi status` and `chezmoi doctor` after any manual changes.
 
 Google Cloud verification discards the access token and never prints it.
 A failed verification can also mean a connectivity or account problem; it does

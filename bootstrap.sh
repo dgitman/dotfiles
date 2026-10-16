@@ -54,6 +54,27 @@ gcloud_signin() {
   esac
 }
 
+# Install the pipx apps recorded in pipx-packages.json that are not installed.
+restore_pipx() {
+  local inventory spec name
+  inventory="$(chezmoi source-path)/pipx-packages.json"
+  if ! command -v pipx >/dev/null 2>&1 || [ ! -f "$inventory" ]; then
+    echo "pipx or $inventory is missing; skipping."
+    return 1
+  fi
+  python3 -c 'import json, sys
+for p in json.load(open(sys.argv[1]))["packages"]:
+    print(p["package"] + ("==" + p["version"] if p.get("version") else ""))' "$inventory" |
+    while IFS= read -r spec; do
+      name="${spec%%[[=]*}"
+      if pipx list --short 2>/dev/null | grep -q "^$name "; then
+        echo "$name is already installed."
+      else
+        pipx install "$spec" </dev/null
+      fi
+    done
+}
+
 main() {
   [ "$(uname -s)" = "Darwin" ] || fail "this bootstrap only supports macOS."
   [ "$(id -u)" -ne 0 ] || fail "run as your normal user, not root."
@@ -121,15 +142,30 @@ main() {
   fi
   chezmoi git -- remote set-url origin "git@github.com:$REPO.git"
 
-  # 5. Google Cloud sign-in. It exits at once when already signed in; a declined
+  # 5. Steps the README used to list as manual: pipx apps, then a health check.
+  info "Restoring pipx apps"
+  restore_pipx || echo "pipx restore did not finish; see README \"Additional restore files\"."
+
+  info "Checking the restore"
+  local drift
+  drift=$(chezmoi status 2>&1 || true)
+  if [ -n "$drift" ]; then
+    echo "chezmoi status reports differences:"
+    echo "$drift"
+  else
+    echo "chezmoi status: everything applied."
+  fi
+  chezmoi doctor 2>&1 | grep -Ev '^(ok|info|RESULT) ' || true
+
+  # 6. Google Cloud sign-in. It exits at once when already signed in; a declined
   #    or failed sign-in does not undo the restore.
   info "Checking Google Cloud sign-in"
   gcloud_signin || echo "Google Cloud sign-in not finished; run: gcloud auth login"
 
   info "Done"
-  echo "Next steps (see README \"Post-rebuild checklist\"):"
-  echo "  - Restore pipx packages and personal background jobs as described in the README"
-  echo "  - Check with: chezmoi status && chezmoi doctor"
+  echo "Remaining manual steps (see README \"Post-rebuild checklist\"):"
+  echo "  - Personal background jobs (Remtasks, Messages Sync)"
+  echo "  - After Dark modules for Afterglow, the Brother printer, Docker restart"
 }
 
 # Under `curl | bash`, stdin is the script itself. bash reads this whole file

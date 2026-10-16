@@ -52,17 +52,32 @@ main() {
 
   # 3. chezmoi templates read secrets with onepasswordRead, which needs the
   #    desktop app unlocked and its CLI integration turned on.
-  if ! op vault list >/dev/null 2>&1; then
+  # `op account list` never prompts; with no accounts, other op commands offer
+  # to add one by hand, which is not wanted here.
+  if [ -z "$(op account list </dev/null 2>/dev/null)" ]; then
     info "Set up 1Password"
     echo "  1. Sign in to 1Password and unlock it."
     echo "  2. Settings > Developer: turn on \"Integrate with 1Password CLI\"."
     echo "  3. Settings > Developer: turn on \"Use the SSH agent\" (for git over SSH)."
+    echo "  If it is still not detected, quit 1Password fully (Cmd-Q), reopen, and unlock."
     open -a 1Password || true
-    until op vault list >/dev/null 2>&1; do
-      read -r -p "Press Return once 1Password is unlocked and the CLI integration is on... " _
-    done
   fi
-  echo "1Password CLI is connected."
+  local answer
+  while true; do
+    if [ -z "$(op account list </dev/null 2>/dev/null)" ]; then
+      echo "1Password CLI sees no accounts yet (app locked or CLI integration off)."
+    else
+      echo "Checking 1Password access; approve the request if 1Password asks..."
+      # Errors stay visible so a failure says why.
+      op vault list >/dev/null && break
+    fi
+    read -r -p "Press Return to check again, or type s to skip this check: " answer
+    if [ "$answer" = "s" ]; then
+      echo "Skipping the check; chezmoi will ask 1Password for access itself."
+      break
+    fi
+  done
+  echo "Continuing with 1Password."
 
   # 4. Clone and apply. HTTPS needs no SSH key; the remote is switched to SSH
   #    afterwards so brewfile-sync can push through the 1Password SSH agent.

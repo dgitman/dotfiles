@@ -114,7 +114,7 @@ done, so it is safe to re-run:
 
 1. Installs Homebrew (which also installs the Xcode Command Line Tools). Expect
    a password prompt and a Command Line Tools download.
-2. Installs the 1Password app, the 1Password CLI (`1password-cli@beta`, matching
+2. Installs the 1Password app, the 1Password CLI (`1password-cli`, matching
    `dot_Brewfile`), and chezmoi with Homebrew.
 3. Opens 1Password and waits until the CLI can reach it. When prompted:
    sign in and unlock, then in **Settings → Developer** turn on
@@ -151,7 +151,7 @@ The same steps by hand:
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # 2. 1Password, its CLI, and chezmoi
-brew install --cask 1password 1password-cli@beta
+brew install --cask 1password 1password-cli
 brew install chezmoi
 
 # 3. Open 1Password, sign in, and enable Settings → Developer →

@@ -1,8 +1,6 @@
 tap "composio-temp/tap", "https://github.com/composio-temp/homebrew-tap.git", trusted: true
 tap "composiohq/tap", "https://github.com/composio-temp/homebrew-tap.git", trusted: true
 tap "daptify14/tap"
-tap "dgitman/cask-local", File.join(Dir.home, "Developer/dgitman/homebrew-cask"), trusted: true
-tap "homebrew/core"
 tap "integromat/tap"
 tap "oven-sh/bun", trusted: true
 tap "pagecrawl/tap"
@@ -106,10 +104,6 @@ brew "imagemagick"
 brew "imapsync"
 # Command-line tool to export and inspect local iMessage database
 brew "imessage-exporter"
-# Cryptography and SSL/TLS Toolkit
-brew "openssl@3"
-# Interpreted, interactive, object-oriented programming language
-brew "python@3.14"
 # Tools for and transforming and inspecting PDF files
 brew "qpdf"
 # Regular expressions library
@@ -152,6 +146,8 @@ brew "uvwasi"
 brew "node"
 # Adds an OCR text layer to scanned PDF files
 brew "ocrmypdf"
+# Cryptography and SSL/TLS Toolkit
+brew "openssl@3"
 # PDF rendering library (based on the xpdf-3.0 code base)
 brew "poppler"
 # Search PDFs for strings matching a regular expression
@@ -166,6 +162,8 @@ brew "pv"
 brew "python@3.13"
 # Python interface to Tcl/Tk
 brew "python-tk@3.13"
+# Interpreted, interactive, object-oriented programming language
+brew "python@3.14"
 # Install various Ruby versions and implementations
 brew "ruby-build"
 # Ruby version manager
@@ -196,7 +194,7 @@ brew "integromat/tap/make-cli", trusted: true
 brew "pagecrawl/tap/pagecrawl-relay", trusted: true
 # Password manager that keeps all passwords secure behind one password
 cask "1password"
-# Command-line helper for the 1Password password manager
+# Command-line interface for 1Password
 cask "1password-cli"
 # Classic After Dark screen savers emulator
 cask "afterglow"

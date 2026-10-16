@@ -54,12 +54,20 @@ main() {
   echo "  1. Sign in to 1Password and unlock it."
   echo "  2. Settings > Developer: turn on \"Integrate with 1Password CLI\"."
   echo "  3. Settings > Developer: turn on \"Use the SSH agent\" (for git over SSH)."
-  echo "  4. If macOS asks to let Terminal access data from other apps, click Allow."
-  echo "     Without it, op reports \"not signed in\". To change it later: System"
-  echo "     Settings > Privacy & Security > Files & Folders > Terminal > turn on"
-  echo "     \"Data shared by 1Password Launcher and affiliated apps\"."
   open -a 1Password || true
   read -r -p "Press Return when done... " _
+
+  # One op call so macOS asks for Terminal's access to 1Password data now,
+  # not partway through chezmoi apply. Errors stay visible.
+  echo "Connecting to 1Password. If macOS asks to let Terminal access data from"
+  echo "other apps, click Allow; approve in 1Password if it asks."
+  if ! op vault list >/dev/null; then
+    echo "1Password CLI is not connected yet. Check: System Settings > Privacy &"
+    echo "Security > Files & Folders > Terminal > \"Data shared by 1Password Launcher"
+    echo "and affiliated apps\" is on, and the 1Password steps above are done."
+    open "x-apple.systempreferences:com.apple.preference.security?Privacy_FilesAndFolders" || true
+    read -r -p "Press Return to continue... " _
+  fi
 
   # 4. Clone and apply. HTTPS needs no SSH key; the remote is switched to SSH
   #    afterwards so brewfile-sync can push through the 1Password SSH agent.

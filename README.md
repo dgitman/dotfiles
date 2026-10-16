@@ -118,8 +118,10 @@ done, so it is safe to re-run:
    `dot_Brewfile`), and chezmoi with Homebrew.
 3. Opens 1Password and pauses. Sign in and unlock, then in
    **Settings → Developer** turn on **Integrate with 1Password CLI** and
-   **Use the SSH agent**, then press Return. When macOS asks whether Terminal
-   may access data from other apps, click **Allow**. Without it `op` reports
+   **Use the SSH agent**, then press Return. The script then runs
+   `op vault list` once so macOS asks whether Terminal may access data from
+   other apps right away; click **Allow**. If it still fails, the script opens
+   Files & Folders and pauses once. Without it `op` reports
    "You are not currently signed in" even with the app unlocked. If the prompt
    was missed or denied, go to **System Settings → Privacy & Security → Files &
    Folders → Terminal** and turn on **Data shared by 1Password Launcher and

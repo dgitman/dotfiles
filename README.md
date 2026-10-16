@@ -17,8 +17,6 @@ Notable tracked files:
 
 - `bootstrap.sh` — one-command new-Mac restore (repo-only, not applied)
 - `private_dot_zshrc.tmpl` — shell config, aliases, Homebrew integration
-- `dot_local/bin/executable_dotfiles-setup` — post-rebuild Google Cloud
-  authentication check and optional interactive sign-in
 - `dot_Brewfile` — Homebrew formulae, casks, VS Code extensions, npm globals
 - `dot_config/gh/private_hosts.yml` — GitHub CLI config (`git_protocol = ssh`)
 - `dot_config/private_op/private_plugins/private_gh.json.tmpl` — 1Password
@@ -73,8 +71,7 @@ chezmoi re-add            # pull local edits back into the source state
                            # (skipped automatically for .tmpl files —
                            #  those must be edited by hand)
 chezmoi status             # show pending drift between source/live/last-applied
-dotfiles-setup             # verify Google Cloud auth; offer sign-in if needed
-dotfiles-setup --check     # verify Google Cloud auth without prompting
+gcloud auth print-access-token >/dev/null && echo ok   # check Google Cloud auth
 ```
 
 ## Health check
@@ -136,8 +133,9 @@ done, so it is safe to re-run:
 5. Switches the chezmoi repo's `origin` to SSH
    (`git@github.com:dgitman/dotfiles.git`) so `brewfile-sync` can push through
    the 1Password SSH agent.
-6. Runs `dotfiles-setup` to check Google Cloud sign-in and offer it if needed
-   (it only prints a confirmation when already signed in).
+6. Checks Google Cloud sign-in for the restored gcloud account and offers
+   sign-in if needed, showing a login link for your preferred browser (it only
+   prints a confirmation when already signed in).
 
 Sign in to the Mac App Store before running it; Magnet is installed from there.
 
@@ -304,31 +302,6 @@ Google Cloud credential databases, access tokens, application-default
 credentials, logs, and generated state are excluded from this restore. Review
 new settings before re-adding configurations to avoid tracking credentials.
 
-## Post-rebuild setup command
-
-After `chezmoi apply`, open a new terminal and run:
-
-```sh
-dotfiles-setup
-```
-
-The command uses the account in your active gcloud configuration, verifies
-that it can obtain an access token, and offers to sign in if verification
-fails. Sign-in displays a URL to open in your preferred browser. Access tokens
-are discarded without being displayed. This command completes Google Cloud
-CLI authentication; it does not install packages or restore background jobs.
-
-For a noninteractive check:
-
-```sh
-dotfiles-setup --check
-```
-
-It exits successfully when authentication works and with a nonzero status when
-verification fails or setup is incomplete. A network problem can also cause
-verification to fail. Google Cloud Application Default Credentials, when needed
-by a project, require their own sign-in step.
-
 ## Post-rebuild checklist
 
 1. Install and unlock 1Password, enable its CLI integration, allow Terminal
@@ -336,17 +309,15 @@ by a project, require their own sign-in step.
    `bootstrap.sh` handles this step and the next.
 2. Initialize chezmoi and apply the configuration. For Magnet, open it once and
    quit it before retrying the apply if its restore hook requests that step.
-3. Open a new terminal and run `dotfiles-setup`. It verifies authentication for
-   the restored Google Cloud account and offers sign-in if verification fails.
-   It displays a login link for your preferred browser rather than opening a
-   browser automatically. `dotfiles-setup --check` only checks, without prompting.
+3. Sign in to Google Cloud. `bootstrap.sh` checks this and offers sign-in; to
+   do it later, run `gcloud auth login`.
 4. Restore Ray using the pipx command above, then complete the personal background
    job prerequisites before loading their agents.
 5. Run `chezmoi status` and `chezmoi doctor` to check the restored configuration.
 
 Google Cloud verification discards the access token and never prints it.
 A failed verification can also mean a connectivity or account problem; it does
-not necessarily mean you are signed out. This setup command handles gcloud CLI
+not necessarily mean you are signed out. The bootstrap handles gcloud CLI
 login only. If a development project requires Application Default Credentials,
 complete its separate `gcloud auth application-default login` setup.
 AWS credentials are restored from 1Password by the tracked credentials template.

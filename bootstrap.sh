@@ -71,11 +71,22 @@ main() {
       # Errors stay visible so a failure says why.
       op vault list >/dev/null && break
     fi
-    read -r -p "Press Return to check again, or type s to skip this check: " answer
-    if [ "$answer" = "s" ]; then
-      echo "Skipping the check; chezmoi will ask 1Password for access itself."
-      break
-    fi
+    echo "Return: check again. p: sign in with your 1Password password instead"
+    echo "(works when the desktop app integration does not). s: skip this check."
+    read -r -p "> " answer
+    case "$answer" in
+      p)
+        # The session is exported into this script, so chezmoi inherits it.
+        local session
+        if session="$(op signin)"; then
+          eval "$session"
+        fi
+        ;;
+      s)
+        echo "Skipping the check; chezmoi will ask 1Password for access itself."
+        break
+        ;;
+    esac
   done
   echo "Continuing with 1Password."
 

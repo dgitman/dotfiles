@@ -65,8 +65,10 @@ main() {
     echo "1Password CLI is not connected yet. Check: System Settings > Privacy &"
     echo "Security > Files & Folders > Terminal > \"Data shared by 1Password Launcher"
     echo "and affiliated apps\" is on, and the 1Password steps above are done."
+    echo "The setting applies to new Terminal windows only: open a new window"
+    echo "(Cmd-N) and run the bootstrap command again there."
     open "x-apple.systempreferences:com.apple.preference.security?Privacy_FilesAndFolders" || true
-    read -r -p "Press Return to continue... " _
+    exit 1
   fi
 
   # 4. Clone and apply. HTTPS needs no SSH key; the remote is switched to SSH

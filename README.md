@@ -121,7 +121,8 @@ done, so it is safe to re-run:
    **Use the SSH agent**, then press Return. The script then runs
    `op vault list` once so macOS asks whether Terminal may access data from
    other apps right away; click **Allow**. If it still fails, the script opens
-   Files & Folders and pauses once. Without it `op` reports
+   Files & Folders and exits: turn the toggle on, open a **new** Terminal
+   window (the setting does not apply to windows already open), and re-run. Without it `op` reports
    "You are not currently signed in" even with the app unlocked. If the prompt
    was missed or denied, go to **System Settings → Privacy & Security → Files &
    Folders → Terminal** and turn on **Data shared by 1Password Launcher and

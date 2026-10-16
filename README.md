@@ -34,6 +34,9 @@ Notable tracked files:
 - `run_onchange_before_install-packages-darwin.sh.tmpl` — runs
   Homebrew Bundle from the tracked source whenever `dot_Brewfile` changes;
   installation failures stop the apply and are retried on the next apply
+- `run_onchange_after_00-initialize-app-preferences.sh.tmpl` — on first
+  apply, opens Afterglow, Grok Bot, and Magnet once and quits them so the
+  preference hooks below have existing settings to merge into
 
 ## Secrets
 
@@ -123,10 +126,14 @@ done, so it is safe to re-run:
    (`git@github.com:dgitman/dotfiles.git`) so `brewfile-sync` can push through
    the 1Password SSH agent.
 
-If the apply stops partway, read its message. On a new Mac the usual cause is
-an app-preference hook (Magnet, Grok Bot, Afterglow) asking you to open that
-app once and quit it. Do that, then re-run the bootstrap command or
-`chezmoi apply`.
+Sign in to the Mac App Store before running it; Magnet is installed from there.
+
+After packages install, the apply opens Afterglow, Grok Bot, and Magnet once in
+the background so they create their preferences, then quits them before the
+preference hooks run. If macOS asks whether to open an app downloaded from the
+internet, click **Open**. If the apply still stops partway, read its message,
+fix what it names (usually: open that app once and quit it), then re-run the
+bootstrap command or `chezmoi apply`.
 
 Then continue with the [post-rebuild checklist](#post-rebuild-checklist) from
 step 3.
@@ -264,8 +271,8 @@ that entry into `horizontalCommands` through macOS's preferences service,
 leaving other layouts and preferences unchanged. It preserves the existing
 storage type and does nothing if the saved entry already matches.
 
-On a new Mac, open Magnet once to initialize its defaults, quit Magnet, then
-run `chezmoi apply`. If a layout change is needed while Magnet is running, the
+On a new Mac, the first apply opens Magnet once to initialize its defaults and
+quits it. If that times out, open Magnet once, quit it, then run `chezmoi apply`. If a layout change is needed while Magnet is running, the
 hook stops with instructions to quit and retry. Edit the tracked JSON manually
 to capture later changes to this layout; `chezmoi re-add` does not capture it.
 
@@ -337,8 +344,8 @@ settings through macOS's preferences service and changes only those settings
 and the selected collection. Other preferences, window positions, updater
 state, generated catalogs, and caches are unmanaged.
 
-After rebuilding, open Afterglow once to initialize its preferences, quit it,
-and run `chezmoi apply`. Reinstall the After Dark 10th Anniversary package using
+The first apply opens Afterglow once to initialize its preferences and quits
+it; if that times out, open and quit it manually and run `chezmoi apply`. Reinstall the After Dark 10th Anniversary package using
 Afterglow's installer/import workflow to restore Hall of Fame and Toaster 2k;
 these module binaries and resources are not stored in this dotfiles repository.
 If Afterglow is running and settings need to change, the hook asks you to quit
@@ -350,8 +357,8 @@ does not capture preferences managed by this hook.
 - `grok-preferences.json` preserves Grok Bot's update, appearance, network/tool,
   meetings/messages, and custom instruction preferences. Its apply hook merges
   these with existing settings, preserving account scopes, onboarding, and
-  migration state. Open Grok Bot once on a rebuilt machine and quit it before
-  applying preferences. Edit the saved JSON to capture future preference changes.
+  migration state. The first apply on a rebuilt machine opens Grok Bot once
+  and quits it before applying preferences. Edit the saved JSON to capture future preference changes.
 - `private_dot_composio/private_config.json` preserves Composio developer and
   security preferences. Account data and authentication files are not tracked.
 - `dot_docker/daemon.json` preserves Docker build-cache garbage collection

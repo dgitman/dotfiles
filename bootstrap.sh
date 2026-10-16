@@ -95,7 +95,7 @@ main() {
   info "Applying dotfiles from github.com/$REPO"
   local apply_cmd=(chezmoi init --apply "https://github.com/$REPO.git")
   if [ -d "$(chezmoi source-path 2>/dev/null || echo /nonexistent)" ]; then
-    apply_cmd=(chezmoi apply)
+    apply_cmd=(chezmoi update)  # pull fixes pushed since the last run, then apply
   fi
   if ! "${apply_cmd[@]}"; then
     echo >&2

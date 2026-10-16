@@ -57,27 +57,6 @@ gcloud_signin() {
   esac
 }
 
-# Install the pipx apps recorded in pipx-packages.json that are not installed.
-restore_pipx() {
-  local inventory spec name
-  inventory="$(chezmoi source-path)/pipx-packages.json"
-  if ! command -v pipx >/dev/null 2>&1 || [ ! -f "$inventory" ]; then
-    echo "pipx or $inventory is missing; skipping."
-    return 1
-  fi
-  python3 -c 'import json, sys
-for p in json.load(open(sys.argv[1]))["packages"]:
-    print(p["package"] + ("==" + p["version"] if p.get("version") else ""))' "$inventory" |
-    while IFS= read -r spec; do
-      name="${spec%%[[=]*}"
-      if pipx list --short 2>/dev/null | grep -q "^$name "; then
-        echo "$name is already installed."
-      else
-        pipx install "$spec" </dev/null
-      fi
-    done
-}
-
 # Clone every non-archived repo of each owner that is not already present.
 clone_repos() {
   local owner repo dir names cloned=0
@@ -235,9 +214,6 @@ main() {
   chezmoi git -- remote set-url origin "git@github.com:$REPO.git"
 
   # 5. Steps the README used to list as manual.
-  info "Restoring pipx apps"
-  restore_pipx || echo "pipx restore did not finish; see README \"Additional restore files\"."
-
   info "Cloning GitHub repos"
   clone_repos
 

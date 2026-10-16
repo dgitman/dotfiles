@@ -134,7 +134,6 @@ done, so it is safe to re-run:
    (`git@github.com:dgitman/dotfiles.git`) so `brewfile-sync` can push through
    the 1Password SSH agent.
 6. Finishes the steps that used to be manual:
-   - installs the pipx apps listed in `pipx-packages.json` that are missing;
    - clones every non-archived repo of `dgitman` and `because-ventures` into
      `~/Developer/<owner>/<repo>` over SSH (existing folders are left alone;
      the dotfiles repo itself is skipped), then adds the `dgitman/cask-local`
@@ -246,18 +245,6 @@ and secret access key from the AWS item in 1Password. Git stores only the
 references; chezmoi writes `~/.aws/credentials` with private permissions.
 Reapply after rotating the keys and never re-add the rendered credentials.
 
-`pipx-packages.json` records the installed pipx applications separately from the
-Brewfile. The current inventory is `ray[default]` version `2.58.0`, with no
-injected packages or dependency applications exposed. After Homebrew setup,
-`bootstrap.sh` installs it automatically; to restore it by hand:
-
-```sh
-pipx install 'ray[default]==2.58.0'
-```
-
-This recreates the `ray`, `serve`, and `tune` commands. Update the inventory when
-changing pipx packages; the hourly Brewfile snapshot does not collect them.
-
 ## Restoring personal background jobs
 
 chezmoi preserves portable LaunchAgent templates for Remtasks and the hourly
@@ -328,7 +315,7 @@ new settings before re-adding configurations to avoid tracking credentials.
    quit it before retrying the apply if its restore hook requests that step.
 3. Sign in to Google Cloud. `bootstrap.sh` checks this and offers sign-in; to
    do it later, run `gcloud auth login`.
-4. Ray (pipx), repo clones, the printer, the After Dark download, and the
+4. Repo clones, the printer, the After Dark download, and the
    `chezmoi status` / `chezmoi doctor` checks are run by `bootstrap.sh`.
    Import the After Dark modules in Afterglow, and complete the personal
    background job prerequisites before loading their agents.

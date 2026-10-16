@@ -15,6 +15,7 @@ Standard chezmoi naming conventions apply:
 
 Notable tracked files:
 
+- `bootstrap.sh` — one-command new-Mac restore (repo-only, not applied)
 - `private_dot_zshrc.tmpl` — shell config, aliases, Homebrew integration
 - `dot_local/bin/executable_dotfiles-setup` — post-rebuild Google Cloud
   authentication check and optional interactive sign-in
@@ -91,14 +92,67 @@ Known benign `brew doctor` warnings on this machine:
 
 ## Setup on a new machine
 
+### One-command restore
+
+In the macOS Terminal on a fresh Mac, run:
+
 ```zsh
-chezmoi init --apply git@github.com:dgitman/dotfiles.git
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dgitman/dotfiles/main/bootstrap.sh)"
 ```
 
-This will clone the repo, render templates, write dotfiles into place, and
-run the `run_onchange_*` scripts, including package installation from
-`dot_Brewfile`. The package hook uses a temporary copy of the tracked Brewfile
-because it runs before the home-directory files are updated.
+[`bootstrap.sh`](bootstrap.sh) does the following, skipping anything already
+done, so it is safe to re-run:
+
+1. Installs Homebrew (which also installs the Xcode Command Line Tools). Expect
+   a password prompt and a Command Line Tools download.
+2. Installs the 1Password app, the 1Password CLI (`1password-cli@beta`, matching
+   `dot_Brewfile`), and chezmoi with Homebrew.
+3. Opens 1Password and waits until the CLI can reach it. When prompted:
+   sign in and unlock, then in **Settings → Developer** turn on
+   **Integrate with 1Password CLI** and **Use the SSH agent**. Press Return to
+   continue.
+4. Runs `chezmoi init --apply https://github.com/dgitman/dotfiles.git`. chezmoi
+   asks for the personal and work emails, reads secrets from 1Password, writes
+   the dotfiles, and runs the `run_onchange_*` hooks, including `brew bundle`
+   for everything in `dot_Brewfile` (this takes a while).
+5. Switches the chezmoi repo's `origin` to SSH
+   (`git@github.com:dgitman/dotfiles.git`) so `brewfile-sync` can push through
+   the 1Password SSH agent.
+
+If the apply stops partway, read its message. On a new Mac the usual cause is
+an app-preference hook (Magnet, Grok Bot, Afterglow) asking you to open that
+app once and quit it. Do that, then re-run the bootstrap command or
+`chezmoi apply`.
+
+Then continue with the [post-rebuild checklist](#post-rebuild-checklist) from
+step 3.
+
+### Manual restore
+
+The same steps by hand:
+
+```zsh
+# 1. Homebrew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# 2. 1Password, its CLI, and chezmoi
+brew install --cask 1password 1password-cli@beta
+brew install chezmoi
+
+# 3. Open 1Password, sign in, and enable Settings → Developer →
+#    "Integrate with 1Password CLI" and "Use the SSH agent". Then confirm:
+op vault list
+
+# 4. Clone and apply
+chezmoi init --apply https://github.com/dgitman/dotfiles.git
+chezmoi git -- remote set-url origin git@github.com:dgitman/dotfiles.git
+```
+
+`chezmoi init --apply` clones the repo, renders templates, writes dotfiles into
+place, and runs the `run_onchange_*` scripts, including package installation
+from `dot_Brewfile`. The package hook uses a temporary copy of the tracked
+Brewfile because it runs before the home-directory files are updated.
 
 ## Automatic Brewfile snapshots
 
@@ -252,6 +306,7 @@ by a project, require their own sign-in step.
 
 1. Install and unlock 1Password, enable its CLI integration, and set up its SSH
    agent before cloning private repositories or resolving secret references.
+   `bootstrap.sh` handles this step and the next.
 2. Initialize chezmoi and apply the configuration. For Magnet, open it once and
    quit it before retrying the apply if its restore hook requests that step.
 3. Open a new terminal and run `dotfiles-setup`. It verifies authentication for

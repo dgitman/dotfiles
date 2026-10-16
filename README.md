@@ -136,6 +136,8 @@ done, so it is safe to re-run:
 5. Switches the chezmoi repo's `origin` to SSH
    (`git@github.com:dgitman/dotfiles.git`) so `brewfile-sync` can push through
    the 1Password SSH agent.
+6. Runs `dotfiles-setup` to check Google Cloud sign-in and offer it if needed
+   (skipped silently when already signed in).
 
 Sign in to the Mac App Store before running it; Magnet is installed from there.
 
@@ -147,7 +149,7 @@ fix what it names (usually: open that app once and quit it), then re-run the
 bootstrap command or `chezmoi apply`.
 
 Then continue with the [post-rebuild checklist](#post-rebuild-checklist) from
-step 3.
+step 4.
 
 ### Manual restore
 

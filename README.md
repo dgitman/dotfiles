@@ -97,8 +97,12 @@ Known benign `brew doctor` warnings on this machine:
 In the macOS Terminal on a fresh Mac, run:
 
 ```zsh
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dgitman/dotfiles/main/bootstrap.sh)"
+curl -fsSL https://raw.githubusercontent.com/dgitman/dotfiles/main/bootstrap.sh | bash
 ```
+
+`-f` makes curl fail on an HTTP error instead of piping an error page into
+bash. The script reads prompts from the terminal, so password and email
+prompts work even though it is piped.
 
 [`bootstrap.sh`](bootstrap.sh) does the following, skipping anything already
 done, so it is safe to re-run:

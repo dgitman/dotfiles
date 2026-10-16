@@ -137,7 +137,7 @@ done, so it is safe to re-run:
    (`git@github.com:dgitman/dotfiles.git`) so `brewfile-sync` can push through
    the 1Password SSH agent.
 6. Runs `dotfiles-setup` to check Google Cloud sign-in and offer it if needed
-   (skipped silently when already signed in).
+   (it only prints a confirmation when already signed in).
 
 Sign in to the Mac App Store before running it; Magnet is installed from there.
 

@@ -89,9 +89,13 @@ main() {
   fi
   chezmoi git -- remote set-url origin "git@github.com:$REPO.git"
 
+  # 5. Google Cloud sign-in. It exits at once when already signed in; a declined
+  #    or failed sign-in does not undo the restore.
+  info "Checking Google Cloud sign-in"
+  "$HOME/.local/bin/dotfiles-setup" || echo "Run dotfiles-setup later to finish Google Cloud sign-in."
+
   info "Done"
   echo "Next steps (see README \"Post-rebuild checklist\"):"
-  echo "  - Open a new terminal and run: dotfiles-setup"
   echo "  - Restore pipx packages and personal background jobs as described in the README"
   echo "  - Check with: chezmoi status && chezmoi doctor"
 }

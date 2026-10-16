@@ -133,11 +133,23 @@ done, so it is safe to re-run:
 5. Switches the chezmoi repo's `origin` to SSH
    (`git@github.com:dgitman/dotfiles.git`) so `brewfile-sync` can push through
    the 1Password SSH agent.
-6. Installs the pipx apps listed in `pipx-packages.json` that are missing,
-   then runs `chezmoi status` and `chezmoi doctor` and shows only problems.
+6. Finishes the steps that used to be manual:
+   - installs the pipx apps listed in `pipx-packages.json` that are missing;
+   - clones every non-archived repo of `dgitman` and `because-ventures` into
+     `~/Developer/<owner>/<repo>` over SSH (existing folders are left alone;
+     the dotfiles repo itself is skipped), then adds the `dgitman/cask-local`
+     tap once `homebrew-cask` is present;
+   - adds the Brother HL-L2460DW over AirPrint as `Brother_HL_L2460DW` if it is
+     on the network;
+   - offers to download the After Dark 10th Anniversary disc image from
+     archive.org to `~/Downloads`, mounts it, and opens Afterglow for the
+     module import (skipped once the image is in `~/Downloads`);
+   - runs `chezmoi status` and `chezmoi doctor` and shows only problems.
 7. Checks Google Cloud sign-in for the restored gcloud account and offers
    sign-in if needed, showing a login link for your preferred browser (it only
    prints a confirmation when already signed in).
+8. Until the Remtasks and Messages Sync agents are loaded, prints their
+   remaining steps and opens **Full Disk Access** in System Settings.
 
 Sign in to the Mac App Store before running it; Magnet is installed from there.
 
@@ -253,8 +265,11 @@ and daily Messages Sync jobs. Applying their files does not load or restart
 these jobs. Their application code, Python environments, permissions, and log
 directories must be restored separately before loading them.
 
-For Remtasks, restore `~/Developer/dgitman/apple-reminders-google-tasks-sync`,
-then follow that project's README to create its signing identity and run
+`bootstrap.sh` clones both projects and opens Full Disk Access; the steps
+below are still done by hand.
+
+For Remtasks, in `~/Developer/dgitman/apple-reminders-google-tasks-sync`,
+follow that project's README to create its signing identity and run
 `scripts/install.sh`. Apply the tracked Remtasks config after installation,
 grant Full Disk Access to the installed binary, and run `remtasks doctor`.
 The project command `remtasks install-agent` loads its daemon; the tracked
@@ -313,9 +328,10 @@ new settings before re-adding configurations to avoid tracking credentials.
    quit it before retrying the apply if its restore hook requests that step.
 3. Sign in to Google Cloud. `bootstrap.sh` checks this and offers sign-in; to
    do it later, run `gcloud auth login`.
-4. Ray (pipx) and the `chezmoi status` / `chezmoi doctor` checks are run by
-   `bootstrap.sh`. Complete the personal background job prerequisites before
-   loading their agents.
+4. Ray (pipx), repo clones, the printer, the After Dark download, and the
+   `chezmoi status` / `chezmoi doctor` checks are run by `bootstrap.sh`.
+   Import the After Dark modules in Afterglow, and complete the personal
+   background job prerequisites before loading their agents.
 5. Re-run `chezmoi status` and `chezmoi doctor` after any manual changes.
 
 Google Cloud verification discards the access token and never prints it.
@@ -335,9 +351,11 @@ and the selected collection. Other preferences, window positions, updater
 state, generated catalogs, and caches are unmanaged.
 
 The first apply opens Afterglow once to initialize its preferences and quits
-it; if that times out, open and quit it manually and run `chezmoi apply`. Reinstall the After Dark 10th Anniversary package using
-Afterglow's installer/import workflow to restore Hall of Fame and Toaster 2k;
-these module binaries and resources are not stored in this dotfiles repository.
+it; if that times out, open and quit it manually and run `chezmoi apply`. `bootstrap.sh` offers to download the After Dark
+10th Anniversary disc image ([archive.org](https://archive.org/details/Macintosh_Garden_Apps_Collection_A))
+to `~/Downloads`, mounts it, and opens Afterglow; use Afterglow's import
+workflow to restore Hall of Fame and Toaster 2k. The module binaries and
+resources are not stored in this dotfiles repository.
 If Afterglow is running and settings need to change, the hook asks you to quit
 and retry. Edit the tracked JSON to preserve later changes; `chezmoi re-add`
 does not capture preferences managed by this hook.
@@ -352,10 +370,11 @@ does not capture preferences managed by this hook.
 - `private_dot_composio/private_config.json` preserves Composio developer and
   security preferences. Account data and authentication files are not tracked.
 - `dot_docker/daemon.json` preserves Docker build-cache garbage collection
-  (20 GB) and its experimental-feature setting. Restart Docker Desktop to pick
-  up restored daemon settings.
+  (20 GB) and its experimental-feature setting. On a new Mac Docker reads it on
+  first launch; restart Docker Desktop after changing it later.
 - `private_dot_cups/lpoptions` restores Brother_HL_L2460DW as the default printer.
-  Add that printer separately on a rebuilt Mac using the same queue name.
+  `bootstrap.sh` adds that printer over AirPrint when it is on the network; or
+  add it by hand using the same queue name.
 - `dot_warp/tab_configs/startup_config.toml.tmpl` restores Warp's agent startup
   tab with a portable home-directory path.
 

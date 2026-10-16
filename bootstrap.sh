@@ -73,10 +73,9 @@ main() {
   fi
   if ! "${apply_cmd[@]}"; then
     echo >&2
-    echo "chezmoi apply stopped before finishing. Read the message above. On a new" >&2
-    echo "Mac this is usually an app-preference hook (Magnet, Grok Bot, Afterglow)" >&2
-    echo "asking you to open that app once and quit it. Do that, then rerun this" >&2
-    echo "script or \`chezmoi apply\`; finished steps are skipped." >&2
+    echo "chezmoi apply stopped before finishing. Fix what the message above names" >&2
+    echo "(for an app-preference hook: open that app once and quit it), then rerun" >&2
+    echo "this script or \`chezmoi apply\`; finished steps are skipped." >&2
     exit 1
   fi
   chezmoi git -- remote set-url origin "git@github.com:$REPO.git"

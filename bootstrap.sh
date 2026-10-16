@@ -41,8 +41,10 @@ main() {
     info "Installing 1Password"
     brew install --cask 1password
   fi
-  info "Installing 1Password CLI"
-  brew install --cask 1password-cli
+  if ! command -v op >/dev/null 2>&1; then
+    info "Installing 1Password CLI"
+    brew install --cask 1password-cli
+  fi
   if ! command -v chezmoi >/dev/null 2>&1; then
     info "Installing chezmoi"
     brew install chezmoi

@@ -41,10 +41,8 @@ main() {
     info "Installing 1Password"
     brew install --cask 1password
   fi
-  if ! command -v op >/dev/null 2>&1; then
-    info "Installing 1Password CLI"
-    brew install --cask 1password-cli
-  fi
+  info "Installing 1Password CLI"
+  brew install --cask 1password-cli
   if ! command -v chezmoi >/dev/null 2>&1; then
     info "Installing chezmoi"
     brew install chezmoi
@@ -52,43 +50,12 @@ main() {
 
   # 3. chezmoi templates read secrets with onepasswordRead, which needs the
   #    desktop app unlocked and its CLI integration turned on.
-  # `op account list` never prompts; with no accounts, other op commands offer
-  # to add one by hand, which is not wanted here.
-  if [ -z "$(op account list </dev/null 2>/dev/null)" ]; then
-    info "Set up 1Password"
-    echo "  1. Sign in to 1Password and unlock it."
-    echo "  2. Settings > Developer: turn on \"Integrate with 1Password CLI\"."
-    echo "  3. Settings > Developer: turn on \"Use the SSH agent\" (for git over SSH)."
-    echo "  If it is still not detected, quit 1Password fully (Cmd-Q), reopen, and unlock."
-    open -a 1Password || true
-  fi
-  local answer
-  while true; do
-    if [ -z "$(op account list </dev/null 2>/dev/null)" ]; then
-      echo "1Password CLI sees no accounts yet (app locked or CLI integration off)."
-    else
-      echo "Checking 1Password access; approve the request if 1Password asks..."
-      # Errors stay visible so a failure says why.
-      op vault list >/dev/null && break
-    fi
-    echo "Return: check again. p: sign in with your 1Password password instead"
-    echo "(works when the desktop app integration does not). s: skip this check."
-    read -r -p "> " answer
-    case "$answer" in
-      p)
-        # The session is exported into this script, so chezmoi inherits it.
-        local session
-        if session="$(op signin)"; then
-          eval "$session"
-        fi
-        ;;
-      s)
-        echo "Skipping the check; chezmoi will ask 1Password for access itself."
-        break
-        ;;
-    esac
-  done
-  echo "Continuing with 1Password."
+  info "Set up 1Password"
+  echo "  1. Sign in to 1Password and unlock it."
+  echo "  2. Settings > Developer: turn on \"Integrate with 1Password CLI\"."
+  echo "  3. Settings > Developer: turn on \"Use the SSH agent\" (for git over SSH)."
+  open -a 1Password || true
+  read -r -p "Press Return when done... " _
 
   # 4. Clone and apply. HTTPS needs no SSH key; the remote is switched to SSH
   #    afterwards so brewfile-sync can push through the 1Password SSH agent.

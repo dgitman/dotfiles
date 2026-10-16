@@ -7,16 +7,17 @@ set -euo pipefail
 brewfile=$(mktemp "${TMPDIR:-/tmp}/chezmoi-Brewfile.XXXXXX")
 trap 'rm -f "$brewfile"' EXIT
 
-# Skip taps that cannot work on another Mac: homebrew/core (Homebrew refuses
-# to tap it) and local taps whose directory does not exist yet. brewfile-sync
-# keeps writing them back, so they are filtered here instead of in the Brewfile.
-local_tap='^tap "[^"]+", File\.join\(Dir\.home, "([^"]+)"\)'
+# Skip taps that do not restore: homebrew/core (Homebrew refuses to tap it) and
+# taps of local development checkouts (dgitman/cask-local is a homebrew-cask
+# fork that Homebrew rejects as a third-party tap). brewfile-sync keeps writing
+# them back, so they are filtered here instead of in the Brewfile.
+local_tap='^tap "[^"]+", File\.join\(Dir\.home, "[^"]+"\)'
 while IFS= read -r line; do
   if [[ "$line" == 'tap "homebrew/core"'* ]]; then
     continue
   fi
-  if [[ "$line" =~ $local_tap ]] && [ ! -d "$HOME/${BASH_REMATCH[1]}" ]; then
-    echo "Skipping local tap until $HOME/${BASH_REMATCH[1]} exists: $line" >&2
+  if [[ "$line" =~ $local_tap ]]; then
+    echo "Skipping local development tap: $line" >&2
     continue
   fi
   printf '%s\n' "$line"

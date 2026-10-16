@@ -26,4 +26,12 @@ CHEZMOI_BREWFILE
 
 echo "Syncing Homebrew packages from tracked Brewfile..."
 brew bundle --file="$brewfile"
+
+# Some cask installers run with sudo and create ~/Library/LaunchAgents as root,
+# which makes chezmoi fail when it writes the tracked LaunchAgents next.
+launch_agents="$HOME/Library/LaunchAgents"
+if [ -d "$launch_agents" ] && [ ! -O "$launch_agents" ]; then
+  echo "Fixing ownership of $launch_agents (created as another user by an installer)..."
+  sudo chown "$(id -un):staff" "$launch_agents"
+fi
 {{ end -}}

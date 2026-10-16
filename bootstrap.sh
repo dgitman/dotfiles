@@ -41,12 +41,6 @@ main() {
     info "Installing 1Password"
     brew install --cask 1password
   fi
-  # Stable CLI only; the beta did not connect to the desktop app. Both casks
-  # install `op`, so an earlier beta install is replaced.
-  if brew list --cask 1password-cli@beta >/dev/null 2>&1; then
-    info "Replacing 1Password CLI beta with the stable release"
-    brew uninstall --cask 1password-cli@beta
-  fi
   if ! command -v op >/dev/null 2>&1; then
     info "Installing 1Password CLI"
     brew install --cask 1password-cli

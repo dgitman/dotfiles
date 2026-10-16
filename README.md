@@ -146,8 +146,12 @@ done, so it is safe to re-run:
 7. Checks Google Cloud sign-in for the restored gcloud account and offers
    sign-in if needed, showing a login link for your preferred browser (it only
    prints a confirmation when already signed in).
-8. Until the Remtasks and Messages Sync agents are loaded, prints their
-   remaining steps and opens **Full Disk Access** in System Settings.
+8. Until the Remtasks and Messages Sync agents are loaded, sets them up:
+   builds and signs Remtasks (`make-signing-identity.sh` asks for your password
+   once), creates the Messages Sync Python environment, opens **Full Disk
+   Access** and shows the files to add in Finder, runs `remtasks doctor` and the
+   read-only Messages `validate-source` check, then asks before starting each
+   sync job. Answer **y** only after stopping that job on the old Mac.
 
 Sign in to the Mac App Store before running it; Magnet is installed from there.
 
@@ -251,8 +255,11 @@ and daily Messages Sync jobs. Applying their files does not load or restart
 these jobs. Their application code, Python environments, permissions, and log
 directories must be restored separately before loading them.
 
-`bootstrap.sh` clones both projects and opens Full Disk Access; the steps
-below are still done by hand.
+`bootstrap.sh` clones both projects and runs the install, Full Disk Access,
+check, and load steps below, asking before it starts either sync job. Full Disk
+Access is the one step that always needs your clicks: macOS never prompts for
+it. The Messages Sync controlled write tests are not repeated; the queue starts
+fresh and reconciliation baselines rows that are already in the Sheet.
 
 For Remtasks, in `~/Developer/dgitman/apple-reminders-google-tasks-sync`,
 follow that project's README to create its signing identity and run

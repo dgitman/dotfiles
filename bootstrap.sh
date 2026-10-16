@@ -121,23 +121,80 @@ after_dark_modules() {
   echo "After Dark disk, then quit Afterglow and run: chezmoi apply"
 }
 
-# Remtasks and Messages Sync need Full Disk Access and checks only you can do.
-# Show the steps and open the settings page until both agents are loaded.
+# Set up Remtasks and Messages Sync from their clones in ~/Developer. Steps that
+# are done are skipped. Full Disk Access cannot be requested by a script, so the
+# settings page and the files to add are opened for you. Starting the sync jobs
+# writes to Google, so it is asked for explicitly.
 background_jobs() {
-  local uid; uid=$(id -u)
-  if launchctl print "gui/$uid/net.gitman.remtasks" >/dev/null 2>&1 &&
-     launchctl print "gui/$uid/com.davidgitman.gitman-messages-sync.incremental" >/dev/null 2>&1; then
+  local uid answer
+  uid=$(id -u)
+  local rem_repo="$HOME/Developer/dgitman/apple-reminders-google-tasks-sync"
+  local rem_bin="$HOME/Library/Application Support/remtasks/Apple Reminders & Google Tasks Sync"
+  local msg_repo="$HOME/Developer/dgitman/gitman-messages-sync"
+  local msg_label="com.davidgitman.gitman-messages-sync"
+  local rem_loaded=false msg_loaded=false
+  launchctl print "gui/$uid/net.gitman.remtasks" >/dev/null 2>&1 && rem_loaded=true
+  launchctl print "gui/$uid/$msg_label.incremental" >/dev/null 2>&1 && msg_loaded=true
+  if $rem_loaded && $msg_loaded; then
     echo "Remtasks and Messages Sync agents are loaded."
     return 0
   fi
-  echo "Remtasks (~/Developer/dgitman/apple-reminders-google-tasks-sync):"
-  echo "  run scripts/install.sh, grant Full Disk Access to the installed remtasks"
-  echo "  binary, run remtasks doctor, then remtasks install-agent."
-  echo "Messages Sync (~/Developer/dgitman/gitman-messages-sync):"
-  echo "  set up its Python environment per its README, grant Full Disk Access to"
-  echo "  its launchers, complete its write checks, then load its agents"
-  echo "  (README \"Restoring personal background jobs\")."
+
+  # Install what is missing.
+  if ! $rem_loaded && [ -d "$rem_repo" ] && [ ! -x "$rem_bin" ]; then
+    echo "Building Remtasks (macOS asks for your password to trust its signing certificate)..."
+    "$rem_repo/scripts/make-signing-identity.sh" && "$rem_repo/scripts/install.sh" ||
+      echo "Remtasks install did not finish; see $rem_repo/README.md."
+  fi
+  if ! $msg_loaded && [ -d "$msg_repo" ] && [ ! -x "$msg_repo/.venv/bin/gitman-messages-sync" ]; then
+    echo "Setting up the Messages Sync Python environment..."
+    (cd "$msg_repo" && "$(brew --prefix)/bin/python3" -m venv .venv &&
+      .venv/bin/python -m pip install --quiet --upgrade pip &&
+      .venv/bin/python -m pip install --quiet -e .) ||
+      echo "Messages Sync install did not finish; see $msg_repo/README.md."
+  fi
+
+  # Full Disk Access: open the page and show the files to drag into the list.
+  echo "Full Disk Access: in the System Settings page that opens, drag in the files"
+  echo "shown in Finder (or press + and add them), and turn on Terminal for manual runs."
   open "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles" || true
+  if ! $rem_loaded && [ -x "$rem_bin" ]; then
+    open -R "$rem_bin" || true
+  fi
+  if ! $msg_loaded && [ -d "$msg_repo/scripts" ]; then
+    open -R "$msg_repo/scripts/Gitman Messages Sync Hourly" || true
+    echo "  Messages Sync launchers: both \"Gitman Messages Sync\" files in $msg_repo/scripts"
+  fi
+  read -r -p "Press Return when Full Disk Access is set... " _
+
+  # Remtasks: check, then offer to start its agent.
+  if ! $rem_loaded && [ -x "$rem_bin" ]; then
+    echo "Running remtasks doctor (allow Reminders access if macOS asks)..."
+    "$HOME/.local/bin/remtasks" doctor || true
+    read -r -p "Start Remtasks background sync on this Mac? Stop it on the old Mac first. [y/N] " answer
+    case "$answer" in
+      y|Y|yes|YES) "$HOME/.local/bin/remtasks" install-agent --interval 300 || true ;;
+      *) echo "Not started. Later: remtasks install-agent --interval 300" ;;
+    esac
+  fi
+
+  # Messages Sync: read-only source check, timezone check, then offer to load its jobs.
+  if ! $msg_loaded && [ -x "$msg_repo/.venv/bin/gitman-messages-sync" ]; then
+    echo "Checking the Messages database (read-only, no Google access)..."
+    "$msg_repo/scripts/run.sh" validate-source || echo "Source check failed; check Full Disk Access."
+    local tz; tz=$(readlink /etc/localtime | sed 's|.*/zoneinfo/||')
+    [ "$tz" = "America/New_York" ] || echo "Warning: Mac timezone is $tz; Messages Sync expects America/New_York."
+    read -r -p "Load the Messages Sync jobs (live writes to Sheets/Drive)? Stop them on the old Mac first. [y/N] " answer
+    case "$answer" in
+      y|Y|yes|YES)
+        mkdir -p "$HOME/Library/Logs/GitmanMessagesSync"
+        launchctl bootstrap "gui/$uid" "$HOME/Library/LaunchAgents/$msg_label.incremental.plist" || true
+        launchctl enable "gui/$uid/$msg_label.reconcile" || true
+        launchctl bootstrap "gui/$uid" "$HOME/Library/LaunchAgents/$msg_label.reconcile.plist" || true
+        ;;
+      *) echo "Not loaded. See README \"Restoring personal background jobs\"." ;;
+    esac
+  fi
 }
 
 main() {

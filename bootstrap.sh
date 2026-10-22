@@ -266,6 +266,8 @@ main() {
   # answers to its one-time prompts are kept.
   chezmoi init
   chezmoi git -- remote set-url origin "git@github.com:$REPO.git"
+  # Block commits that would publish the home path or personal email addresses.
+  chezmoi git -- config core.hooksPath git-hooks
 
   # 5. Steps the README used to list as manual.
   info "Cloning GitHub repos"

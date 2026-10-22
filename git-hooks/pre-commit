@@ -1,0 +1,43 @@
+#!/bin/sh
+# Refuse commits that would publish this Mac's home path or a personal email
+# address. The values are looked up when the hook runs (from $HOME, chezmoi
+# data, and the untracked `privacy.forbidden` git config), so none of them are
+# written into this public repo. With --message FILE it checks a commit message
+# instead; the commit-msg hook calls it that way.
+set -eu
+
+patterns=$(mktemp "${TMPDIR:-/tmp}/forbidden.XXXXXX")
+added=$(mktemp "${TMPDIR:-/tmp}/added.XXXXXX")
+trap 'rm -f "$patterns" "$added"' EXIT
+
+{
+  printf '%s\n' "$HOME"
+  if command -v chezmoi >/dev/null 2>&1; then
+    chezmoi execute-template \
+      '{{ get . "personalEmail" }}{{ "\n" }}{{ get . "workEmail" }}{{ "\n" }}' \
+      2>/dev/null || true
+  fi
+  git config --get-all privacy.forbidden || true
+} | grep -v '^[[:space:]]*$' > "$patterns" || true
+
+[ -s "$patterns" ] || exit 0
+
+blocked() {
+  echo "Commit blocked: $1 contains your home path or a personal email address." >&2
+  echo "Use {{ .chezmoi.homeDir }} or a 1Password lookup instead." >&2
+  echo "To commit anyway: git commit --no-verify" >&2
+  exit 1
+}
+
+if [ "${1:-}" = "--message" ]; then
+  grep -v '^#' "$2" | grep -qiF -f "$patterns" && blocked "the commit message"
+  exit 0
+fi
+
+git diff --cached --name-only --diff-filter=d | while IFS= read -r file; do
+  git diff --cached -U0 --no-color --no-ext-diff -- "$file" |
+    grep '^+' | grep -v '^+++ ' > "$added" || true
+  if printf '%s\n' "$file" | cat - "$added" | grep -qiF -f "$patterns"; then
+    blocked "$file"
+  fi
+done

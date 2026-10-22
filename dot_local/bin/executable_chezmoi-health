@@ -113,6 +113,18 @@ while IFS= read -r plist; do
 done < <(chezmoi managed --include=files | grep '^Library/LaunchAgents/.*\.plist$')
 [ "$stale" = 0 ] && ok "every managed LaunchAgent points at an existing program"
 
+# Every 1Password shell plugin config must be tracked (as a template that looks
+# up its item), or the plugin needs `op plugin init` again after a rebuild.
+untracked_plugins=$(cd "$HOME" && for f in .config/op/plugins/*.json; do
+  [ -e "$f" ] || continue
+  chezmoi managed --include=files | grep -qxF "$f" || echo "${f##*/}"
+done)
+if [ -n "$untracked_plugins" ]; then
+  issue "1Password plugin configs not in chezmoi (add a template like the others in dot_config/private_op/private_plugins): $(echo $untracked_plugins)"
+else
+  ok "every 1Password plugin config is tracked"
+fi
+
 # Repo tests must pass.
 if python3 -m unittest discover -s tests >"$scratch/tests" 2>&1; then
   ok "repo tests pass"
@@ -181,7 +193,7 @@ fi
 # Unmanaged dotfiles and ~/.config entries that might belong in chezmoi. The
 # names below were reviewed and are deliberately left out (caches, history,
 # per-Mac state, app-managed data).
-known_unmanaged='^(\.CFUserTextEncoding|\.DS_Store|\.Trash|\.bun|\.cache|\.claude\.json(\.backup.*)?|\.grokbot|\.homebrew|\.littlebird|\.mcp-apple-mail|\.npm|\.rbenv|\.swiftpm|\.viminfo|\.vscode|\.vscode-shared|\.zcompdump.*|\.zsh_history|\.zsh_sessions|\.lesshst|\.python_history|\.node_repl_history|\.wget-hsts|\.config/(1Password|browser-harness|browseruse|chezmoi))$'
+known_unmanaged='^(\.CFUserTextEncoding|\.DS_Store|\.Trash|\.bun|\.cache|\.claude\.json(\.backup.*)?|\.grokbot|\.homebrew|\.littlebird|\.mcp-apple-mail|\.npm|\.rbenv|\.swiftpm|\.viminfo|\.vscode|\.vscode-shared|\.zcompdump.*|\.zsh_history|\.zsh_sessions|\.lesshst|\.python_history|\.node_repl_history|\.wget-hsts|\.config/(1Password|browser-harness|browseruse|chezmoi|configstore))$'
 chezmoi managed --include=files,dirs,symlinks | awk -F/ '{print $1; if ($1 == ".config" && NF > 1) print $1 "/" $2}' |
   sort -u >"$scratch/managed"
 {

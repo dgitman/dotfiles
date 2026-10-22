@@ -12,7 +12,7 @@ class PrivacyHookTests(unittest.TestCase):
         self.env = dict(os.environ, HOME=str(self.home), PATH=str(self.bin)+':/usr/bin:/bin', GIT_CONFIG_GLOBAL='/dev/null', GIT_CONFIG_NOSYSTEM='1', GIT_AUTHOR_NAME='Test', GIT_AUTHOR_EMAIL='test@example.com', GIT_COMMITTER_NAME='Test', GIT_COMMITTER_EMAIL='test@example.com')
         self.env.pop('GIT_INDEX_FILE', None)
         chezmoi = self.bin/'chezmoi'
-        chezmoi.write_text('#!/bin/sh\nprintf "me@personal.test\\nme@work.test\\n"\n'); chezmoi.chmod(0o755)
+        chezmoi.write_text('#!/bin/sh\nprintf "me@personal.test\\nme@work.test\\nmyname\\n"\n'); chezmoi.chmod(0o755)
         self.git('init', '-q')
         self.git('config', 'core.hooksPath', str(HOOKS))
         self.git('config', 'commit.gpgsign', 'false')
@@ -42,9 +42,8 @@ class PrivacyHookTests(unittest.TestCase):
         result = self.commit('config.toml', 'account = "ME@Work.test"\n')
         self.assertNotEqual(result.returncode, 0)
 
-    def test_blocks_extra_value_from_git_config(self):
-        self.git('config', '--add', 'privacy.forbidden', 'other@private.test')
-        result = self.commit('notes.md', 'mail other@private.test\n')
+    def test_blocks_private_value_from_chezmoi(self):
+        result = self.commit('notes.md', 'drive GoogleDrive-myname/Photos\n')
         self.assertNotEqual(result.returncode, 0)
 
     def test_blocks_commit_message(self):

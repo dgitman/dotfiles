@@ -1,0 +1,51 @@
+{
+  "version": 3,
+  "skills": {
+    "pagecrawl": {
+      "source": "pagecrawl/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/pagecrawl/skills.git",
+      "skillPath": "skills/pagecrawl/SKILL.md",
+      "skillFolderHash": "7e9ed370222ac951d0828f43eba0ed30ecadfd53",
+      "installedAt": "2026-10-21T19:21:31.548Z",
+      "updatedAt": "2026-10-21T19:21:31.548Z"
+    },
+    "pagecrawl-api": {
+      "source": "pagecrawl/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/pagecrawl/skills.git",
+      "skillPath": "skills/pagecrawl-api/SKILL.md",
+      "skillFolderHash": "3e2d16993bc3e000fd89e5a8cffced5aad0b0567",
+      "installedAt": "2026-10-21T19:21:31.552Z",
+      "updatedAt": "2026-10-21T19:21:31.552Z"
+    },
+    "find-skills": {
+      "source": "vercel-labs/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/vercel-labs/skills.git",
+      "skillPath": "skills/find-skills/SKILL.md",
+      "skillFolderHash": "76a98a285cb0434f3d39e1a873823556330e398b",
+      "installedAt": "2026-10-21T19:21:45.099Z",
+      "updatedAt": "2026-10-21T19:21:45.099Z"
+    }
+  },
+  "dismissed": {
+    "findSkillsPrompt": true
+  },
+  "lastSelectedAgents": [
+    "amp",
+    "cline",
+    "codex",
+    "cursor",
+    "droid",
+    "fx",
+    "gemini-cli",
+    "github-copilot",
+    "kilo",
+    "kimi-code-cli",
+    "opencode",
+    "pi",
+    "warp",
+    "zed"
+  ]
+}

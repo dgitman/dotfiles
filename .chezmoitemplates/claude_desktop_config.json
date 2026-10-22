@@ -169,11 +169,12 @@
               "shown": false
             },
             {
-              "id": "cg-00bd2d38-2fab-433d-906a-4dab938be5db",
+              "id": "cg-533bff2a-fe92-47fa-8af3-d016fe07b5fb",
               "kind": "manual",
               "v": 2,
-              "name": "Websites",
+              "name": "Legal / court",
               "order": 2,
+              "groupBy": "status",
               "sortBy": "alpha",
               "ascending": false,
               "show": {
@@ -181,16 +182,15 @@
                 "emptyGroups": false,
                 "sideChats": false
               },
-              "collapsed": true,
+              "collapsed": false,
               "shown": true,
-              "members": [],
-              "groupBy": "status"
+              "members": []
             },
             {
-              "id": "cg-3e642554-a198-4ce2-bdbf-f39c100e6c30",
+              "id": "cg-00bd2d38-2fab-433d-906a-4dab938be5db",
               "kind": "manual",
               "v": 2,
-              "name": "Sync & migration",
+              "name": "Websites",
               "order": 3,
               "groupBy": "status",
               "sortBy": "alpha",
@@ -205,10 +205,10 @@
               "members": []
             },
             {
-              "id": "cg-533bff2a-fe92-47fa-8af3-d016fe07b5fb",
+              "id": "cg-3ab31ab2-1c2d-48a3-a50a-354c2c2b9804",
               "kind": "manual",
               "v": 2,
-              "name": "Legal / court",
+              "name": "Media & travel",
               "order": 4,
               "groupBy": "status",
               "sortBy": "alpha",
@@ -218,15 +218,15 @@
                 "emptyGroups": false,
                 "sideChats": false
               },
-              "collapsed": true,
+              "collapsed": false,
               "shown": true,
               "members": []
             },
             {
-              "id": "cg-74279aa0-eb9c-4de8-b6ae-a311a4fdb0cd",
+              "id": "cg-3e642554-a198-4ce2-bdbf-f39c100e6c30",
               "kind": "manual",
               "v": 2,
-              "name": "Scrapers & monitors",
+              "name": "Sync & migration",
               "order": 5,
               "groupBy": "status",
               "sortBy": "alpha",
@@ -236,15 +236,15 @@
                 "emptyGroups": false,
                 "sideChats": false
               },
-              "collapsed": true,
+              "collapsed": false,
               "shown": true,
               "members": []
             },
             {
-              "id": "cg-fb5d24b8-2d2d-49d7-b967-3b4a73e5a80b",
+              "id": "cg-74279aa0-eb9c-4de8-b6ae-a311a4fdb0cd",
               "kind": "manual",
               "v": 2,
-              "name": "Sheets & automation",
+              "name": "Scrapers & monitors",
               "order": 6,
               "groupBy": "status",
               "sortBy": "alpha",
@@ -254,15 +254,15 @@
                 "emptyGroups": false,
                 "sideChats": false
               },
-              "collapsed": true,
+              "collapsed": false,
               "shown": true,
               "members": []
             },
             {
-              "id": "cg-3ab31ab2-1c2d-48a3-a50a-354c2c2b9804",
+              "id": "cg-fb5d24b8-2d2d-49d7-b967-3b4a73e5a80b",
               "kind": "manual",
               "v": 2,
-              "name": "Media & travel",
+              "name": "Sheets & automation",
               "order": 7,
               "groupBy": "status",
               "sortBy": "alpha",
@@ -272,7 +272,7 @@
                 "emptyGroups": false,
                 "sideChats": false
               },
-              "collapsed": true,
+              "collapsed": false,
               "shown": true,
               "members": []
             },
@@ -290,7 +290,7 @@
                 "emptyGroups": false,
                 "sideChats": false
               },
-              "collapsed": true,
+              "collapsed": false,
               "shown": true,
               "members": []
             },
@@ -300,6 +300,7 @@
               "v": 2,
               "name": "Tools",
               "order": 9,
+              "groupBy": "status",
               "sortBy": "alpha",
               "ascending": false,
               "show": {
@@ -309,8 +310,7 @@
               },
               "collapsed": false,
               "shown": true,
-              "members": [],
-              "groupBy": "status"
+              "members": []
             },
             {
               "id": "sessions",

@@ -22,7 +22,7 @@
       }
     }
   },
-  "coworkUserFilesPath": "~/Claude",
+  "coworkUserFilesPath": "{{ .chezmoi.homeDir }}/Claude",
   "preferences": {
     "coworkBrowserToolsEnabled": true,
     "coworkPreferredBrowser": "built_in",
@@ -33,10 +33,10 @@
     "launchPreviewSessionScopedSessions": [],
     "launchChromeImportPrompt": "done",
     "localAgentModeTrustedFolders": [
-      "~/Developer/dgitman/shiragitman.com",
-      "~/.local/share/chezmoi",
-      "~/Developer",
-      "~/Library/CloudStorage/GoogleDrive-personal@example.com/My Drive/Personal/Legal/Temporary Child Custody 24CV009376-910"
+      "{{ .chezmoi.homeDir }}/Developer/dgitman/shiragitman.com",
+      "{{ .chezmoi.homeDir }}/.local/share/chezmoi",
+      "{{ .chezmoi.homeDir }}/Developer",
+      "{{ .chezmoi.homeDir }}/Library/CloudStorage/GoogleDrive-{{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/nijakk5lonp577fq6ha5avc3v4/username" }}/My Drive/Personal/Legal/Temporary Child Custody 24CV009376-910"
     ],
     "folderTccProbeResults": {
       "desktop": "granted",
@@ -47,9 +47,9 @@
     },
     "remoteSessionFolderGrants": {
       "session_01GkGerVapVXQhgWVqi2vrUG": [
-        "~/Library/CloudStorage/GoogleDrive-personal@example.com/My Drive/Personal/Legal/Temporary Child Custody 24CV009376-910",
-        "~/Downloads",
-        "~/Developer/dgitman/custody"
+        "{{ .chezmoi.homeDir }}/Library/CloudStorage/GoogleDrive-{{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/nijakk5lonp577fq6ha5avc3v4/username" }}/My Drive/Personal/Legal/Temporary Child Custody 24CV009376-910",
+        "{{ .chezmoi.homeDir }}/Downloads",
+        "{{ .chezmoi.homeDir }}/Developer/dgitman/custody"
       ]
     },
     "coworkLegacyRootGrantsPruned": true,
@@ -304,10 +304,10 @@
         "version": 0
       },
       "epitaxy-perm-mode-acks.c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": [
-        "~/Developer/dgitman/firecrawl:auto"
+        "{{ .chezmoi.homeDir }}/Developer/dgitman/firecrawl:auto"
       ],
       "epitaxy-folder-permission-mode.c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": {
-        "~/Developer/dgitman/firecrawl": "auto"
+        "{{ .chezmoi.homeDir }}/Developer/dgitman/firecrawl": "auto"
       },
       "epitaxy-auto-mode-consented.c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": true,
       "epitaxy-auto-default-notice-seen.c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": true,

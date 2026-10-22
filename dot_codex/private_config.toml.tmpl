@@ -12,102 +12,102 @@ service_tier = "default"
 
 # Trusted projects
 approvals_reviewer = "guardian_subagent"
-notify = ["~/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
+notify = ["{{ .chezmoi.homeDir }}/.codex/computer-use/Codex Computer Use.app/Contents/SharedSupport/SkyComputerUseClient.app/Contents/MacOS/SkyComputerUseClient", "turn-ended"]
 
-[projects."~/.codex/.chatgpt-projects/g-p-69a9a2ddc0e88191b956ac777d99cdbc"]
+[projects."{{ .chezmoi.homeDir }}/.codex/.chatgpt-projects/g-p-69a9a2ddc0e88191b956ac777d99cdbc"]
 trust_level = "trusted"
 
-[projects."~/.codex/.chatgpt-projects/g-p-69ac9c856d088191b2480295eb606daf"]
+[projects."{{ .chezmoi.homeDir }}/.codex/.chatgpt-projects/g-p-69ac9c856d088191b2480295eb606daf"]
 trust_level = "trusted"
 
-[projects."~/.codex/.chatgpt-projects/g-p-6a147e043010819185198bdc2a48275a"]
+[projects."{{ .chezmoi.homeDir }}/.codex/.chatgpt-projects/g-p-6a147e043010819185198bdc2a48275a"]
 trust_level = "trusted"
 
-[projects."~/.local/share/chezmoi"]
+[projects."{{ .chezmoi.homeDir }}/.local/share/chezmoi"]
 trust_level = "trusted"
 
-[projects."~/Developer"]
+[projects."{{ .chezmoi.homeDir }}/Developer"]
 trust_level = "trusted"
 
-[projects."~/Developer/because-ventures/because.ventures"]
+[projects."{{ .chezmoi.homeDir }}/Developer/because-ventures/because.ventures"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/ai-stack-coverage"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/ai-stack-coverage"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/apple-reminders-google-tasks-sync"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/apple-reminders-google-tasks-sync"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/brewlert"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/brewlert"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/contactsplus-icloud-photo-sync-fix"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/contactsplus-icloud-photo-sync-fix"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/contactsplus-photo-review"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/contactsplus-photo-review"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/cuddle-critters"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/cuddle-critters"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/custody"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/custody"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/davidgitman.com"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/davidgitman.com"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/genealogy-outreach-tracker"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/genealogy-outreach-tracker"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/gitman-messages-sync"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/gitman-messages-sync"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/gitmanantique.com"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/gitmanantique.com"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/homebrew-cask"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/homebrew-cask"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/laura-email-sync"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/laura-email-sync"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/nc-ecourts-register-of-actions"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/nc-ecourts-register-of-actions"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/nc-ecourts-rob-hearings"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/nc-ecourts-rob-hearings"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/nc-smart-cities"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/nc-smart-cities"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/panda-explosion"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/panda-explosion"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/photosbridge"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/photosbridge"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/polyglot-sync"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/polyglot-sync"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/shira-social-media-watch"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/shira-social-media-watch"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/shiragitman.com"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/shiragitman.com"]
 trust_level = "trusted"
 
-[projects."~/Developer/dgitman/spinning-dare-wheel"]
+[projects."{{ .chezmoi.homeDir }}/Developer/dgitman/spinning-dare-wheel"]
 trust_level = "trusted"
 
-[projects."~/Library/Application Support/Alden"]
+[projects."{{ .chezmoi.homeDir }}/Library/Application Support/Alden"]
 trust_level = "trusted"
 
-[projects."~/Library/CloudStorage/GoogleDrive-personal@example.com/My Drive/FastFoto"]
+[projects."{{ .chezmoi.homeDir }}/Library/CloudStorage/GoogleDrive-{{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/nijakk5lonp577fq6ha5avc3v4/username" }}/My Drive/FastFoto"]
 trust_level = "trusted"
 
-[projects."~/Library/CloudStorage/GoogleDrive-personal@example.com/My Drive/Personal/Genealogy"]
+[projects."{{ .chezmoi.homeDir }}/Library/CloudStorage/GoogleDrive-{{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/nijakk5lonp577fq6ha5avc3v4/username" }}/My Drive/Personal/Genealogy"]
 trust_level = "trusted"
 
-[projects."~/Library/CloudStorage/GoogleDrive-personal@example.com/My Drive/Personal/Memories"]
+[projects."{{ .chezmoi.homeDir }}/Library/CloudStorage/GoogleDrive-{{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/nijakk5lonp577fq6ha5avc3v4/username" }}/My Drive/Personal/Memories"]
 trust_level = "trusted"
 
 [plugins."apify@apify-plugins"]
@@ -213,7 +213,7 @@ args = ["--from", "git+https://github.com/wwiens/trakt_mcpserver", "trakt-mcp"]
 [mcp_servers.trakt-david.env]
 TRAKT_CLIENT_ID = "yTXPeU2LvCnPujp9ABsFYwqZXa1FsPP60x2dpnDlRlE"
 TRAKT_CLIENT_SECRET = "op://ts4jmaranagdjfxrtkfukeglcm/t7aiboqrptwqpqk6fe5em4ag7u/client_secret"
-TRAKT_AUTH_TOKEN_PATH = "~/.trakt-mcp/auth_token_david.json"
+TRAKT_AUTH_TOKEN_PATH = "{{ .chezmoi.homeDir }}/.trakt-mcp/auth_token_david.json"
 
 [mcp_servers.trakt-emalie]
 enabled = true
@@ -223,7 +223,7 @@ args = ["--from", "git+https://github.com/wwiens/trakt_mcpserver", "trakt-mcp"]
 [mcp_servers.trakt-emalie.env]
 TRAKT_CLIENT_ID = "-4Dm2hiheumQs9bBLHH9s7HN6EBwqYpYul5iiaDoWvo"
 TRAKT_CLIENT_SECRET = "op://Emalie/2o5fnrqglcfbhkoqnzuuya2dh4/client_secret"
-TRAKT_AUTH_TOKEN_PATH = "~/.trakt-mcp/auth_token_emalie.json"
+TRAKT_AUTH_TOKEN_PATH = "{{ .chezmoi.homeDir }}/.trakt-mcp/auth_token_emalie.json"
 
 [mcp_servers.node_repl]
 args = []
@@ -234,8 +234,8 @@ startup_timeout_sec = 120
 NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS = "1000"
 NODE_REPL_NODE_MODULE_DIRS = "/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
 NODE_REPL_NODE_PATH = "/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"
-NODE_REPL_TRUSTED_CODE_PATHS = "~/.codex:/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
-CODEX_HOME = "~/.codex"
+NODE_REPL_TRUSTED_CODE_PATHS = "{{ .chezmoi.homeDir }}/.codex:/Applications/ChatGPT.app/Contents/Resources/cua_node/lib/node_modules"
+CODEX_HOME = "{{ .chezmoi.homeDir }}/.codex"
 BROWSER_USE_AVAILABLE_BACKENDS = "chrome,iab,mcpapps"
 BROWSER_USE_TINYSKY_ENABLED = "1"
 NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = ""
@@ -243,8 +243,8 @@ NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = ""
 NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = ""
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
 BROWSER_USE_CODEX_APP_VERSION = "26.1007.71326"
-NODE_REPL_TRUSTED_SERVICES = '{"browser":"~/.codex/plugins/cache/openai-bundled/browser/26.1007.71326/scripts/browser-service.mjs","sky":"@oai/sky/service"}'
-SKY_CUA_SERVICE_PATH = "~/.codex/computer-use/Codex Computer Use.app"
+NODE_REPL_TRUSTED_SERVICES = '{"browser":"{{ .chezmoi.homeDir }}/.codex/plugins/cache/openai-bundled/browser/26.1007.71326/scripts/browser-service.mjs","sky":"@oai/sky/service"}'
+SKY_CUA_SERVICE_PATH = "{{ .chezmoi.homeDir }}/.codex/computer-use/Codex Computer Use.app"
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex"
 
 # Desktop preferences
@@ -304,11 +304,11 @@ source_type = "git"
 
 [marketplaces.openai-bundled]
 source_type = "local"
-source = "~/.codex/.tmp/bundled-marketplaces/openai-bundled"
+source = "{{ .chezmoi.homeDir }}/.codex/.tmp/bundled-marketplaces/openai-bundled"
 
 [marketplaces.openai-primary-runtime]
 source_type = "local"
-source = "~/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
+source = "{{ .chezmoi.homeDir }}/.cache/codex-runtimes/codex-primary-runtime/plugins/openai-primary-runtime"
 
 [marketplaces.zapier]
 source = "https://github.com/zapier/marketplace.git"

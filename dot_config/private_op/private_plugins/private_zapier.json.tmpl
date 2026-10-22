@@ -1,0 +1,17 @@
+{{- $opAccount := index (fromJson (output "op" "account" "list" "--format=json")) 0 -}}
+{{- $item := onepassword "Zapier" "Team" -}}
+{
+	"account_id": "{{ $opAccount.account_uuid }}",
+	"entrypoint": [
+		"zapier"
+	],
+	"credentials": [
+		{
+			"plugin": "zapier",
+			"credential_type": "deploy_key",
+			"usage_id": "deploy_key",
+			"vault_id": "{{ $item.vault.id }}",
+			"item_id": "{{ $item.id }}"
+		}
+	]
+}

@@ -11,3 +11,9 @@ gh() {
 openai() {
     op plugin run -- openai "$@"
 }
+vercel() {
+    op plugin run -- vercel "$@"
+}
+zapier() {
+    op plugin run -- zapier "$@"
+}

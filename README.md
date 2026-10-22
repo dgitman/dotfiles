@@ -69,6 +69,23 @@ there and run `chezmoi init`.
 `bootstrap.sh` turns the hooks on with `core.hooksPath`. `git commit
 --no-verify` skips the check.
 
+## Weekly health check
+
+`~/.local/bin/chezmoi-health` checks that chezmoi is clean and published:
+`chezmoi status` is empty, the source repo is committed and matches
+`origin/main`, the privacy hooks are on, no tracked file or commit message has
+the home path, a private value, or a credential-shaped string, no
+`dot_chezmoi.*` file is managed, every managed LaunchAgent's program exists,
+and the repo tests pass. It also lists unmanaged dotfiles and `~/.config`
+entries that are not on its reviewed list. It prints `OK`, `ISSUE`, or
+`REVIEW` per check, never prints private values, and exits 1 on any issue.
+1Password must be unlocked.
+
+A Claude scheduled task named "Weekly chezmoi health check" runs it early on
+Sunday mornings, fixes what it finds, commits through the privacy hooks, and
+pushes `main`. It runs only while the Claude app is open; a missed run starts
+on the next launch.
+
 ## GitHub CLI auth
 
 - Single account (`dgitman`), authenticated via the 1Password `gh` plugin

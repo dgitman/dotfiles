@@ -1,0 +1,146 @@
+#!/bin/bash
+# Check that chezmoi is clean and that everything is committed and pushed to the
+# public dotfiles repo. Prints one line per check (OK / ISSUE / REVIEW) and exits
+# 1 if any ISSUE was found. It never prints secret values or private strings:
+# privacy and secret hits are reported as file:line only. Read-only apart from
+# `git fetch`.
+set -uo pipefail
+export PATH="/opt/homebrew/bin:/usr/local/bin:${PATH:-/usr/bin:/bin}"
+
+issues=0
+ok() { printf 'OK      %s\n' "$*"; }
+issue() { printf 'ISSUE   %s\n' "$*"; issues=$((issues + 1)); }
+review() { printf 'REVIEW  %s\n' "$*"; }
+
+src=$(chezmoi source-path 2>/dev/null) || { issue "chezmoi source-path failed"; exit 1; }
+cd "$src" || exit 1
+scratch=$(mktemp -d "${TMPDIR:-/tmp}/chezmoi-health.XXXXXX")
+trap 'rm -rf "$scratch"' EXIT
+
+# 1Password must be unlocked for templates that read secrets to render.
+if /usr/bin/perl -e 'alarm 20; exec @ARGV' op whoami >/dev/null 2>&1; then
+  ok "1Password CLI is connected"
+else
+  issue "1Password CLI is not connected; unlock 1Password, then run again"
+  exit 1
+fi
+
+# chezmoi status must be empty: source and home directory agree.
+if chezmoi status >"$scratch/status" 2>"$scratch/status.err"; then
+  if [ -s "$scratch/status" ]; then
+    issue "chezmoi status is not empty:"
+    sed 's/^/          /' "$scratch/status"
+  else
+    ok "chezmoi status is empty"
+  fi
+else
+  issue "chezmoi status failed: $(head -1 "$scratch/status.err")"
+fi
+
+# The source repo must be clean, on main, and in step with GitHub.
+branch=$(git branch --show-current)
+[ "$branch" = main ] && ok "source repo is on main" || issue "source repo is on '$branch', not main"
+if [ -n "$(git status --porcelain)" ]; then
+  issue "source repo has uncommitted changes:"
+  git status --short | sed 's/^/          /'
+else
+  ok "source repo has no uncommitted changes"
+fi
+if git fetch -q origin 2>"$scratch/fetch.err"; then
+  read -r behind ahead < <(git rev-list --left-right --count origin/main...main)
+  if [ "$ahead" = 0 ] && [ "$behind" = 0 ]; then
+    ok "main matches origin/main"
+  else
+    issue "main is $ahead ahead and $behind behind origin/main"
+  fi
+else
+  issue "git fetch failed: $(head -1 "$scratch/fetch.err")"
+fi
+other=$(git ls-remote --heads origin | awk '{print $2}' | grep -vx refs/heads/main)
+[ -z "$other" ] && ok "GitHub has no branches besides main" || review "GitHub has other branches: $(echo $other)"
+
+# The privacy hooks must be on.
+[ "$(git config --get core.hooksPath)" = git-hooks ] && ok "privacy hooks are enabled" ||
+  issue "privacy hooks are off; run: chezmoi git -- config core.hooksPath git-hooks"
+
+# No tracked file may contain the home path or a private value from chezmoi data.
+{
+  printf '%s\n' "$HOME"
+  chezmoi execute-template \
+    '{{ get . "personalEmail" }}{{ "\n" }}{{ get . "workEmail" }}{{ "\n" }}{{ with get . "privateValues" }}{{ range . }}{{ . }}{{ "\n" }}{{ end }}{{ end }}' \
+    2>/dev/null
+} | grep -v '^[[:space:]]*$' >"$scratch/private"
+if [ "$(wc -l <"$scratch/private")" -lt 4 ]; then
+  issue "chezmoi data is missing personalEmail, workEmail, or privateValues; run chezmoi init"
+fi
+if git grep -nIiF -f "$scratch/private" -- . >"$scratch/private.hits" 2>/dev/null; then
+  issue "tracked files contain the home path or a private value (use {{ .chezmoi.homeDir }} or 1Password):"
+  cut -d: -f1,2 "$scratch/private.hits" | sed 's/^/          /'
+else
+  ok "no home path or private values in tracked files"
+fi
+if git log --format=%B | grep -qiF -f "$scratch/private"; then
+  issue "a commit message contains the home path or a private value"
+else
+  ok "no home path or private values in commit messages"
+fi
+
+# No tracked file may contain something shaped like a credential.
+secret_re='(sk-[A-Za-z0-9_-]{20,}|gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|xox[abpr]-[A-Za-z0-9-]{10,}|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35}|-----BEGIN [A-Z ]*PRIVATE KEY-----)'
+if git grep -nIE "$secret_re" -- . >"$scratch/secret.hits" 2>/dev/null; then
+  issue "tracked files contain what looks like a credential:"
+  cut -d: -f1,2 "$scratch/secret.hits" | sed 's/^/          /'
+else
+  ok "no credential-shaped strings in tracked files"
+fi
+
+# A dot_chezmoi.* source file writes an unused ~/.chezmoi.* instead of config.
+if chezmoi managed --include=files | grep -q '^\.chezmoi\.'; then
+  issue "a dot_chezmoi.* source file is managed; config belongs in .chezmoi.toml.tmpl"
+else
+  ok "no stray chezmoi config files are managed"
+fi
+
+# Managed LaunchAgents must point at programs that still exist.
+stale=0
+while IFS= read -r plist; do
+  program=$(plutil -extract ProgramArguments.0 raw "$HOME/$plist" 2>/dev/null) ||
+    program=$(plutil -extract Program raw "$HOME/$plist" 2>/dev/null) || continue
+  if [ ! -e "$program" ]; then
+    issue "$plist runs a program that no longer exists; remove it from chezmoi"
+    stale=1
+  fi
+done < <(chezmoi managed --include=files | grep '^Library/LaunchAgents/.*\.plist$')
+[ "$stale" = 0 ] && ok "every managed LaunchAgent points at an existing program"
+
+# Repo tests must pass.
+if python3 -m unittest discover -s tests >"$scratch/tests" 2>&1; then
+  ok "repo tests pass"
+else
+  issue "repo tests fail: $(tail -1 "$scratch/tests")"
+fi
+
+# Unmanaged dotfiles and ~/.config entries that might belong in chezmoi. The
+# names below were reviewed and are deliberately left out (caches, history,
+# per-Mac state, app-managed data).
+known_unmanaged='^(\.CFUserTextEncoding|\.DS_Store|\.Trash|\.bun|\.cache|\.claude\.json(\.backup.*)?|\.grokbot|\.homebrew|\.littlebird|\.mcp-apple-mail|\.npm|\.rbenv|\.swiftpm|\.viminfo|\.vscode|\.vscode-shared|\.zcompdump.*|\.zsh_history|\.zsh_sessions|\.lesshst|\.python_history|\.node_repl_history|\.wget-hsts|\.config/(1Password|browser-harness|browseruse|chezmoi))$'
+chezmoi managed --include=files,dirs,symlinks | awk -F/ '{print $1; if ($1 == ".config" && NF > 1) print $1 "/" $2}' |
+  sort -u >"$scratch/managed"
+{
+  (cd "$HOME" && ls -A | grep '^\.')
+  (cd "$HOME" && ls -A .config 2>/dev/null | sed 's|^|.config/|')
+} | grep -vxF -f "$scratch/managed" | grep -vE "$known_unmanaged" >"$scratch/unmanaged" || true
+if [ -s "$scratch/unmanaged" ]; then
+  review "unmanaged entries to consider adding to chezmoi (or to the known list in chezmoi-health):"
+  sed 's/^/          ~\//' "$scratch/unmanaged"
+else
+  ok "no new unmanaged dotfiles or ~/.config entries"
+fi
+
+echo
+if [ "$issues" -eq 0 ]; then
+  echo "chezmoi-health: clean"
+else
+  echo "chezmoi-health: $issues issue(s)"
+  exit 1
+fi

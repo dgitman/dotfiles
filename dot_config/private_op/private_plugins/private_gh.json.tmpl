@@ -1,6 +1,5 @@
 {{- $opAccount := index (fromJson (output "op" "account" "list" "--format=json")) 0 -}}
-{{- /* By ID: the Private vault also has an SSH key item titled "GitHub". */ -}}
-{{- $ghItem := onepassword "ilisfoloivekdguzpnjepypsbi" -}}
+{{- $ghItem := onepassword "GitHub" -}}
 {
         "account_id": "{{ $opAccount.account_uuid }}",
         "entrypoint": [

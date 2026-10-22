@@ -28,9 +28,13 @@ Notable tracked files:
   automatic login/session state in `config.json` is not tracked
 - `dot_warp/settings.toml` — Warp terminal settings
 - `.chezmoitemplates/claude_desktop_config.json` — Claude Desktop MCP servers
-  and preferences. `private_Library/.../modify_private_claude_desktop_config.json.tmpl`
-  merges them into the live file and leaves the app's sidebar and session state
-  (`preferences.epitaxyPrefs`) alone, so new sessions do not show as drift
+  and preferences, including the sidebar's section and group definitions.
+  `private_Library/.../modify_private_claude_desktop_config.json.tmpl` merges
+  them into the live file and leaves the rest of the app's sidebar state alone
+  (which sessions sit in which group, collapsed sections, the last open pane),
+  so new sessions do not show as drift. After adding, renaming, or reordering
+  sections or groups, copy the new `dframe-code-sections` and the `groups` lists
+  from the live file into the template; `chezmoi re-add` does not work for it
 - `run_onchange_before_install-packages-darwin.sh.tmpl` — runs
   Homebrew Bundle from the tracked source whenever `dot_Brewfile` changes;
   installation failures stop the apply and are retried on the next apply.

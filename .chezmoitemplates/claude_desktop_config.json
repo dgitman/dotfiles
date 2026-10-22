@@ -93,6 +93,247 @@
       "{{ .chezmoi.homeDir }}/Developer/because-ventures",
       "{{ .chezmoi.homeDir }}/Developer/dgitman"
     ],
-    "remoteControlStayReachable": true
+    "remoteControlStayReachable": true,
+    "epitaxyPrefs": {
+      "dframe-group-scopes": {
+        "c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55/434c64cb-f6cd-4ee6-a89b-7a4e957bde68": {
+          "groups": [
+            {
+              "id": "cg-00bd2d38-2fab-433d-906a-4dab938be5db",
+              "name": "Websites"
+            },
+            {
+              "id": "cg-3e642554-a198-4ce2-bdbf-f39c100e6c30",
+              "name": "Sync & migration"
+            },
+            {
+              "id": "cg-533bff2a-fe92-47fa-8af3-d016fe07b5fb",
+              "name": "Legal / court"
+            },
+            {
+              "id": "cg-fb5d24b8-2d2d-49d7-b967-3b4a73e5a80b",
+              "name": "Sheets & automation"
+            },
+            {
+              "id": "cg-74279aa0-eb9c-4de8-b6ae-a311a4fdb0cd",
+              "name": "Scrapers & monitors"
+            },
+            {
+              "id": "cg-3ab31ab2-1c2d-48a3-a50a-354c2c2b9804",
+              "name": "Media & travel"
+            },
+            {
+              "id": "cg-bb27b4a2-b1f6-4211-9d08-4e4d9d866641",
+              "name": "Games & fun"
+            },
+            {
+              "id": "cg-4a1ec0fa-d3a7-4e4d-b127-385d3ca99f00",
+              "name": "Tools"
+            }
+          ]
+        }
+      },
+      "dframe-code-sections": {
+        "c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55/434c64cb-f6cd-4ee6-a89b-7a4e957bde68": {
+          "sections": [
+            {
+              "id": "pinned",
+              "kind": "pinned",
+              "v": 2,
+              "name": "",
+              "order": 0,
+              "sortBy": "recency",
+              "ascending": false,
+              "show": {
+                "metadata": false,
+                "emptyGroups": false,
+                "sideChats": false
+              },
+              "collapsed": false,
+              "shown": true
+            },
+            {
+              "id": "routines",
+              "kind": "routines",
+              "v": 2,
+              "name": "",
+              "order": 1,
+              "sortBy": "recency",
+              "ascending": false,
+              "show": {
+                "metadata": false,
+                "emptyGroups": false,
+                "sideChats": false
+              },
+              "collapsed": true,
+              "shown": false
+            },
+            {
+              "id": "cg-00bd2d38-2fab-433d-906a-4dab938be5db",
+              "kind": "manual",
+              "v": 2,
+              "name": "Websites",
+              "order": 2,
+              "sortBy": "alpha",
+              "ascending": false,
+              "show": {
+                "metadata": true,
+                "emptyGroups": false,
+                "sideChats": false
+              },
+              "collapsed": true,
+              "shown": true,
+              "members": [],
+              "groupBy": "status"
+            },
+            {
+              "id": "cg-3e642554-a198-4ce2-bdbf-f39c100e6c30",
+              "kind": "manual",
+              "v": 2,
+              "name": "Sync & migration",
+              "order": 3,
+              "groupBy": "status",
+              "sortBy": "alpha",
+              "ascending": false,
+              "show": {
+                "metadata": true,
+                "emptyGroups": false,
+                "sideChats": false
+              },
+              "collapsed": false,
+              "shown": true,
+              "members": []
+            },
+            {
+              "id": "cg-533bff2a-fe92-47fa-8af3-d016fe07b5fb",
+              "kind": "manual",
+              "v": 2,
+              "name": "Legal / court",
+              "order": 4,
+              "groupBy": "status",
+              "sortBy": "alpha",
+              "ascending": false,
+              "show": {
+                "metadata": true,
+                "emptyGroups": false,
+                "sideChats": false
+              },
+              "collapsed": true,
+              "shown": true,
+              "members": []
+            },
+            {
+              "id": "cg-74279aa0-eb9c-4de8-b6ae-a311a4fdb0cd",
+              "kind": "manual",
+              "v": 2,
+              "name": "Scrapers & monitors",
+              "order": 5,
+              "groupBy": "status",
+              "sortBy": "alpha",
+              "ascending": false,
+              "show": {
+                "metadata": true,
+                "emptyGroups": false,
+                "sideChats": false
+              },
+              "collapsed": true,
+              "shown": true,
+              "members": []
+            },
+            {
+              "id": "cg-fb5d24b8-2d2d-49d7-b967-3b4a73e5a80b",
+              "kind": "manual",
+              "v": 2,
+              "name": "Sheets & automation",
+              "order": 6,
+              "groupBy": "status",
+              "sortBy": "alpha",
+              "ascending": false,
+              "show": {
+                "metadata": true,
+                "emptyGroups": false,
+                "sideChats": false
+              },
+              "collapsed": true,
+              "shown": true,
+              "members": []
+            },
+            {
+              "id": "cg-3ab31ab2-1c2d-48a3-a50a-354c2c2b9804",
+              "kind": "manual",
+              "v": 2,
+              "name": "Media & travel",
+              "order": 7,
+              "groupBy": "status",
+              "sortBy": "alpha",
+              "ascending": false,
+              "show": {
+                "metadata": true,
+                "emptyGroups": false,
+                "sideChats": false
+              },
+              "collapsed": true,
+              "shown": true,
+              "members": []
+            },
+            {
+              "id": "cg-bb27b4a2-b1f6-4211-9d08-4e4d9d866641",
+              "kind": "manual",
+              "v": 2,
+              "name": "Games & fun",
+              "order": 8,
+              "groupBy": "status",
+              "sortBy": "alpha",
+              "ascending": false,
+              "show": {
+                "metadata": true,
+                "emptyGroups": false,
+                "sideChats": false
+              },
+              "collapsed": true,
+              "shown": true,
+              "members": []
+            },
+            {
+              "id": "cg-4a1ec0fa-d3a7-4e4d-b127-385d3ca99f00",
+              "kind": "manual",
+              "v": 2,
+              "name": "Tools",
+              "order": 9,
+              "sortBy": "alpha",
+              "ascending": false,
+              "show": {
+                "metadata": true,
+                "emptyGroups": false,
+                "sideChats": false
+              },
+              "collapsed": false,
+              "shown": true,
+              "members": [],
+              "groupBy": "status"
+            },
+            {
+              "id": "sessions",
+              "kind": "sessions",
+              "v": 2,
+              "name": "",
+              "order": 10,
+              "groupBy": "status",
+              "sortBy": "alpha",
+              "ascending": false,
+              "show": {
+                "metadata": true,
+                "emptyGroups": true,
+                "sideChats": false
+              },
+              "collapsed": false,
+              "shown": true
+            }
+          ],
+          "migratedFrom": 1,
+          "prefsSeeded": true
+        }
+      }
+    }
   }
 }

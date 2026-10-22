@@ -1,0 +1,17 @@
+{{- $opAccount := index (fromJson (output "op" "account" "list" "--format=json")) 0 -}}
+{{- $item := onepassword "Vercel / v0" "Employee" -}}
+{
+	"account_id": "{{ $opAccount.account_uuid }}",
+	"entrypoint": [
+		"vercel"
+	],
+	"credentials": [
+		{
+			"plugin": "vercel",
+			"credential_type": "api_token",
+			"usage_id": "api_token",
+			"vault_id": "{{ $item.vault.id }}",
+			"item_id": "{{ $item.id }}"
+		}
+	]
+}

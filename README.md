@@ -332,6 +332,38 @@ launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/com.davidgitman.g
 The Contacts photo repair agent remains owned by its separate helper under
 `~/Documents/Codex/contacts-hourly-helper`; it is not included in this restore.
 
+## Claude sessions (Google Drive backup)
+
+chezmoi restores Claude Code and Claude Desktop settings and the sidebar's
+section and group definitions. Local Code sessions are deliberately not in this
+public repo: their transcripts hold whole conversations. Google Drive for
+desktop backs them up instead. Add these folders under **Add folder**, backing
+up to Google Drive (not Google Photos); press Cmd-Shift-. in the picker to show
+hidden folders:
+
+- `~/.claude`: session transcripts (`projects/`), prompt history, file
+  checkpoints, and scheduled tasks, including the weekly chezmoi health check.
+- `~/Library/Application Support/Claude/claude-code-sessions`: one file per Code
+  session, which the app uses to list sessions and place them in groups.
+
+Do not back up the rest of `~/Library/Application Support/Claude`: it holds
+the app's own Claude Code and VM files, which reinstall themselves, plus sign-in
+cookies and live databases that a copy can catch mid-write.
+
+To restore, before opening Claude on the new Mac:
+
+1. Download both folders from the **Computers** section of Google Drive.
+2. Put them back at the same paths, under the same macOS username; sessions
+   record full paths.
+3. Run `chezmoi apply` (or let `bootstrap.sh` run it). It writes the tracked
+   settings over the restored `~/.claude/settings.json` and `CLAUDE.md`, and
+   merges the sidebar sections and groups into the Claude Desktop config.
+4. Open Claude and check that sessions sit in their groups and that the weekly
+   chezmoi health check appears under Scheduled.
+
+The transcripts can contain anything that came up in a session, so keep 2-step
+verification on the Google account.
+
 ## Magnet custom layout
 
 `magnet-stage-manager.json` preserves only the Stage Manager horizontal layout,
@@ -361,16 +393,18 @@ new settings before re-adding configurations to avoid tracking credentials.
 
 1. Install and unlock 1Password, enable its CLI integration, allow Terminal
    to access 1Password's shared data (Files & Folders), and set up its SSH agent before cloning private repositories or resolving secret references.
-   `bootstrap.sh` handles this step and the next.
-2. Initialize chezmoi and apply the configuration. For Magnet, open it once and
+   `bootstrap.sh` handles this step and step 3.
+2. Before opening Claude, restore the Claude session folders from Google Drive
+   (see "Claude sessions (Google Drive backup)").
+3. Initialize chezmoi and apply the configuration. For Magnet, open it once and
    quit it before retrying the apply if its restore hook requests that step.
-3. Sign in to Google Cloud. `bootstrap.sh` checks this and offers sign-in; to
+4. Sign in to Google Cloud. `bootstrap.sh` checks this and offers sign-in; to
    do it later, run `gcloud auth login`.
-4. Repo clones, the printer, the After Dark download, and the
+5. Repo clones, the printer, the After Dark download, and the
    `chezmoi status` / `chezmoi doctor` checks are run by `bootstrap.sh`.
    Import the After Dark modules in Afterglow, and complete the personal
    background job prerequisites before loading their agents.
-5. Re-run `chezmoi status` and `chezmoi doctor` after any manual changes.
+6. Re-run `chezmoi status` and `chezmoi doctor` after any manual changes.
 
 Google Cloud verification discards the access token and never prints it.
 A failed verification can also mean a connectivity or account problem; it does

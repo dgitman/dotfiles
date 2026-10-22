@@ -34,6 +34,9 @@ for dump in "$HOME/.zcompdump"(N.mh+24); do
 done
 compinit -C
 
+# 1Password CLI plugin
+[[ -r "$HOME/.config/op/plugins.sh" ]] && source "$HOME/.config/op/plugins.sh"
+
 # ==============================================================================
 # ZSH PLUGINS (Syntax Highlighting & Autosuggestions)
 # ==============================================================================

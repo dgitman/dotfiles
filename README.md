@@ -82,8 +82,13 @@ there and run `chezmoi init`.
 `origin/main`, the privacy hooks are on, no tracked file or commit message has
 the home path, a private value, or a credential-shaped string, no
 `dot_chezmoi.*` file is managed, every managed LaunchAgent's program exists,
-and the repo tests pass. It also lists unmanaged dotfiles and `~/.config`
-entries that are not on its reviewed list. It prints `OK`, `ISSUE`, or
+and the repo tests pass. For packages, it checks that every npm global package
+and uv tool is in the Brewfile (brewfile-sync records them, and the install
+script reinstalls them with Homebrew Bundle) and that everything in the
+Brewfile is installed. It also lists pipx apps and pip packages installed
+outside Homebrew, which the Brewfile cannot track (reinstall them as uv tools),
+and unmanaged dotfiles and `~/.config` entries that are not on its reviewed
+list. It prints `OK`, `ISSUE`, or
 `REVIEW` per check, never prints private values, and exits 1 on any issue.
 1Password must be unlocked.
 

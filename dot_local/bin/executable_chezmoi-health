@@ -120,6 +120,64 @@ else
   issue "repo tests fail: $(tail -1 "$scratch/tests")"
 fi
 
+# Packages installed outside Homebrew formulae and casks. The Brewfile tracks
+# npm globals and uv tools (brewfile-sync records them hourly, and the install
+# script reinstalls them with brew bundle); pip and pipx installs it cannot track.
+brewfile="$src/dot_Brewfile"
+if command -v npm >/dev/null 2>&1; then
+  npm ls --global --depth=0 --json 2>/dev/null |
+    /usr/bin/python3 -c 'import json, sys; print("\n".join(n for n in json.load(sys.stdin).get("dependencies", {}) if n not in ("npm", "corepack")))' |
+    sort >"$scratch/npm.installed"
+  sed -nE 's/^npm "([^"]+)".*/\1/p' "$brewfile" | sort >"$scratch/npm.tracked"
+  untracked=$(comm -23 "$scratch/npm.installed" "$scratch/npm.tracked")
+  if [ -n "$untracked" ]; then
+    issue "npm global packages missing from the Brewfile (run brewfile-sync; see ~/Library/Logs/brewfile-sync.log): $(echo $untracked)"
+  else
+    ok "every npm global package is in the Brewfile"
+  fi
+fi
+if command -v uv >/dev/null 2>&1; then
+  uv tool list 2>/dev/null | sed -nE 's/^([A-Za-z0-9._-]+) v.*/\1/p' | sort >"$scratch/uv.installed"
+  sed -nE 's/^uv "([^"]+)".*/\1/p' "$brewfile" | sort >"$scratch/uv.tracked"
+  untracked=$(comm -23 "$scratch/uv.installed" "$scratch/uv.tracked")
+  if [ -n "$untracked" ]; then
+    issue "uv tools missing from the Brewfile (run brewfile-sync): $(echo $untracked)"
+  else
+    ok "every uv tool is in the Brewfile"
+  fi
+fi
+if brew bundle check --no-upgrade --file="$brewfile" >/dev/null 2>&1; then
+  ok "everything in the Brewfile is installed"
+else
+  issue "Brewfile entries are not installed; run: brew bundle install --file=$brewfile"
+fi
+pipx_apps=$(command -v pipx >/dev/null 2>&1 && pipx list --short 2>/dev/null | awk '{print $1}')
+if [ -n "$pipx_apps" ]; then
+  review "pipx apps are not tracked by the Brewfile; reinstall them with 'uv tool install' so brewfile-sync records them: $(echo $pipx_apps)"
+else
+  ok "no pipx apps"
+fi
+pip_pkgs=$(for py in /opt/homebrew/bin/python3.* /usr/bin/python3; do
+  [ -x "$py" ] || continue
+  "$py" - 2>/dev/null <<'PY'
+import importlib.metadata as metadata, os, site, sys
+# Apple's Python ships its own packages; only the user site is ours there.
+user_only = not sys.prefix.startswith("/opt/homebrew")
+user_site = os.path.realpath(site.getusersitepackages())
+for dist in metadata.distributions():
+    path = os.path.realpath(str(dist.locate_file("")))
+    if user_only and not path.startswith(user_site):
+        continue
+    if (dist.read_text("INSTALLER") or "").strip() != "brew":
+        print(dist.metadata["Name"])
+PY
+done | sort -u)
+if [ -n "$pip_pkgs" ]; then
+  review "Python packages installed with pip outside Homebrew; use a uv tool, a project virtualenv, or a Homebrew formula instead: $(echo $pip_pkgs)"
+else
+  ok "no pip packages outside Homebrew"
+fi
+
 # Unmanaged dotfiles and ~/.config entries that might belong in chezmoi. The
 # names below were reviewed and are deliberately left out (caches, history,
 # per-Mac state, app-managed data).

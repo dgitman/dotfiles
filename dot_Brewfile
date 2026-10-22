@@ -2,6 +2,7 @@ tap "composio-temp/tap", "https://github.com/composio-temp/homebrew-tap.git", tr
 tap "composiohq/tap", "https://github.com/composio-temp/homebrew-tap.git", trusted: true
 tap "daptify14/tap"
 tap "integromat/tap"
+tap "openai/tools"
 tap "oven-sh/bun", trusted: true
 tap "pagecrawl/tap"
 # Open-source formatting library for C++
@@ -74,6 +75,28 @@ brew "fdupes"
 brew "sdl2-compat"
 # Play, record, convert, and stream select audio and video codecs
 brew "ffmpeg"
+# C port of the HdrHistogram
+brew "hdrhistogram_c"
+# Portable Foreign Function Interface library
+brew "libffi"
+# HTTP/2 C Library
+brew "libnghttp2"
+# Multi-platform support library with a focus on asynchronous I/O
+brew "libuv"
+# Port of http_parser to llparse
+brew "llhttp"
+# C++ lexer for extracting named exports from CommonJS modules
+brew "merve"
+# Library of byte handling functions extracted from Node.js core
+brew "nbytes"
+# SIMD-accelerated C++ JSON parser
+brew "simdjson"
+# WASI syscall API built atop libuv
+brew "uvwasi"
+# Open-source, cross-platform JavaScript runtime environment
+brew "node"
+# Interact with Google Gemini AI models from the command-line
+brew "gemini-cli"
 # GitHub command-line tool
 brew "gh"
 # Double-Array Trie Library
@@ -90,10 +113,10 @@ brew "gitleaks"
 brew "libgpg-error"
 # Assuan IPC Library
 brew "libassuan"
+# Open source programming language to build simple/reliable/efficient software
+brew "go"
 # CLI for Drive, Gmail, Calendar, Sheets, Docs, Chat, Admin, and more
 brew "googleworkspace-cli"
-# C port of the HdrHistogram
-brew "hdrhistogram_c"
 # Text-based UI library
 brew "ncurses"
 # Improved top (interactive process viewer)
@@ -110,40 +133,22 @@ brew "qpdf"
 brew "oniguruma"
 # Lightweight and flexible command-line JSON processor
 brew "jq"
-# Portable Foreign Function Interface library
-brew "libffi"
 # Library for large linear classification
 brew "liblinear"
-# HTTP/2 C Library
-brew "libnghttp2"
 # HTTP/3 library written in C
 brew "libnghttp3"
 # IETF QUIC protocol implementation
 brew "libngtcp2"
 # C library implementing the SSH2 protocol
 brew "libssh2"
-# Multi-platform support library with a focus on asynchronous I/O
-brew "libuv"
 # YAML Parser
 brew "libyaml"
-# Port of http_parser to llparse
-brew "llhttp"
 # Powerful, lightweight programming language
 brew "lua"
 # Mac App Store command-line interface
 brew "mas"
-# C++ lexer for extracting named exports from CommonJS modules
-brew "merve"
-# Library of byte handling functions extracted from Node.js core
-brew "nbytes"
 # Port scanning utility for large networks
 brew "nmap"
-# SIMD-accelerated C++ JSON parser
-brew "simdjson"
-# WASI syscall API built atop libuv
-brew "uvwasi"
-# Open-source, cross-platform JavaScript runtime environment
-brew "node"
 # Adds an OCR text layer to scanned PDF files
 brew "ocrmypdf"
 # Cryptography and SSL/TLS Toolkit
@@ -174,6 +179,8 @@ brew "rclone"
 brew "rename"
 # Powerful, clean, object-oriented scripting language
 brew "ruby@3.4"
+# Command-line tool for Stripe
+brew "stripe-cli"
 # Find and verify credentials
 brew "trufflehog"
 # Extremely fast Python package installer and resolver, written in Rust
@@ -273,6 +280,8 @@ cask "microsoft-teams"
 cask "monitorcontrol"
 # App to write, plan, collaborate, and get organised
 cask "notion"
+# The official CLI for the OpenAI API.
+cask "openai/tools/openai", trusted: true
 # Collaboration platform for API development
 cask "postman"
 # Imaging utility to install operating systems to a microSD card

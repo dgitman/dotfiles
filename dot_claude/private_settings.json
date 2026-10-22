@@ -1,9 +1,9 @@
 {
   "enabledPlugins": {
-    "firecrawl@claude-plugins-official": true,
     "imessage@claude-plugins-official": true,
-    "slack@claude-plugins-official": true,
     "telegram@claude-plugins-official": true,
+    "slack@claude-plugins-official": true,
+    "firecrawl@claude-plugins-official": true,
     "warp@claude-code-warp": true
   },
   "extraKnownMarketplaces": {
@@ -23,5 +23,33 @@
   "tui": "fullscreen",
   "theme": "auto",
   "inputNeededNotifEnabled": true,
-  "agentPushNotifEnabled": true
+  "agentPushNotifEnabled": true,
+  "enableWorkflows": true,
+  "model": "claude-3-7-sonnet",
+  "effortLevel": "high",
+  "permissions": {
+    "deny": [
+      "Read(~/.env*)",
+      "Read(~/.aws/credentials)",
+      "Read(~/.ssh/*)"
+    ],
+    "ask": [
+      "Bash(rm -rf *)",
+      "Bash(sudo *)",
+      "Bash(git push *)",
+      "Bash(npm publish *)",
+      "Bash(pip install *)"
+    ],
+    "allow": [
+      "Bash(.venv/bin/python:*)",
+      "Bash(git status)",
+      "Bash(git diff)",
+      "Bash(pytest *)",
+      "Bash(npm test)",
+      "Read(package.json)",
+      "Read(requirements.txt)",
+      "Read(pyproject.toml)"
+    ]
+  }
 }
+

@@ -3,6 +3,8 @@
     "Trakt": {
       "command": "uvx",
       "args": [
+        "--python",
+        "3.13",
         "--from",
         "git+https://github.com/wwiens/trakt_mcpserver",
         "trakt-mcp"
@@ -52,19 +54,29 @@
         "{{ .chezmoi.homeDir }}/Developer/dgitman/custody"
       ]
     },
+    "remoteChatFolderGrants": {
+      "88e393ba-33fa-4e1b-b94d-64412c37502d": {
+        "orgUuid": "434c64cb-f6cd-4ee6-a89b-7a4e957bde68",
+        "accountUuid": "c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55",
+        "folders": [
+          "{{ .chezmoi.homeDir }}/Library/Messages"
+        ]
+      }
+    },
     "coworkLegacyRootGrantsPruned": true,
     "allowAllBrowserActions": true,
     "coworkScheduledTasksEnabled": true,
     "coworkHipaaRestricted": false,
     "orgWorkAcrossAppsDisabled": false,
     "ccdScheduledTasksEnabled": true,
-    "sidebarMode": "chat",
+    "sidebarMode": "epitaxy",
     "bypassPermissionsOptInByAccount": {
       "c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": true
     },
     "bypassPermissionsGateByAccount": {
       "c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": true
     },
+    "dockBounceEnabled": true,
     "coworkWebSearchEnabled": true,
     "coworkModelAutoFallbackByAccount": {
       "c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": true
@@ -75,6 +87,13 @@
     "remoteToolsDeviceName": "davids-macbook-pro-local",
     "chicagoBackgroundIntroSeen": true,
     "ccRemoteControlDefaultEnabled": true,
+    "remoteControlExcludedFolders": [],
+    "remoteControlPinnedFolders": [
+      "{{ .chezmoi.homeDir }}/Developer",
+      "{{ .chezmoi.homeDir }}/Developer/because-ventures",
+      "{{ .chezmoi.homeDir }}/Developer/dgitman"
+    ],
+    "remoteControlStayReachable": true,
     "epitaxyPrefs": {
       "starred-local-code-sessions": [],
       "starred-cowork-spaces": [],
@@ -83,196 +102,128 @@
         "c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55/434c64cb-f6cd-4ee6-a89b-7a4e957bde68": {
           "groups": [
             {
-              "id": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-              "name": "Because Ventures"
-            },
-            {
-              "id": "cg-fbff5dd2-801f-4912-82e6-bc8e5df44b72",
-              "name": "Legal"
-            },
-            {
-              "id": "cg-181f55e1-ed12-4ce0-90da-33c8f2021598",
-              "name": "Developer Tools"
-            },
-            {
-              "id": "cg-3eb21ca0-afb4-488d-8a1f-305a0f6c93ef",
-              "name": "Personal Automation"
-            },
-            {
-              "id": "cg-90813fa1-8966-4c66-a6b6-6d3ee55068a1",
-              "name": "Personal Coding"
-            },
-            {
-              "id": "cg-b9ab9e00-c236-4bcd-abc9-83292a7e8780",
+              "id": "cg-00bd2d38-2fab-433d-906a-4dab938be5db",
               "name": "Websites"
+            },
+            {
+              "id": "cg-3e642554-a198-4ce2-bdbf-f39c100e6c30",
+              "name": "Sync & migration"
+            },
+            {
+              "id": "cg-533bff2a-fe92-47fa-8af3-d016fe07b5fb",
+              "name": "Legal / court"
+            },
+            {
+              "id": "cg-fb5d24b8-2d2d-49d7-b967-3b4a73e5a80b",
+              "name": "Sheets & automation"
+            },
+            {
+              "id": "cg-74279aa0-eb9c-4de8-b6ae-a311a4fdb0cd",
+              "name": "Scrapers & monitors"
+            },
+            {
+              "id": "cg-3ab31ab2-1c2d-48a3-a50a-354c2c2b9804",
+              "name": "Media & travel"
+            },
+            {
+              "id": "cg-bb27b4a2-b1f6-4211-9d08-4e4d9d866641",
+              "name": "Games & fun"
+            },
+            {
+              "id": "cg-4a1ec0fa-d3a7-4e4d-b127-385d3ca99f00",
+              "name": "Tools"
             }
           ],
           "assignments": {
-            "code:local_c43fc2fd-a914-412c-a196-d3908e101978": "cg-181f55e1-ed12-4ce0-90da-33c8f2021598",
-            "code:local_1bb5cc0a-78aa-4e77-b113-e5ec8c966710": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_eaa9bb83-a000-451b-b09b-abec54bec89f": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_e3288b1c-c205-4c92-b550-39aeab40cec1": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_07495bcd-40b0-4671-8cf3-06ded10b9fd4": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_3b7aff35-315c-48e8-bfc7-d239db573385": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_8669242b-261d-462f-9134-e7e7e0de48cb": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_0dfed822-037a-4fbe-9531-f0de11b0406d": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_4d94266f-b9a9-480b-8a9b-0f039763b93b": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_a54b4a7c-f70c-4c31-b1d2-19f12b2821c3": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_5e4c650f-c5f7-45ad-96f9-bf9d02e60d45": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_416bf3ca-01d2-4fd8-89ae-0d96719817d2": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_87ea2211-9f6f-4cd2-93fb-02db3a137f83": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_c0f306f4-8add-41ee-918c-51f10d28cc6e": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_62f6bd66-f69c-4ac2-bf03-eef70ad0aca5": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_b85403be-b87a-4c59-b6a2-835fdc56d03a": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_e9bc33ce-0b79-4097-8bdb-559c539e733d": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_fde7140b-5a08-49f9-8892-18bbc5923f3a": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_6803b2af-ea96-41c3-9aa5-5f890872995b": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_9195bf86-a954-4b3f-b000-e17612702ae4": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_5656f934-51a3-4a59-b6ef-e7c8a782e91d": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_ddf10c39-35ce-4266-a0a9-020ec55521c2": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_f22b0fa8-d5cc-4a0e-a0f7-79254194ad7e": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_1b3c93c5-6951-44f5-9006-39360a1b2112": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_bbc26f97-1bbc-478d-95c9-d33f9d87e6f4": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_12e6d824-182e-4fef-bedc-ef8646f43d7e": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_93e539ec-6eb5-4266-9e7f-bac54530ca70": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_9ebf62d4-2f49-4b27-87d8-105606c417ad": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-            "code:local_69723a5a-78c7-4c7f-a3e1-5d8503d21caf": "cg-181f55e1-ed12-4ce0-90da-33c8f2021598",
-            "code:local_27c2db33-8955-474f-b00a-e0ce22e67bc0": "cg-181f55e1-ed12-4ce0-90da-33c8f2021598",
-            "code:local_d8c3c5e3-bc3d-4235-82c0-ccd5cec0427a": "cg-181f55e1-ed12-4ce0-90da-33c8f2021598",
-            "code:local_12325c0d-7032-44fc-8f73-2b107ec48175": "cg-181f55e1-ed12-4ce0-90da-33c8f2021598",
-            "code:local_e3412fc9-029f-4db0-9471-b74ecc3f7ac3": "cg-181f55e1-ed12-4ce0-90da-33c8f2021598",
-            "code:local_a3d22c3b-4610-4ab9-97d5-c5e01c93baee": "cg-181f55e1-ed12-4ce0-90da-33c8f2021598",
-            "code:local_13067f02-e11a-4ac7-b8ad-cbcdfa32e918": "cg-181f55e1-ed12-4ce0-90da-33c8f2021598",
-            "code:local_36e333f7-727e-4a6c-a5f5-1f4c7e6ac4e3": "cg-181f55e1-ed12-4ce0-90da-33c8f2021598",
-            "code:local_a0d4249f-c1f1-479f-8486-78ff36751bb0": "cg-181f55e1-ed12-4ce0-90da-33c8f2021598",
-            "code:local_f4d64bb4-3043-4539-a36b-c0ad9432eb2c": "cg-181f55e1-ed12-4ce0-90da-33c8f2021598",
-            "code:local_3d82436e-ead9-43ed-ae69-ada43ddb3aae": "cg-181f55e1-ed12-4ce0-90da-33c8f2021598",
-            "code:local_f93fca49-cf7b-484a-964d-e3f0e8888b92": "cg-3eb21ca0-afb4-488d-8a1f-305a0f6c93ef",
-            "code:local_13cf040c-2ed0-4a71-baf4-de399b48bd69": "cg-b9ab9e00-c236-4bcd-abc9-83292a7e8780",
-            "code:local_bfe28867-b867-4b3f-97cc-c07f2e1374d0": "cg-90813fa1-8966-4c66-a6b6-6d3ee55068a1",
-            "code:local_c6ffac20-378f-42f3-bdfb-ac9db30f4af2": "cg-b9ab9e00-c236-4bcd-abc9-83292a7e8780",
-            "code:local_92b00141-0d9a-4e88-ab78-bc678386195a": "cg-3eb21ca0-afb4-488d-8a1f-305a0f6c93ef",
-            "code:local_c2c7bcd9-4f66-4d21-a038-88a4409ea00c": "cg-fbff5dd2-801f-4912-82e6-bc8e5df44b72",
-            "code:local_9f25d020-36c7-4d59-8844-2f3d22740e33": "cg-3eb21ca0-afb4-488d-8a1f-305a0f6c93ef",
-            "code:local_1a808923-b099-43fc-b388-9809dc5aab2c": "cg-3eb21ca0-afb4-488d-8a1f-305a0f6c93ef",
-            "code:local_a982eae5-dbd2-4570-8fda-78741ea3da14": "cg-3eb21ca0-afb4-488d-8a1f-305a0f6c93ef",
-            "code:local_b1d30a6a-bd86-4ec4-abb2-ce121a684f4f": "cg-3eb21ca0-afb4-488d-8a1f-305a0f6c93ef",
-            "code:local_61672bcc-777d-4843-a860-380195fecc2f": "cg-3eb21ca0-afb4-488d-8a1f-305a0f6c93ef",
-            "code:local_a8545634-6747-40dd-8d6b-98cae9533382": "cg-3eb21ca0-afb4-488d-8a1f-305a0f6c93ef",
-            "code:local_1d8f2de9-b298-4196-988d-bb565599a308": "cg-fbff5dd2-801f-4912-82e6-bc8e5df44b72",
-            "code:local_938685ed-82ae-4238-a812-4db693eece1f": "cg-fbff5dd2-801f-4912-82e6-bc8e5df44b72",
-            "code:local_49f51f27-9389-42f4-83b8-fa1cb7c17102": "cg-fbff5dd2-801f-4912-82e6-bc8e5df44b72",
-            "code:local_ff426719-9ad3-4864-98a3-4d210f431c1e": "cg-3eb21ca0-afb4-488d-8a1f-305a0f6c93ef",
-            "code:local_3dd4096a-08c8-4fb4-b140-d9f61e421b1c": "cg-3eb21ca0-afb4-488d-8a1f-305a0f6c93ef",
-            "code:local_a039150b-3a85-46be-aa8e-d848673b54c7": "cg-3eb21ca0-afb4-488d-8a1f-305a0f6c93ef",
-            "code:local_46cd20e3-7659-47b7-a575-a3f368097666": "cg-3eb21ca0-afb4-488d-8a1f-305a0f6c93ef",
-            "code:local_687526d3-af45-4e07-be7f-0f7966d0fde5": "cg-3eb21ca0-afb4-488d-8a1f-305a0f6c93ef",
-            "code:local_bdffdd78-a21d-437a-9cc9-c92826cd1e94": "cg-3eb21ca0-afb4-488d-8a1f-305a0f6c93ef",
-            "code:local_644ad4f1-7af0-4170-ae72-631ff2f96a52": "cg-fbff5dd2-801f-4912-82e6-bc8e5df44b72",
-            "code:local_e1d74f3d-2a0c-4ba0-a6c9-73784a2ec25c": "cg-90813fa1-8966-4c66-a6b6-6d3ee55068a1",
-            "code:local_3714d651-5ec8-4a3c-8cbc-b193d5e4542c": "cg-90813fa1-8966-4c66-a6b6-6d3ee55068a1",
-            "code:local_ab8a2880-b584-46d1-8a42-b3a5a68dc21b": "cg-90813fa1-8966-4c66-a6b6-6d3ee55068a1",
-            "code:local_d8933c3c-77d9-47d6-92ae-269443227fae": "cg-90813fa1-8966-4c66-a6b6-6d3ee55068a1",
-            "code:local_09a87187-c2b6-4046-a4e5-2861abe30f63": "cg-90813fa1-8966-4c66-a6b6-6d3ee55068a1",
-            "code:local_b1108731-15aa-4f25-bc58-8cfe3216db2d": "cg-90813fa1-8966-4c66-a6b6-6d3ee55068a1",
-            "code:local_66b32325-5343-4cc0-a756-50f0950ed55e": "cg-90813fa1-8966-4c66-a6b6-6d3ee55068a1",
-            "code:local_bb1e5a8a-b2b0-4639-9573-9fa1eac144c6": "cg-90813fa1-8966-4c66-a6b6-6d3ee55068a1",
-            "code:local_f5b93822-8545-4e15-ad98-3d81bd235e1c": "cg-b9ab9e00-c236-4bcd-abc9-83292a7e8780",
-            "code:local_dbdc5378-9e43-489a-aada-1d0ee679d923": "cg-b9ab9e00-c236-4bcd-abc9-83292a7e8780",
-            "code:local_007a8d9b-4730-4efd-aaf1-703514c9e1d6": "cg-b9ab9e00-c236-4bcd-abc9-83292a7e8780",
-            "code:local_9ca31b78-da50-4c48-8a44-a9f8ac513b10": "cg-b9ab9e00-c236-4bcd-abc9-83292a7e8780",
-            "code:local_d876cf6b-228f-4b45-8d75-ff99b03970c5": "cg-b9ab9e00-c236-4bcd-abc9-83292a7e8780",
-            "code:local_5510617c-e419-4bf3-a9bd-dca92c83ab88": "cg-b9ab9e00-c236-4bcd-abc9-83292a7e8780",
-            "code:local_bd478c62-f4ea-45d3-a5c7-f063367d3b62": "cg-fbff5dd2-801f-4912-82e6-bc8e5df44b72"
+            "code:local_c3372648-2466-40a1-97af-a5fe643a5a9f": "cg-00bd2d38-2fab-433d-906a-4dab938be5db",
+            "code:local_52dd041f-0aea-415e-91d3-ac257dbe7d1c": "cg-00bd2d38-2fab-433d-906a-4dab938be5db",
+            "code:local_80894c00-6b40-4c89-955e-34467d9224b7": "cg-00bd2d38-2fab-433d-906a-4dab938be5db",
+            "code:local_f84d0527-994f-4bba-963a-f3f5d83a0728": "cg-00bd2d38-2fab-433d-906a-4dab938be5db",
+            "code:local_66165f2e-a852-4b67-a739-c1e849f4c9d9": "cg-00bd2d38-2fab-433d-906a-4dab938be5db",
+            "code:local_4eaee068-73f8-48e1-9f71-c902c51abf03": "cg-00bd2d38-2fab-433d-906a-4dab938be5db",
+            "code:local_2a3dd8e7-e756-4dca-92bf-d26db7553018": "cg-3e642554-a198-4ce2-bdbf-f39c100e6c30",
+            "code:local_16bd3304-a2f6-4c49-bb6d-bd2aaecbf0f7": "cg-3e642554-a198-4ce2-bdbf-f39c100e6c30",
+            "code:local_b3853b1a-6f6a-45df-9d07-f63414a8e229": "cg-3e642554-a198-4ce2-bdbf-f39c100e6c30",
+            "code:local_e26794cc-15a0-43bd-ba29-9b16fe70babf": "cg-3e642554-a198-4ce2-bdbf-f39c100e6c30",
+            "code:local_37f7613e-7fec-4fc7-a7ff-6f884bdb3fc1": "cg-3e642554-a198-4ce2-bdbf-f39c100e6c30",
+            "code:local_c817cd28-b2f9-4341-82fe-71f2dbc91e5b": "cg-3e642554-a198-4ce2-bdbf-f39c100e6c30",
+            "code:local_ef2482b3-1859-44fa-bef8-3b15eb596f34": "cg-3e642554-a198-4ce2-bdbf-f39c100e6c30",
+            "code:local_1f608e0f-eee5-4942-b416-a10d1e21a450": "cg-3e642554-a198-4ce2-bdbf-f39c100e6c30",
+            "code:local_4a56625b-1cec-4412-9fb5-68758b74fdbc": "cg-533bff2a-fe92-47fa-8af3-d016fe07b5fb",
+            "code:local_d0e66bc0-e809-44e5-9db9-c54628c0c023": "cg-533bff2a-fe92-47fa-8af3-d016fe07b5fb",
+            "code:local_a544671d-caaf-4d08-8696-0cd74b65ae32": "cg-533bff2a-fe92-47fa-8af3-d016fe07b5fb",
+            "code:local_46dc2c96-f0ca-4f37-b697-9e9c1011daed": "cg-533bff2a-fe92-47fa-8af3-d016fe07b5fb",
+            "code:local_e3dd1dea-2cc9-4cdb-a237-83f857569521": "cg-533bff2a-fe92-47fa-8af3-d016fe07b5fb",
+            "code:local_212a66ce-e7c6-4303-b296-95bce1398dd9": "cg-fb5d24b8-2d2d-49d7-b967-3b4a73e5a80b",
+            "code:local_6e4b2a1a-e486-47db-857b-2a004f1c2c19": "cg-fb5d24b8-2d2d-49d7-b967-3b4a73e5a80b",
+            "code:local_35cb2422-47d3-477f-80a7-f1800b7af505": "cg-fb5d24b8-2d2d-49d7-b967-3b4a73e5a80b",
+            "code:local_13fd19d2-206a-40cf-84be-617caf58d101": "cg-74279aa0-eb9c-4de8-b6ae-a311a4fdb0cd",
+            "code:local_38b16585-f185-4220-b4f7-83cfb6f2dbea": "cg-74279aa0-eb9c-4de8-b6ae-a311a4fdb0cd",
+            "code:local_885516b8-8f86-435d-b290-c77a302eef4f": "cg-74279aa0-eb9c-4de8-b6ae-a311a4fdb0cd",
+            "code:local_9915a3a6-dd45-4f73-9855-5cf4024d6d19": "cg-74279aa0-eb9c-4de8-b6ae-a311a4fdb0cd",
+            "code:local_ac1a8c8d-fb37-49c0-9158-3efbdb8b91c6": "cg-74279aa0-eb9c-4de8-b6ae-a311a4fdb0cd",
+            "code:local_ac8f9ee9-fec6-4dd8-98c6-4f47ca88991e": "cg-3ab31ab2-1c2d-48a3-a50a-354c2c2b9804",
+            "code:local_9e906441-5673-4194-8214-31976ba4f182": "cg-3ab31ab2-1c2d-48a3-a50a-354c2c2b9804",
+            "code:local_0e098a68-99bb-4259-b24e-5f6e91bb40df": "cg-3ab31ab2-1c2d-48a3-a50a-354c2c2b9804",
+            "code:local_f737ecd0-1458-4ed9-82c2-2ab6fee10757": "cg-bb27b4a2-b1f6-4211-9d08-4e4d9d866641",
+            "code:local_f9997b36-45e6-464f-aa20-4f60b721e9f1": "cg-bb27b4a2-b1f6-4211-9d08-4e4d9d866641",
+            "code:local_7b4dfb33-6cf5-4c12-9ce6-bc312dc2d370": "cg-bb27b4a2-b1f6-4211-9d08-4e4d9d866641",
+            "code:local_87191a5e-4b49-402b-9dde-0b503187d0bd": "cg-4a1ec0fa-d3a7-4e4d-b127-385d3ca99f00",
+            "code:local_478e6263-6564-4dce-8e07-c97dee8757e0": "cg-4a1ec0fa-d3a7-4e4d-b127-385d3ca99f00",
+            "code:local_e030e6c4-4356-40ac-8e10-667703e2cc40": "cg-3e642554-a198-4ce2-bdbf-f39c100e6c30"
           },
           "order": {
-            "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6": [
-              "code:local_1bb5cc0a-78aa-4e77-b113-e5ec8c966710",
-              "code:local_eaa9bb83-a000-451b-b09b-abec54bec89f",
-              "code:local_e3288b1c-c205-4c92-b550-39aeab40cec1",
-              "code:local_07495bcd-40b0-4671-8cf3-06ded10b9fd4",
-              "code:local_3b7aff35-315c-48e8-bfc7-d239db573385",
-              "code:local_8669242b-261d-462f-9134-e7e7e0de48cb",
-              "code:local_0dfed822-037a-4fbe-9531-f0de11b0406d",
-              "code:local_4d94266f-b9a9-480b-8a9b-0f039763b93b",
-              "code:local_a54b4a7c-f70c-4c31-b1d2-19f12b2821c3",
-              "code:local_5e4c650f-c5f7-45ad-96f9-bf9d02e60d45",
-              "code:local_416bf3ca-01d2-4fd8-89ae-0d96719817d2",
-              "code:local_87ea2211-9f6f-4cd2-93fb-02db3a137f83",
-              "code:local_c0f306f4-8add-41ee-918c-51f10d28cc6e",
-              "code:local_62f6bd66-f69c-4ac2-bf03-eef70ad0aca5",
-              "code:local_b85403be-b87a-4c59-b6a2-835fdc56d03a",
-              "code:local_e9bc33ce-0b79-4097-8bdb-559c539e733d",
-              "code:local_fde7140b-5a08-49f9-8892-18bbc5923f3a",
-              "code:local_6803b2af-ea96-41c3-9aa5-5f890872995b",
-              "code:local_9195bf86-a954-4b3f-b000-e17612702ae4",
-              "code:local_5656f934-51a3-4a59-b6ef-e7c8a782e91d",
-              "code:local_ddf10c39-35ce-4266-a0a9-020ec55521c2",
-              "code:local_f22b0fa8-d5cc-4a0e-a0f7-79254194ad7e",
-              "code:local_1b3c93c5-6951-44f5-9006-39360a1b2112",
-              "code:local_bbc26f97-1bbc-478d-95c9-d33f9d87e6f4",
-              "code:local_12e6d824-182e-4fef-bedc-ef8646f43d7e",
-              "code:local_93e539ec-6eb5-4266-9e7f-bac54530ca70",
-              "code:local_9ebf62d4-2f49-4b27-87d8-105606c417ad"
+            "cg-00bd2d38-2fab-433d-906a-4dab938be5db": [
+              "code:local_c3372648-2466-40a1-97af-a5fe643a5a9f",
+              "code:local_52dd041f-0aea-415e-91d3-ac257dbe7d1c",
+              "code:local_80894c00-6b40-4c89-955e-34467d9224b7",
+              "code:local_f84d0527-994f-4bba-963a-f3f5d83a0728",
+              "code:local_66165f2e-a852-4b67-a739-c1e849f4c9d9",
+              "code:local_4eaee068-73f8-48e1-9f71-c902c51abf03"
             ],
-            "cg-b9ab9e00-c236-4bcd-abc9-83292a7e8780": [
-              "code:local_c6ffac20-378f-42f3-bdfb-ac9db30f4af2",
-              "code:local_f5b93822-8545-4e15-ad98-3d81bd235e1c",
-              "code:local_dbdc5378-9e43-489a-aada-1d0ee679d923",
-              "code:local_007a8d9b-4730-4efd-aaf1-703514c9e1d6",
-              "code:local_9ca31b78-da50-4c48-8a44-a9f8ac513b10",
-              "code:local_d876cf6b-228f-4b45-8d75-ff99b03970c5",
-              "code:local_5510617c-e419-4bf3-a9bd-dca92c83ab88",
-              "code:local_13cf040c-2ed0-4a71-baf4-de399b48bd69"
+            "cg-3e642554-a198-4ce2-bdbf-f39c100e6c30": [
+              "code:local_2a3dd8e7-e756-4dca-92bf-d26db7553018",
+              "code:local_16bd3304-a2f6-4c49-bb6d-bd2aaecbf0f7",
+              "code:local_b3853b1a-6f6a-45df-9d07-f63414a8e229",
+              "code:local_e26794cc-15a0-43bd-ba29-9b16fe70babf",
+              "code:local_37f7613e-7fec-4fc7-a7ff-6f884bdb3fc1",
+              "code:local_c817cd28-b2f9-4341-82fe-71f2dbc91e5b",
+              "code:local_ef2482b3-1859-44fa-bef8-3b15eb596f34",
+              "code:local_1f608e0f-eee5-4942-b416-a10d1e21a450",
+              "code:local_e030e6c4-4356-40ac-8e10-667703e2cc40"
             ],
-            "cg-181f55e1-ed12-4ce0-90da-33c8f2021598": [
-              "code:local_c43fc2fd-a914-412c-a196-d3908e101978",
-              "code:local_69723a5a-78c7-4c7f-a3e1-5d8503d21caf",
-              "code:local_27c2db33-8955-474f-b00a-e0ce22e67bc0",
-              "code:local_d8c3c5e3-bc3d-4235-82c0-ccd5cec0427a",
-              "code:local_12325c0d-7032-44fc-8f73-2b107ec48175",
-              "code:local_e3412fc9-029f-4db0-9471-b74ecc3f7ac3",
-              "code:local_a3d22c3b-4610-4ab9-97d5-c5e01c93baee",
-              "code:local_13067f02-e11a-4ac7-b8ad-cbcdfa32e918",
-              "code:local_36e333f7-727e-4a6c-a5f5-1f4c7e6ac4e3",
-              "code:local_a0d4249f-c1f1-479f-8486-78ff36751bb0",
-              "code:local_f4d64bb4-3043-4539-a36b-c0ad9432eb2c",
-              "code:local_3d82436e-ead9-43ed-ae69-ada43ddb3aae"
+            "cg-533bff2a-fe92-47fa-8af3-d016fe07b5fb": [
+              "code:local_4a56625b-1cec-4412-9fb5-68758b74fdbc",
+              "code:local_d0e66bc0-e809-44e5-9db9-c54628c0c023",
+              "code:local_a544671d-caaf-4d08-8696-0cd74b65ae32",
+              "code:local_46dc2c96-f0ca-4f37-b697-9e9c1011daed",
+              "code:local_e3dd1dea-2cc9-4cdb-a237-83f857569521"
             ],
-            "cg-3eb21ca0-afb4-488d-8a1f-305a0f6c93ef": [
-              "code:local_f93fca49-cf7b-484a-964d-e3f0e8888b92",
-              "code:local_92b00141-0d9a-4e88-ab78-bc678386195a",
-              "code:local_9f25d020-36c7-4d59-8844-2f3d22740e33",
-              "code:local_1a808923-b099-43fc-b388-9809dc5aab2c",
-              "code:local_a982eae5-dbd2-4570-8fda-78741ea3da14",
-              "code:local_b1d30a6a-bd86-4ec4-abb2-ce121a684f4f",
-              "code:local_61672bcc-777d-4843-a860-380195fecc2f",
-              "code:local_a8545634-6747-40dd-8d6b-98cae9533382",
-              "code:local_ff426719-9ad3-4864-98a3-4d210f431c1e",
-              "code:local_3dd4096a-08c8-4fb4-b140-d9f61e421b1c",
-              "code:local_a039150b-3a85-46be-aa8e-d848673b54c7",
-              "code:local_46cd20e3-7659-47b7-a575-a3f368097666",
-              "code:local_687526d3-af45-4e07-be7f-0f7966d0fde5",
-              "code:local_bdffdd78-a21d-437a-9cc9-c92826cd1e94"
+            "cg-fb5d24b8-2d2d-49d7-b967-3b4a73e5a80b": [
+              "code:local_212a66ce-e7c6-4303-b296-95bce1398dd9",
+              "code:local_6e4b2a1a-e486-47db-857b-2a004f1c2c19",
+              "code:local_35cb2422-47d3-477f-80a7-f1800b7af505"
             ],
-            "cg-90813fa1-8966-4c66-a6b6-6d3ee55068a1": [
-              "code:local_bfe28867-b867-4b3f-97cc-c07f2e1374d0",
-              "code:local_e1d74f3d-2a0c-4ba0-a6c9-73784a2ec25c",
-              "code:local_3714d651-5ec8-4a3c-8cbc-b193d5e4542c",
-              "code:local_ab8a2880-b584-46d1-8a42-b3a5a68dc21b",
-              "code:local_d8933c3c-77d9-47d6-92ae-269443227fae",
-              "code:local_09a87187-c2b6-4046-a4e5-2861abe30f63",
-              "code:local_b1108731-15aa-4f25-bc58-8cfe3216db2d",
-              "code:local_66b32325-5343-4cc0-a756-50f0950ed55e",
-              "code:local_bb1e5a8a-b2b0-4639-9573-9fa1eac144c6"
+            "cg-74279aa0-eb9c-4de8-b6ae-a311a4fdb0cd": [
+              "code:local_13fd19d2-206a-40cf-84be-617caf58d101",
+              "code:local_38b16585-f185-4220-b4f7-83cfb6f2dbea",
+              "code:local_885516b8-8f86-435d-b290-c77a302eef4f",
+              "code:local_9915a3a6-dd45-4f73-9855-5cf4024d6d19",
+              "code:local_ac1a8c8d-fb37-49c0-9158-3efbdb8b91c6"
             ],
-            "cg-fbff5dd2-801f-4912-82e6-bc8e5df44b72": [
-              "code:local_1d8f2de9-b298-4196-988d-bb565599a308",
-              "code:local_938685ed-82ae-4238-a812-4db693eece1f",
-              "code:local_49f51f27-9389-42f4-83b8-fa1cb7c17102",
-              "code:local_c2c7bcd9-4f66-4d21-a038-88a4409ea00c",
-              "code:local_644ad4f1-7af0-4170-ae72-631ff2f96a52",
-              "code:local_bd478c62-f4ea-45d3-a5c7-f063367d3b62"
+            "cg-3ab31ab2-1c2d-48a3-a50a-354c2c2b9804": [
+              "code:local_ac8f9ee9-fec6-4dd8-98c6-4f47ca88991e",
+              "code:local_9e906441-5673-4194-8214-31976ba4f182",
+              "code:local_0e098a68-99bb-4259-b24e-5f6e91bb40df"
+            ],
+            "cg-bb27b4a2-b1f6-4211-9d08-4e4d9d866641": [
+              "code:local_f737ecd0-1458-4ed9-82c2-2ab6fee10757",
+              "code:local_f9997b36-45e6-464f-aa20-4f60b721e9f1",
+              "code:local_7b4dfb33-6cf5-4c12-9ce6-bc312dc2d370"
+            ],
+            "cg-4a1ec0fa-d3a7-4e4d-b127-385d3ca99f00": [
+              "code:local_87191a5e-4b49-402b-9dde-0b503187d0bd",
+              "code:local_478e6263-6564-4dce-8e07-c97dee8757e0"
             ]
           }
         }
@@ -291,8 +242,8 @@
           "rowSplit": 0.5,
           "draftNonce": 0,
           "lastPrimaryCodeSession": {
-            "id": "session_011vtEmNw87m8ELrSe7enHtj",
-            "type": "remote"
+            "id": "local_5d61b296-36aa-4d69-854e-9115dad50b45",
+            "type": "local"
           }
         },
         "version": 4
@@ -335,7 +286,8 @@
               "ascending": false,
               "show": {
                 "metadata": false,
-                "emptyGroups": false
+                "emptyGroups": false,
+                "sideChats": false
               },
               "collapsed": false,
               "shown": true
@@ -350,102 +302,151 @@
               "ascending": false,
               "show": {
                 "metadata": false,
-                "emptyGroups": false
+                "emptyGroups": false,
+                "sideChats": false
               },
               "collapsed": true,
               "shown": false
             },
             {
-              "id": "cg-fbff5dd2-801f-4912-82e6-bc8e5df44b72",
-              "kind": "manual",
-              "v": 2,
-              "name": "Legal",
-              "order": 2,
-              "sortBy": "recency",
-              "ascending": false,
-              "show": {
-                "metadata": false,
-                "emptyGroups": false
-              },
-              "collapsed": true,
-              "shown": true,
-              "members": []
-            },
-            {
-              "id": "cg-90813fa1-8966-4c66-a6b6-6d3ee55068a1",
-              "kind": "manual",
-              "v": 2,
-              "name": "Personal Coding",
-              "order": 3,
-              "sortBy": "recency",
-              "ascending": false,
-              "show": {
-                "metadata": false,
-                "emptyGroups": false
-              },
-              "collapsed": true,
-              "shown": true,
-              "members": []
-            },
-            {
-              "id": "cg-3eb21ca0-afb4-488d-8a1f-305a0f6c93ef",
-              "kind": "manual",
-              "v": 2,
-              "name": "Personal Automation",
-              "order": 4,
-              "sortBy": "recency",
-              "ascending": false,
-              "show": {
-                "metadata": false,
-                "emptyGroups": false
-              },
-              "collapsed": true,
-              "shown": true,
-              "members": []
-            },
-            {
-              "id": "cg-181f55e1-ed12-4ce0-90da-33c8f2021598",
-              "kind": "manual",
-              "v": 2,
-              "name": "Developer Tools",
-              "order": 5,
-              "sortBy": "recency",
-              "ascending": false,
-              "show": {
-                "metadata": false,
-                "emptyGroups": false
-              },
-              "collapsed": true,
-              "shown": true,
-              "members": []
-            },
-            {
-              "id": "cg-fe264395-f95e-444b-9f61-d7a59f2fa8b6",
-              "kind": "manual",
-              "v": 2,
-              "name": "Because Ventures",
-              "order": 6,
-              "sortBy": "recency",
-              "ascending": false,
-              "show": {
-                "metadata": false,
-                "emptyGroups": false
-              },
-              "collapsed": true,
-              "shown": true,
-              "members": []
-            },
-            {
-              "id": "cg-b9ab9e00-c236-4bcd-abc9-83292a7e8780",
+              "id": "cg-00bd2d38-2fab-433d-906a-4dab938be5db",
               "kind": "manual",
               "v": 2,
               "name": "Websites",
-              "order": 7,
-              "sortBy": "recency",
+              "order": 2,
+              "groupBy": "status",
+              "sortBy": "alpha",
               "ascending": false,
               "show": {
-                "metadata": false,
-                "emptyGroups": false
+                "metadata": true,
+                "emptyGroups": false,
+                "sideChats": false
+              },
+              "collapsed": true,
+              "shown": true,
+              "members": []
+            },
+            {
+              "id": "cg-3e642554-a198-4ce2-bdbf-f39c100e6c30",
+              "kind": "manual",
+              "v": 2,
+              "name": "Sync & migration",
+              "order": 3,
+              "groupBy": "status",
+              "sortBy": "alpha",
+              "ascending": false,
+              "show": {
+                "metadata": true,
+                "emptyGroups": false,
+                "sideChats": false
+              },
+              "collapsed": false,
+              "shown": true,
+              "members": []
+            },
+            {
+              "id": "cg-533bff2a-fe92-47fa-8af3-d016fe07b5fb",
+              "kind": "manual",
+              "v": 2,
+              "name": "Legal / court",
+              "order": 4,
+              "groupBy": "status",
+              "sortBy": "alpha",
+              "ascending": false,
+              "show": {
+                "metadata": true,
+                "emptyGroups": false,
+                "sideChats": false
+              },
+              "collapsed": true,
+              "shown": true,
+              "members": []
+            },
+            {
+              "id": "cg-74279aa0-eb9c-4de8-b6ae-a311a4fdb0cd",
+              "kind": "manual",
+              "v": 2,
+              "name": "Scrapers & monitors",
+              "order": 5,
+              "groupBy": "status",
+              "sortBy": "alpha",
+              "ascending": false,
+              "show": {
+                "metadata": true,
+                "emptyGroups": false,
+                "sideChats": false
+              },
+              "collapsed": true,
+              "shown": true,
+              "members": []
+            },
+            {
+              "id": "cg-fb5d24b8-2d2d-49d7-b967-3b4a73e5a80b",
+              "kind": "manual",
+              "v": 2,
+              "name": "Sheets & automation",
+              "order": 6,
+              "groupBy": "status",
+              "sortBy": "alpha",
+              "ascending": false,
+              "show": {
+                "metadata": true,
+                "emptyGroups": false,
+                "sideChats": false
+              },
+              "collapsed": true,
+              "shown": true,
+              "members": []
+            },
+            {
+              "id": "cg-3ab31ab2-1c2d-48a3-a50a-354c2c2b9804",
+              "kind": "manual",
+              "v": 2,
+              "name": "Media & travel",
+              "order": 7,
+              "groupBy": "status",
+              "sortBy": "alpha",
+              "ascending": false,
+              "show": {
+                "metadata": true,
+                "emptyGroups": false,
+                "sideChats": false
+              },
+              "collapsed": true,
+              "shown": true,
+              "members": []
+            },
+            {
+              "id": "cg-bb27b4a2-b1f6-4211-9d08-4e4d9d866641",
+              "kind": "manual",
+              "v": 2,
+              "name": "Games & fun",
+              "order": 8,
+              "groupBy": "status",
+              "sortBy": "alpha",
+              "ascending": false,
+              "show": {
+                "metadata": true,
+                "emptyGroups": false,
+                "sideChats": false
+              },
+              "collapsed": true,
+              "shown": true,
+              "members": []
+            },
+            {
+              "id": "cg-4a1ec0fa-d3a7-4e4d-b127-385d3ca99f00",
+              "kind": "manual",
+              "v": 2,
+              "name": "Tools",
+              "order": 9,
+              "groupBy": "status",
+              "sortBy": "alpha",
+              "ascending": false,
+              "show": {
+                "metadata": true,
+                "emptyGroups": false,
+                "sideChats": false
               },
               "collapsed": true,
               "shown": true,
@@ -456,13 +457,14 @@
               "kind": "sessions",
               "v": 2,
               "name": "",
-              "order": 8,
-              "groupBy": "environment",
+              "order": 10,
+              "groupBy": "status",
               "sortBy": "alpha",
               "ascending": false,
               "show": {
-                "metadata": false,
-                "emptyGroups": true
+                "metadata": true,
+                "emptyGroups": true,
+                "sideChats": false
               },
               "collapsed": false,
               "shown": true
@@ -471,7 +473,15 @@
           "migratedFrom": 1,
           "prefsSeeded": true
         }
-      }
+      },
+      "code-sessions-status-filter.c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": "active",
+      "epitaxy-auto-mode-denial-count.c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": 2,
+      "epitaxy-folder-permission-mode-v2.c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": {
+        "{{ .chezmoi.homeDir }}/Developer/dgitman/firecrawl": "auto"
+      },
+      "epitaxy-perm-mode-acks-v2.c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": [
+        "{{ .chezmoi.homeDir }}/Developer/dgitman/firecrawl:auto"
+      ]
     }
   }
 }

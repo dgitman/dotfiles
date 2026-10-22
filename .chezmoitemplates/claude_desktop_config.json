@@ -1,0 +1,98 @@
+{
+  "mcpServers": {
+    "Trakt": {
+      "command": "uvx",
+      "args": [
+        "--python",
+        "3.13",
+        "--from",
+        "git+https://github.com/wwiens/trakt_mcpserver",
+        "trakt-mcp"
+      ],
+      "env": {
+        "TRAKT_CLIENT_ID": "REDACTED-TRAKT-CLIENT-ID",
+        "TRAKT_CLIENT_SECRET": "REDACTED-TRAKT-CLIENT-SECRET"
+      }
+    },
+    "Capsolver": {
+      "command": "uvx",
+      "args": [
+        "capsolver-mcp"
+      ],
+      "env": {
+        "CAPSOLVER_API_KEY": "REDACTED-CAPSOLVER-API-KEY"
+      }
+    }
+  },
+  "coworkUserFilesPath": "{{ .chezmoi.homeDir }}/Claude",
+  "preferences": {
+    "coworkBrowserToolsEnabled": true,
+    "coworkPreferredBrowser": "built_in",
+    "launchPreviewStorage": "shared",
+    "launchPreviewPersistedWorkspaces": [
+      "cowork-shared"
+    ],
+    "launchPreviewSessionScopedSessions": [],
+    "launchChromeImportPrompt": "done",
+    "localAgentModeTrustedFolders": [
+      "{{ .chezmoi.homeDir }}/Developer/dgitman/shiragitman.com",
+      "{{ .chezmoi.homeDir }}/.local/share/chezmoi",
+      "{{ .chezmoi.homeDir }}/Developer",
+      "{{ .chezmoi.homeDir }}/Library/CloudStorage/GoogleDrive-{{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/nijakk5lonp577fq6ha5avc3v4/username" }}/My Drive/Personal/Legal/Temporary Child Custody 24CV009376-910"
+    ],
+    "folderTccProbeResults": {
+      "desktop": "granted",
+      "documents": "granted",
+      "downloads": "granted",
+      "recordedAt": "2026-07-20T21:22:33.479Z",
+      "appVersion": "1.22209.3"
+    },
+    "remoteSessionFolderGrants": {
+      "session_01GkGerVapVXQhgWVqi2vrUG": [
+        "{{ .chezmoi.homeDir }}/Library/CloudStorage/GoogleDrive-{{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/nijakk5lonp577fq6ha5avc3v4/username" }}/My Drive/Personal/Legal/Temporary Child Custody 24CV009376-910",
+        "{{ .chezmoi.homeDir }}/Downloads",
+        "{{ .chezmoi.homeDir }}/Developer/dgitman/custody"
+      ]
+    },
+    "remoteChatFolderGrants": {
+      "88e393ba-33fa-4e1b-b94d-64412c37502d": {
+        "orgUuid": "434c64cb-f6cd-4ee6-a89b-7a4e957bde68",
+        "accountUuid": "c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55",
+        "folders": [
+          "{{ .chezmoi.homeDir }}/Library/Messages"
+        ]
+      }
+    },
+    "coworkLegacyRootGrantsPruned": true,
+    "allowAllBrowserActions": true,
+    "coworkScheduledTasksEnabled": true,
+    "coworkHipaaRestricted": false,
+    "orgWorkAcrossAppsDisabled": false,
+    "ccdScheduledTasksEnabled": true,
+    "sidebarMode": "epitaxy",
+    "bypassPermissionsOptInByAccount": {
+      "c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": true
+    },
+    "bypassPermissionsGateByAccount": {
+      "c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": true
+    },
+    "dockBounceEnabled": true,
+    "coworkWebSearchEnabled": true,
+    "coworkModelAutoFallbackByAccount": {
+      "c2e0905a-d0ea-4a7e-9fa9-8ac1c9a60f55": true
+    },
+    "keepAwakeEnabled": true,
+    "coworkOnboardingResumeStep": null,
+    "chicagoEnabled": true,
+    "remoteToolsDeviceName": "davids-macbook-pro-local",
+    "chicagoBackgroundIntroSeen": true,
+    "ccRemoteControlDefaultEnabled": true,
+    "remoteControlExcludedFolders": [],
+    "remoteControlPinnedFolders": [
+      "{{ .chezmoi.homeDir }}/Developer",
+      "{{ .chezmoi.homeDir }}/Developer/because-ventures",
+      "{{ .chezmoi.homeDir }}/Developer/dgitman"
+    ],
+    "remoteControlStayReachable": true
+  }
+}

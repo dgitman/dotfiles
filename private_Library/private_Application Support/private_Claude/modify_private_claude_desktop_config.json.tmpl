@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+# Merge the tracked Claude desktop settings into the live config. Settings the
+# app keeps for itself, like its sidebar and session state
+# (preferences.epitaxyPrefs), are left as they are, so new sessions do not show
+# up as chezmoi drift. Tracked settings live in
+# .chezmoitemplates/claude_desktop_config.json.
+import base64, json, sys
+
+managed = json.loads(base64.b64decode(
+    "{{ includeTemplate "claude_desktop_config.json" . | b64enc }}"
+))
+
+raw = sys.stdin.read()
+try:
+    config = json.loads(raw) if raw.strip() else {}
+except json.JSONDecodeError:
+    config = {}
+
+
+def merge(target, source):
+    for key, value in source.items():
+        if isinstance(value, dict) and isinstance(target.get(key), dict):
+            merge(target[key], value)
+        else:
+            target[key] = value
+
+
+merge(config, managed)
+# Same layout the app writes: 2-space indent, no final newline.
+sys.stdout.write(json.dumps(config, indent=2, ensure_ascii=False))

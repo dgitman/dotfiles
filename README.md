@@ -27,8 +27,10 @@ Notable tracked files:
 - `dot_copilot/private_settings.json` — Copilot CLI user preferences;
   automatic login/session state in `config.json` is not tracked
 - `dot_warp/settings.toml` — Warp terminal settings
-- `private_Library/.../private_claude_desktop_config.json.tmpl` — Claude
-  Desktop MCP servers and preferences
+- `.chezmoitemplates/claude_desktop_config.json` — Claude Desktop MCP servers
+  and preferences. `private_Library/.../modify_private_claude_desktop_config.json.tmpl`
+  merges them into the live file and leaves the app's sidebar and session state
+  (`preferences.epitaxyPrefs`) alone, so new sessions do not show as drift
 - `run_onchange_before_install-packages-darwin.sh.tmpl` — runs
   Homebrew Bundle from the tracked source whenever `dot_Brewfile` changes;
   installation failures stop the apply and are retried on the next apply.

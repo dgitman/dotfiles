@@ -1,15 +1,18 @@
+{{- $opAccount := index (fromJson (output "op" "account" "list" "--format=json")) 0 -}}
+{{- /* By ID: the Private vault also has an SSH key item titled "GitHub". */ -}}
+{{- $ghItem := onepassword "ilisfoloivekdguzpnjepypsbi" -}}
 {
-	"account_id": "DADTWU6NSBFM3HJANY5SUOCXEU",
-	"entrypoint": [
-		"gh"
-	],
-	"credentials": [
-		{
-			"plugin": "github",
-			"credential_type": "personal_access_token",
-			"usage_id": "personal_access_token",
-			"vault_id": "ts4jmaranagdjfxrtkfukeglcm",
-			"item_id": "ilisfoloivekdguzpnjepypsbi"
-		}
-	]
+        "account_id": "{{ $opAccount.account_uuid }}",
+        "entrypoint": [
+                "gh"
+        ],
+        "credentials": [
+                {
+                        "plugin": "github",
+                        "credential_type": "personal_access_token",
+                        "usage_id": "personal_access_token",
+                        "vault_id": "{{ $ghItem.vault.id }}",
+                        "item_id": "{{ $ghItem.id }}"
+                }
+        ]
 }

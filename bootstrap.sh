@@ -186,13 +186,11 @@ background_jobs() {
       echo "Check could not read Messages from Terminal. Expected unless Terminal has Full Disk Access; the jobs use the launchers' access."
     local tz; tz=$(readlink /etc/localtime | sed 's|.*/zoneinfo/||')
     [ "$tz" = "America/New_York" ] || echo "Warning: Mac timezone is $tz; Messages Sync expects America/New_York."
-    read -r -p "Load the Messages Sync jobs (live writes to Sheets/Drive)? Stop them on the old Mac first. [y/N] " answer
+    read -r -p "Load the Messages Sync job (live writes to Sheets/Drive)? Stop it on the old Mac first. [y/N] " answer
     case "$answer" in
       y|Y|yes|YES)
         mkdir -p "$HOME/Library/Logs/GitmanMessagesSync"
         launchctl bootstrap "gui/$uid" "$HOME/Library/LaunchAgents/$msg_label.incremental.plist" || true
-        launchctl enable "gui/$uid/$msg_label.reconcile" || true
-        launchctl bootstrap "gui/$uid" "$HOME/Library/LaunchAgents/$msg_label.reconcile.plist" || true
         ;;
       *) echo "Not loaded. See README \"Restoring personal background jobs\"." ;;
     esac

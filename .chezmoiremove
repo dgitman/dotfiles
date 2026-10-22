@@ -1,1 +1,2 @@
 .local/bin/dotfiles-setup
+.chezmoi.toml

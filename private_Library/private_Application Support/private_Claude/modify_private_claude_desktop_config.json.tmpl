@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-# Merge the tracked Claude desktop settings into the live config. Settings the
-# app keeps for itself, like its sidebar and session state
-# (preferences.epitaxyPrefs), are left as they are, so new sessions do not show
-# up as chezmoi drift. Tracked settings live in
-# .chezmoitemplates/claude_desktop_config.json.
+# Merge the tracked Claude desktop settings into the live config. Tracked
+# settings live in .chezmoitemplates/claude_desktop_config.json. Of the app's
+# sidebar state (preferences.epitaxyPrefs) only the section and group
+# definitions are tracked; which sessions sit in which group, each section's
+# collapsed state, and the rest are left as the app wrote them, so new sessions
+# do not show up as chezmoi drift.
 import base64, json, sys
 
 managed = json.loads(base64.b64decode(
@@ -17,10 +18,24 @@ except json.JSONDecodeError:
     config = {}
 
 
+def keep_collapsed(sections, current):
+    """Use the app's current expanded/collapsed state for known sections."""
+    if not isinstance(current, list):
+        return sections
+    state = {s.get("id"): s["collapsed"] for s in current
+             if isinstance(s, dict) and "collapsed" in s}
+    for section in sections:
+        if section.get("id") in state:
+            section["collapsed"] = state[section["id"]]
+    return sections
+
+
 def merge(target, source):
     for key, value in source.items():
         if isinstance(value, dict) and isinstance(target.get(key), dict):
             merge(target[key], value)
+        elif key == "sections" and isinstance(value, list):
+            target[key] = keep_collapsed(value, target.get(key))
         else:
             target[key] = value
 

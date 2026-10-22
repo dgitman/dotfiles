@@ -31,6 +31,9 @@ Library/Application Support/Code/Backups/
 # Repository-only regression tests
 tests/
 
+# Repository-only git hooks (enabled with core.hooksPath by bootstrap.sh)
+git-hooks/
+
 # Magnet layout is merged by its restore hook, not copied into the home directory
 magnet-stage-manager.json
 

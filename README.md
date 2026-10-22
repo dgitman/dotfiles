@@ -55,6 +55,23 @@ MCP client. This retrieves existing secrets; it does not generate new passwords.
 JSON encoding preserves quotes, backslashes, and newlines in credential values.
 Avoid sharing rendered configs or secret-bearing `chezmoi diff` output.
 
+## Privacy check on commits
+
+This repo is public, so `git-hooks/pre-commit` and `git-hooks/commit-msg` refuse
+a commit whose added lines, file names, or message contain this Mac's home path
+or a personal email address. Write `{{ .chezmoi.homeDir }}` or a 1Password
+lookup instead. The hooks look the values up when they run: `$HOME`, the
+`personalEmail` and `workEmail` chezmoi data, and any extra values in the
+repo's untracked git config:
+
+```zsh
+chezmoi git -- config --add privacy.forbidden someone@example.com
+```
+
+`bootstrap.sh` turns the hooks on with `core.hooksPath`. Extra values are kept
+per Mac, so add them again after a reinstall. `git commit --no-verify` skips
+the check.
+
 ## GitHub CLI auth
 
 - Single account (`dgitman`), authenticated via the 1Password `gh` plugin

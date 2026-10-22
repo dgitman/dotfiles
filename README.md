@@ -258,7 +258,7 @@ Reapply after rotating the keys and never re-add the rendered credentials.
 ## Restoring personal background jobs
 
 chezmoi preserves portable LaunchAgent templates for Remtasks and the hourly
-and daily Messages Sync jobs. Applying their files does not load or restart
+Messages Sync job. Applying their files does not load or restart
 these jobs. Their application code, Python environments, permissions, and log
 directories must be restored separately before loading them.
 
@@ -266,7 +266,8 @@ directories must be restored separately before loading them.
 check, and load steps below, asking before it starts either sync job. Full Disk
 Access is the one step that always needs your clicks: macOS never prompts for
 it. The Messages Sync controlled write tests are not repeated; the queue starts
-fresh and reconciliation baselines rows that are already in the Sheet.
+fresh, and a manual `sync --mode reconcile` run (see the project README)
+baselines rows that are already in the Sheet.
 
 For Remtasks, in `~/Developer/dgitman/apple-reminders-google-tasks-sync`,
 follow that project's README to create its signing identity and run
@@ -279,16 +280,16 @@ For Messages Sync, restore `~/Developer/dgitman/gitman-messages-sync`, set up it
 Python environment following the project README, apply its tracked config,
 and grant Full Disk Access to its launchers. Confirm the Mac timezone is
 `America/New_York` and complete the project's controlled write checks before
-loading the jobs. The tracked plists retain the current write gates: hourly
-incremental sync and reconciliation daily at 2 a.m. local time.
+loading the job. The tracked plist retains the current write gate: hourly
+incremental sync. The daily reconcile job was retired on 2026-10-20;
+reconciliation is now a manual run.
 
-Once those prerequisites are complete, the Messages Sync jobs can be loaded
+Once those prerequisites are complete, the Messages Sync job can be loaded
 with:
 
 ```sh
 mkdir -p "$HOME/Library/Logs/GitmanMessagesSync"
 launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/com.davidgitman.gitman-messages-sync.incremental.plist"
-launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/com.davidgitman.gitman-messages-sync.reconcile.plist"
 ```
 
 The Contacts photo repair agent remains owned by its separate helper under

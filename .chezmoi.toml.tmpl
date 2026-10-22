@@ -1,14 +1,19 @@
 {{- $computerName := output "scutil" "--get" "ComputerName" | trim -}}
-{{- $personalEmail := promptStringOnce . "personalEmail" "Personal email (Workspace MCP)" -}}
-{{- $workEmail := promptStringOnce . "workEmail" "Work email (Workspace MCP)" -}}
+{{- $personalEmail := onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/nijakk5lonp577fq6ha5avc3v4/username" -}}
+{{- $workEmail := onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/qpwizlxov5vwmrbeytqvha7xu4/username" -}}
+{{- /* Extra values git-hooks/pre-commit keeps out of this public repo. */ -}}
+{{- $privateValues := list
+      (onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/wdb54vvhengg7go5dfno6kxk5y/username")
+      (onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/wdb54vvhengg7go5dfno6kxk5y/email") -}}
 
 [onepassword]
 mode = "account"
 
 [data]
 computerName = "{{ $computerName }}"
-personalEmail = "{{ $personalEmail }}"
-workEmail = "{{ $workEmail }}"
+personalEmail = {{ $personalEmail | quote }}
+workEmail = {{ $workEmail | quote }}
+privateValues = [{{ range $i, $v := $privateValues }}{{ if $i }}, {{ end }}{{ $v | quote }}{{ end }}]
 
 [git]
 autoCommit = false

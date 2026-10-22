@@ -1,7 +1,7 @@
 #!/bin/sh
 # Refuse commits that would publish this Mac's home path or a personal email
-# address. The values are looked up when the hook runs (from $HOME, chezmoi
-# data, and the untracked `privacy.forbidden` git config), so none of them are
+# address. The values are looked up when the hook runs ($HOME plus chezmoi
+# data that .chezmoi.toml.tmpl reads from 1Password), so none of them are
 # written into this public repo. With --message FILE it checks a commit message
 # instead; the commit-msg hook calls it that way.
 set -eu
@@ -14,10 +14,9 @@ trap 'rm -f "$patterns" "$added"' EXIT
   printf '%s\n' "$HOME"
   if command -v chezmoi >/dev/null 2>&1; then
     chezmoi execute-template \
-      '{{ get . "personalEmail" }}{{ "\n" }}{{ get . "workEmail" }}{{ "\n" }}' \
+      '{{ get . "personalEmail" }}{{ "\n" }}{{ get . "workEmail" }}{{ "\n" }}{{ with get . "privateValues" }}{{ range . }}{{ . }}{{ "\n" }}{{ end }}{{ end }}' \
       2>/dev/null || true
   fi
-  git config --get-all privacy.forbidden || true
 } | grep -v '^[[:space:]]*$' > "$patterns" || true
 
 [ -s "$patterns" ] || exit 0

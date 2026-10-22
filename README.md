@@ -60,17 +60,14 @@ Avoid sharing rendered configs or secret-bearing `chezmoi diff` output.
 This repo is public, so `git-hooks/pre-commit` and `git-hooks/commit-msg` refuse
 a commit whose added lines, file names, or message contain this Mac's home path
 or a personal email address. Write `{{ .chezmoi.homeDir }}` or a 1Password
-lookup instead. The hooks look the values up when they run: `$HOME`, the
-`personalEmail` and `workEmail` chezmoi data, and any extra values in the
-repo's untracked git config:
+lookup instead. The hooks look the values up when they run: `$HOME` and the
+`personalEmail`, `workEmail`, and `privateValues` chezmoi data. `chezmoi init`
+reads that data from 1Password through `.chezmoi.toml.tmpl`, which holds only
+item references; to block another value, add its reference to `privateValues`
+there and run `chezmoi init`.
 
-```zsh
-chezmoi git -- config --add privacy.forbidden someone@example.com
-```
-
-`bootstrap.sh` turns the hooks on with `core.hooksPath`. Extra values are kept
-per Mac, so add them again after a reinstall. `git commit --no-verify` skips
-the check.
+`bootstrap.sh` turns the hooks on with `core.hooksPath`. `git commit
+--no-verify` skips the check.
 
 ## GitHub CLI auth
 

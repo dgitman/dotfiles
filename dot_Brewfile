@@ -284,6 +284,8 @@ cask "monitorcontrol"
 cask "notion"
 # The official CLI for the OpenAI API.
 cask "openai/tools/openai", trusted: true
+# AI-powered answer engine with Personal Computer agent
+cask "perplexity"
 # Collaboration platform for API development
 cask "postman"
 # Imaging utility to install operating systems to a microSD card

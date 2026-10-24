@@ -23,7 +23,7 @@ DEST_FILE="$ROOT/data/sheet-sync/backup-dest"
 if [ -s "$DEST_FILE" ]; then
   DEST=$(head -1 "$DEST_FILE")
   if [ -d "$(dirname "$DEST")" ]; then
-    mkdir -p "$DEST/career-ops" "$DEST/claude-memory"
+    mkdir -p "$DEST/claude-memory"
     rsync -a --exclude '.git/' --exclude 'node_modules/' --exclude '.env' --exclude '.DS_Store' \
       --exclude 'data/Connections.csv' --exclude 'web/' --exclude 'dashboard/' \
       --include 'cv.md' --include 'article-digest.md' --include 'portals.yml' --include 'voice-dna.md' \
@@ -32,7 +32,7 @@ if [ -s "$DEST_FILE" ]; then
       --include 'data/***' --include 'reports/***' --include 'output/***' --include 'jds/***' \
       --include 'interview-prep/***' --include 'documents/***' --include 'writing-samples/***' \
       --include 'batch/' --include 'batch/tracker-additions/***' \
-      --exclude '*' "$ROOT/" "$DEST/career-ops/" \
+      --exclude '*' "$ROOT/" "$DEST/" \
       && rsync -a "$HOME/.claude/projects/-Users-dgitman-Developer-public-career-ops/memory/" "$DEST/claude-memory/" \
       && echo "backed up to Drive: $(du -sh "$DEST" | cut -f1)" || echo "backup FAILED"
   else

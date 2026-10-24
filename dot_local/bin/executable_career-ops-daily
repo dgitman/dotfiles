@@ -17,5 +17,29 @@ PROMPT="Daily application-sheet import and scoring for career-ops ($ROOT). Read 
 env -u ANTHROPIC_API_KEY /opt/homebrew/bin/claude -p "$PROMPT" \
   --allowedTools "mcp__claude_ai_Google_Sheets__get_values" "ToolSearch" "Read" \
   "Bash(node data/sheet-sync/*)" "Bash(node verify-pipeline.mjs*)" "Bash(node merge-tracker.mjs*)" 2>&1 | tail -6
+
+echo "--- backup"
+DEST_FILE="$ROOT/data/sheet-sync/backup-dest"
+if [ -s "$DEST_FILE" ]; then
+  DEST=$(head -1 "$DEST_FILE")
+  if [ -d "$(dirname "$DEST")" ]; then
+    mkdir -p "$DEST/career-ops" "$DEST/claude-memory"
+    rsync -a --exclude '.git/' --exclude 'node_modules/' --exclude '.env' --exclude '.DS_Store' \
+      --exclude 'data/Connections.csv' --exclude 'web/' --exclude 'dashboard/' \
+      --include 'cv.md' --include 'article-digest.md' --include 'portals.yml' --include 'voice-dna.md' \
+      --include 'config/' --include 'config/profile.yml' --include 'config/cv-facts.json' \
+      --include 'modes/' --include 'modes/_profile.md' --include 'modes/_brief.md' --include 'modes/_custom.md' \
+      --include 'data/***' --include 'reports/***' --include 'output/***' --include 'jds/***' \
+      --include 'interview-prep/***' --include 'documents/***' --include 'writing-samples/***' \
+      --include 'batch/' --include 'batch/tracker-additions/***' \
+      --exclude '*' "$ROOT/" "$DEST/career-ops/" \
+      && rsync -a "$HOME/.claude/projects/-Users-dgitman-Developer-public-career-ops/memory/" "$DEST/claude-memory/" \
+      && echo "backed up to Drive: $(du -sh "$DEST" | cut -f1)" || echo "backup FAILED"
+  else
+    echo "backup skipped: Drive folder not available"
+  fi
+else
+  echo "backup skipped: no data/sheet-sync/backup-dest"
+fi
 echo "===== done $(date '+%H:%M:%S') ====="
 osascript -e 'display notification "Scan, sheet import and scoring finished. See data/sheet-sync/daily.log" with title "career-ops daily"' 2>/dev/null

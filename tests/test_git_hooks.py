@@ -51,6 +51,20 @@ class PrivacyHookTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('commit message', result.stderr)
 
+    def test_blocks_literal_secret_value(self):
+        key = 'SERVICE_API' + '_KEY'
+        result = self.commit('mcp.json', f'{{"{key}": "abcdefghijklmnop1234"}}\n')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('secret-looking key', result.stderr)
+        self.assertNotIn('abcdefghijklmnop1234', result.stderr)
+
+    def test_allows_secret_from_1password(self):
+        key = 'SERVICE_API' + '_KEY'
+        ok = self.commit('mcp.json', f'{{"{key}": {{{{ onepasswordRead "op://vault/item/field" | toJson }}}}}}\n')
+        self.assertEqual(ok.returncode, 0, ok.stderr)
+        ref = self.commit('codex.toml', f'{key} = "op://vault/item/field"\n')
+        self.assertEqual(ref.returncode, 0, ref.stderr)
+
     def test_ignores_removed_lines(self):
         self.assertEqual(self.commit('old.toml', 'clean\n').returncode, 0)
         (self.repo/'old.toml').write_text(f'{self.home}\n')

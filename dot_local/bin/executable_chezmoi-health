@@ -93,6 +93,13 @@ if git grep -nIE "$secret_re" -- . >"$scratch/secret.hits" 2>/dev/null; then
 else
   ok "no credential-shaped strings in tracked files"
 fi
+secret_kv='"?[A-Za-z_]*(SECRET|TOKEN|PASSWORD|PASSWD|API_KEY|APIKEY|CLIENT_ID|PRIVATE_KEY|ACCESS_KEY)[A-Za-z_]*"?[[:space:]]*[:=][[:space:]]*"[^"{$<][^"]{11,}"'
+if git grep -nIE "$secret_kv" -- . 2>/dev/null | grep -v '"op://' >"$scratch/secret-kv.hits"; then
+  issue "tracked files set secret-looking keys to literal values (use onepasswordRead):"
+  cut -d: -f1,2 "$scratch/secret-kv.hits" | sed 's/^/          /'
+else
+  ok "no secret-looking keys with literal values in tracked files"
+fi
 
 # A dot_chezmoi.* source file writes an unused ~/.chezmoi.* instead of config.
 if chezmoi managed --include=files | grep -q '^\.chezmoi\.'; then

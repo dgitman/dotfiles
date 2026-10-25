@@ -33,6 +33,18 @@ if [ "${1:-}" = "--message" ]; then
   exit 0
 fi
 
+# Refuse literal values for secret-looking keys; read them from 1Password.
+secret_kv='"?[A-Za-z_]*(SECRET|TOKEN|PASSWORD|PASSWD|API_KEY|APIKEY|CLIENT_ID|PRIVATE_KEY|ACCESS_KEY)[A-Za-z_]*"?[[:space:]]*[:=][[:space:]]*"[^"{$<][^"]{11,}"'
+git diff --cached --name-only --diff-filter=d | while IFS= read -r file; do
+  if git diff --cached -U0 --no-color --no-ext-diff -- "$file" | grep '^+' | grep -v '^+++ ' |
+    grep -E "$secret_kv" | grep -vq '"op://'; then
+    echo "Commit blocked: $file sets a secret-looking key (…SECRET, …TOKEN, …API_KEY, …CLIENT_ID) to a literal value." >&2
+    echo "Read it from 1Password with onepasswordRead instead." >&2
+    echo "To commit anyway: git commit --no-verify" >&2
+    exit 1
+  fi
+done
+
 git diff --cached --name-only --diff-filter=d | while IFS= read -r file; do
   git diff --cached -U0 --no-color --no-ext-diff -- "$file" |
     grep '^+' | grep -v '^+++ ' > "$added" || true

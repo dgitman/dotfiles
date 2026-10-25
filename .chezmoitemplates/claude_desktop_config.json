@@ -10,8 +10,8 @@
         "trakt-mcp"
       ],
       "env": {
-        "TRAKT_CLIENT_ID": "REDACTED-TRAKT-CLIENT-ID",
-        "TRAKT_CLIENT_SECRET": "REDACTED-TRAKT-CLIENT-SECRET"
+        "TRAKT_CLIENT_ID": {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/t7aiboqrptwqpqk6fe5em4ag7u/client_id" | toJson }},
+        "TRAKT_CLIENT_SECRET": {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/t7aiboqrptwqpqk6fe5em4ag7u/client_secret" | toJson }}
       }
     },
     "Capsolver": {
@@ -20,7 +20,7 @@
         "capsolver-mcp"
       ],
       "env": {
-        "CAPSOLVER_API_KEY": "REDACTED-CAPSOLVER-API-KEY"
+        "CAPSOLVER_API_KEY": {{ onepasswordRead "op://5muo7u2aqulocq4t75j7ykbw2u/bdcvenrvwr2gn66zwwhabfe2tm/26443wvz5orwcddeckk3dqxqre/ro4ejmced5sbqpacz6yrwr7l5y" | toJson }}
       }
     }
   },

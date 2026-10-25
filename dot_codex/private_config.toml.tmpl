@@ -133,7 +133,7 @@ command = "uvx"
 args = ["--from", "git+https://github.com/wwiens/trakt_mcpserver", "trakt-mcp"]
 
 [mcp_servers.trakt-david.env]
-TRAKT_CLIENT_ID = "REDACTED-TRAKT-CLIENT-ID"
+TRAKT_CLIENT_ID = {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/t7aiboqrptwqpqk6fe5em4ag7u/client_id" | toJson }}
 TRAKT_CLIENT_SECRET = "op://ts4jmaranagdjfxrtkfukeglcm/t7aiboqrptwqpqk6fe5em4ag7u/client_secret"
 TRAKT_AUTH_TOKEN_PATH = "{{ .chezmoi.homeDir }}/.trakt-mcp/auth_token_david.json"
 
@@ -143,7 +143,7 @@ command = "uvx"
 args = ["--from", "git+https://github.com/wwiens/trakt_mcpserver", "trakt-mcp"]
 
 [mcp_servers.trakt-emalie.env]
-TRAKT_CLIENT_ID = "REDACTED-TRAKT-EMALIE-CLIENT-ID"
+TRAKT_CLIENT_ID = {{ onepasswordRead "op://Emalie/2o5fnrqglcfbhkoqnzuuya2dh4/client_id" | toJson }}
 TRAKT_CLIENT_SECRET = "op://Emalie/2o5fnrqglcfbhkoqnzuuya2dh4/client_secret"
 TRAKT_AUTH_TOKEN_PATH = "{{ .chezmoi.homeDir }}/.trakt-mcp/auth_token_emalie.json"
 

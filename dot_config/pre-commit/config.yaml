@@ -1,0 +1,14 @@
+# Global pre-commit hooks. ~/.config/git/hooks/pre-commit runs this config in
+# every repository (core.hooksPath in ~/.gitconfig), before the repository's
+# own pre-commit hook. Hooks use installed tools (language: system), so they
+# work offline and need no per-repository setup.
+repos:
+  - repo: local
+    hooks:
+      - id: gitleaks
+        name: gitleaks (staged changes)
+        # Honors a repository's .gitleaks.toml and .gitleaksignore.
+        entry: gitleaks git --pre-commit --staged --redact --no-banner --verbose
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]

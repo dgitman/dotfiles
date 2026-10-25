@@ -18,6 +18,8 @@
         gpgsign = true
 [core]
 	excludesfile = ~/.gitignore_global
+	# Global hooks: gitleaks via pre-commit, then each repo's own hooks.
+	hooksPath = ~/.config/git/hooks
 [credential "https://github.com"]
 	helper = 
 	helper = !/opt/homebrew/bin/gh auth git-credential

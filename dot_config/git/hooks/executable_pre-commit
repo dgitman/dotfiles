@@ -1,0 +1,20 @@
+#!/bin/bash
+# Global pre-commit hook (core.hooksPath in ~/.gitconfig): run the global
+# pre-commit config (gitleaks secret scan), then the repository's own hooks.
+# `pre-commit install` refuses to work while core.hooksPath is set, so a
+# repository's .pre-commit-config.yaml is run from here instead.
+set -euo pipefail
+
+config="$HOME/.config/pre-commit/config.yaml"
+if ! command -v pre-commit >/dev/null 2>&1; then
+  echo "Global pre-commit hook: pre-commit is not installed; secret scan skipped." >&2
+else
+  [ -f "$config" ] && pre-commit run --config "$config" --hook-stage pre-commit
+  repo_config="$(git rev-parse --show-toplevel)/.pre-commit-config.yaml"
+  repo_hook="$(git rev-parse --git-common-dir)/hooks/pre-commit"
+  if [ -f "$repo_config" ] && [ ! -x "$repo_hook" ]; then
+    pre-commit run --config "$repo_config" --hook-stage pre-commit
+  fi
+fi
+
+exec "$(dirname "$0")/chain-repo-hook" pre-commit "$@"

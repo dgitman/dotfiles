@@ -52,3 +52,10 @@ git diff --cached --name-only --diff-filter=d | while IFS= read -r file; do
     blocked "$file"
   fi
 done
+
+# This repo's core.hooksPath overrides the global hooks, so run the global
+# pre-commit config (gitleaks secret scan) here too.
+global_config="$HOME/.config/pre-commit/config.yaml"
+if [ -f "$global_config" ] && command -v pre-commit >/dev/null 2>&1; then
+  pre-commit run --config "$global_config" --hook-stage pre-commit
+fi

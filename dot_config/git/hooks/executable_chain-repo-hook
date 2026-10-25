@@ -1,0 +1,19 @@
+#!/bin/bash
+# Run the repository's own hook from .git/hooks. A global core.hooksPath makes
+# git skip .git/hooks, so each global hook ends by calling this. The other hook
+# names here are symlinks to this script; pre-commit calls it with the name.
+set -euo pipefail
+
+if [ "$(basename "$0")" = chain-repo-hook ]; then
+  hook=$1
+  shift
+else
+  hook=$(basename "$0")
+fi
+
+git_dir=$(git rev-parse --git-common-dir)
+repo_hook="$git_dir/hooks/$hook"
+if [ -x "$repo_hook" ]; then
+  exec "$repo_hook" "$@"
+fi
+exit 0

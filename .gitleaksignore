@@ -1,0 +1,2 @@
+# Reviewed false positives (1Password item IDs in a template comment).
+8a351c68d5fba9fd4a8dd1bab400658fd9e5e00b:dot_config/private_remtasks/private_config.json.tmpl:generic-api-key:1

@@ -101,6 +101,24 @@ else
   ok "no secret-looking keys with literal values in tracked files"
 fi
 
+# gitleaks over the whole history (.gitleaksignore lists reviewed false
+# positives), and the global secret-scanning hooks must be on.
+if command -v gitleaks >/dev/null 2>&1; then
+  if gitleaks git --redact --no-banner --report-format json --report-path "$scratch/gitleaks.json" . >/dev/null 2>&1; then
+    ok "gitleaks finds no secrets in the repo history"
+  else
+    issue "gitleaks finds possible secrets in the repo history (run: gitleaks git --redact -v):"
+    /usr/bin/python3 -c 'import json, sys; [print("          %s %s:%s commit %s" % (f["RuleID"], f["File"], f["StartLine"], f["Commit"][:7])) for f in json.load(open(sys.argv[1]))]' "$scratch/gitleaks.json" 2>/dev/null
+  fi
+else
+  issue "gitleaks is not installed; run: brew install gitleaks"
+fi
+if [ "$(git config --global core.hooksPath)" = "~/.config/git/hooks" ] && command -v pre-commit >/dev/null 2>&1; then
+  ok "global git hooks run the gitleaks pre-commit scan"
+else
+  issue "global git hooks are not set up (core.hooksPath ~/.config/git/hooks and pre-commit)"
+fi
+
 # A dot_chezmoi.* source file writes an unused ~/.chezmoi.* instead of config.
 if chezmoi managed --include=files | grep -q '^\.chezmoi\.'; then
   issue "a dot_chezmoi.* source file is managed; config belongs in .chezmoi.toml.tmpl"

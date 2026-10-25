@@ -75,6 +75,27 @@ there and run `chezmoi init`.
 `bootstrap.sh` turns the hooks on with `core.hooksPath`. `git commit
 --no-verify` skips the check.
 
+## Secret scanning in every repository
+
+`~/.gitconfig` sets `core.hooksPath = ~/.config/git/hooks`, so these hooks run
+in every repository on this Mac:
+
+- `pre-commit` runs the global pre-commit config,
+  `~/.config/pre-commit/config.yaml`, which scans staged changes with
+  `gitleaks` (redacted output; a repository's `.gitleaks.toml` and
+  `.gitleaksignore` apply). It then runs the repository's own
+  `.pre-commit-config.yaml`, if any, and its own `.git/hooks/pre-commit`.
+- Every other hook name is a symlink to `chain-repo-hook`, which runs the
+  repository's `.git/hooks/<name>`, so hooks installed by tools such as Git LFS
+  keep working.
+
+A global `core.hooksPath` makes `pre-commit install` refuse to run; that is
+expected, because the global hook already runs a repository's
+`.pre-commit-config.yaml`. A repository that sets its own `core.hooksPath`
+(like this one) skips the global hooks, so its hooks must call the global
+config themselves, as `git-hooks/pre-commit` does. Add more global checks to
+`dot_config/pre-commit/config.yaml`. `git commit --no-verify` skips all hooks.
+
 ## Weekly health check
 
 `~/.local/bin/chezmoi-health` checks that chezmoi is clean and published:
@@ -82,8 +103,10 @@ there and run `chezmoi init`.
 `origin/main`, the privacy hooks are on, no tracked file or commit message has
 the home path, a private value, or a credential-shaped string, no
 `dot_chezmoi.*` file is managed, every managed LaunchAgent's program exists,
-every 1Password shell plugin config in `~/.config/op/plugins` is tracked, and
-the repo tests pass. For packages, it checks that every npm global package
+every 1Password shell plugin config in `~/.config/op/plugins` is tracked,
+gitleaks finds nothing in the repo history (reviewed false positives are in
+`.gitleaksignore`), the global secret-scanning hooks are on, and the repo tests
+pass. For packages, it checks that every npm global package
 and uv tool is in the Brewfile (brewfile-sync records them, and the install
 script reinstalls them with Homebrew Bundle) and that everything in the
 Brewfile is installed. It also lists pipx apps and pip packages installed

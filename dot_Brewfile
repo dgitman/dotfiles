@@ -163,6 +163,8 @@ brew "pdfgrep"
 brew "pipx"
 # Package compiler and linker metadata toolkit
 brew "pkgconf"
+# Framework for managing multi-language pre-commit hooks
+brew "pre-commit"
 # Monitor data's progress through a pipe
 brew "pv"
 # Interpreted, interactive, object-oriented programming language

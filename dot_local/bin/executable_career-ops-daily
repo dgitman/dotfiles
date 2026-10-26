@@ -9,6 +9,16 @@ SHEET_ID=$(tr -d '[:space:]' < "$ROOT/data/sheet-sync/sheet-id") || exit 1
 exec >> "$LOG" 2>&1
 echo; echo "===== $(date '+%Y-%m-%d %H:%M:%S') daily run ====="
 
+echo "--- git pull"
+if [ "$(git branch --show-current)" = "main" ] && [ -z "$(git status --porcelain --untracked-files=no)" ]; then
+  BEFORE=$(git rev-parse --short HEAD)
+  git pull --ff-only --quiet 2>&1 | tail -3
+  AFTER=$(git rev-parse --short HEAD)
+  [ "$BEFORE" = "$AFTER" ] && echo "already up to date ($AFTER)" || { echo "updated $BEFORE -> $AFTER"; git log --oneline "$BEFORE..$AFTER" | head -10; }
+else
+  echo "skipped: not on main, or tracked files are modified"
+fi
+
 echo "--- scan"
 node scan.mjs --since 2 --quiet | sed -n '/scan-summary/,/→ Run/p' | grep -E "Total jobs|New offers|Duplicates|Filtered"
 

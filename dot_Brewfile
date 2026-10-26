@@ -186,7 +186,7 @@ brew "ruby@3.4"
 # Command-line tool for Stripe
 brew "stripe-cli"
 # Find and verify credentials
-brew "trufflehog"
+brew "trufflehog", link: false
 # Extremely fast Python package installer and resolver, written in Rust
 brew "uv"
 # Executes a program periodically, showing output fullscreen

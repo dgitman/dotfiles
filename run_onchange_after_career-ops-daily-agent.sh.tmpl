@@ -1,7 +1,7 @@
 {{- if eq .chezmoi.os "darwin" -}}
 #!/bin/bash
 set -euo pipefail
-# Script: {{ include "dot_local/bin/executable_career-ops-daily" | sha256sum }}
+# Script: {{ include "dot_local/bin/executable_career-ops-automations" | sha256sum }}
 # Agent: {{ include "private_Library/LaunchAgents/net.gitman.career-ops-daily.plist.tmpl" | sha256sum }}
 mkdir -p "$HOME/Library/Logs"
 agent="$HOME/Library/LaunchAgents/net.gitman.career-ops-daily.plist"

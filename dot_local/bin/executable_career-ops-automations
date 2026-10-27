@@ -52,6 +52,13 @@ env -u ANTHROPIC_API_KEY /opt/homebrew/bin/claude -p "$CAREER_PROMPT" \
 echo "--- career mail flags (review these)"
 [ -s "$ROOT/data/sheet-sync/career-mail-flags.txt" ] && tail -20 "$ROOT/data/sheet-sync/career-mail-flags.txt" || echo "none"
 
+echo "--- scheduled connection requests (approved, sent by this job)"
+SC=$(node data/sheet-sync/scheduled-connect.mjs 2>&1); SC_RC=$?
+echo "$SC"
+[ $SC_RC -eq 0 ] || fail "scheduled connection requests (see output above)"
+SC_MSG=$(echo "$SC" | grep -E '^(SENT|HOLD|CHECK):' | head -2 | tr -d '"\\' | paste -sd' ' -)
+[ -n "$SC_MSG" ] && osascript -e "display notification \"$SC_MSG\" with title \"career-ops LinkedIn Request\"" 2>/dev/null
+
 echo "--- contact follow-ups"
 FU=$(node data/sheet-sync/contact-followups.mjs) || fail "contact follow-ups"
 echo "$FU"

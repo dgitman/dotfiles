@@ -36,9 +36,6 @@ env -u ANTHROPIC_API_KEY /opt/homebrew/bin/claude -p "$PROMPT" \
   "Bash(node data/sheet-sync/*)" "Bash(node verify-pipeline.mjs*)" "Bash(node merge-tracker.mjs*)" 2>&1 | tail -6
 [ "${pipestatus[1]}" -eq 0 ] || fail "sheet import and scoring"
 
-echo "--- linkedin mail (read-only)"
-node data/sheet-sync/linkedin-mail.mjs || fail "linkedin mail incomplete (Claude Composio retrieval/identity/pagination/processing; see output above)"
-
 echo "--- linkedin direct: connection status + messages (read-only)"
 node data/sheet-sync/linkedin-direct.mjs || fail "linkedin direct check (LinkedIn MCP; see output above)"
 

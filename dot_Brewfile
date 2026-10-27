@@ -167,6 +167,8 @@ brew "pkgconf"
 brew "pre-commit"
 # Monitor data's progress through a pipe
 brew "pv"
+# Static type checker for Python
+brew "pyright"
 # Interpreted, interactive, object-oriented programming language
 brew "python@3.13"
 # Python interface to Tcl/Tk

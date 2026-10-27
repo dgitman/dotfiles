@@ -43,7 +43,8 @@
     "soft_deny": [
       "$defaults",
       "Bash(gh auth login:*) in this repo — CLAUDE.md states gh auth is handled via `op plugin run -- gh ...` through the 1Password shell plugin; running `gh auth login` directly or persisting a token locally should be flagged rather than auto-approved",
-      "Bash(git push --force*) and Bash(git push -f*) against origin github.com:dgitman/dotfiles.git — CLAUDE.md explicitly says never force-push"
+      "Bash(git push --force*) and Bash(git push -f*) against origin github.com:dgitman/dotfiles.git — CLAUDE.md explicitly says never force-push",
+    "Bash(git push origin main:*) in career-ops-hq/career-ops — main is protected by an active ruleset (main-merge-queue); direct pushes to main should be confirmed rather than auto-approved"
     ]
   },
   "env": {

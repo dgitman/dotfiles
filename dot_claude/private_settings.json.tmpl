@@ -23,7 +23,7 @@
       "**CI/CD deploy targets**: None configured",
       "**Network posture**: None configured",
       "**Host containment**: None configured — assume Claude Code runs on an ordinary developer machine (macOS) with open internet",
-      "**Source control**: The trusted repo (dgitman/dotfiles, github.com:dgitman/dotfiles.git) and its remote(s) only (no additional orgs configured)",
+      "**Source control**: Trusted repos are ~/.local/share/chezmoi (dgitman/dotfiles) and every git repo under ~/Developer/** (any depth), together with each repo's configured origin remote (e.g. github.com:dgitman/*, because-ventures/*, career-ops-hq/*); no other orgs or remotes are trusted",
       "**Trusted internal domains**: None configured",
       "**Trusted cloud buckets**: None configured",
       "**Key internal services**: None configured",
@@ -35,7 +35,7 @@
       "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
       "### User-specific",
       "**Primary use of Claude Code**: personal dotfiles/macOS configuration management (chezmoi) — hobby/personal use",
-      "**Trusted repo**: dgitman/dotfiles at ~/.local/share/chezmoi, remote github.com:dgitman/dotfiles.git",
+      "**Trusted repo**: wildcard — ~/.local/share/chezmoi (dgitman/dotfiles, github.com:dgitman/dotfiles.git) and everything under ~/Developer/** (all repos and their origin remotes, including dgitman/*, because-ventures/* and career-ops-hq/*)",
       "**Org-specific CLIs**: None configured — op (1Password CLI) and chezmoi are personal credential/dotfile management tools, not org-specific",
       "Git workflow auto-approval (commit, fast-forward-merge to main, push to origin without asking, provided tests pass and main hasn't diverged; never force-push) is standing approval per ~/.claude/CLAUDE.md for the user's own repos under ~/Developer and ~/.local/share/chezmoi — this repo (~/.local/share/chezmoi) is explicitly covered",
       "Secrets/tokens, .env files must never be committed, per ~/.claude/CLAUDE.md"

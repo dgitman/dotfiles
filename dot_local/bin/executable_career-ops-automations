@@ -52,6 +52,13 @@ env -u ANTHROPIC_API_KEY /opt/homebrew/bin/claude -p "$CAREER_PROMPT" \
 echo "--- career mail flags (review these)"
 [ -s "$ROOT/data/sheet-sync/career-mail-flags.txt" ] && tail -20 "$ROOT/data/sheet-sync/career-mail-flags.txt" || echo "none"
 
+echo "--- first-pass triage of new pipeline items (writes no reports or tracker rows)"
+TR=$(node data/sheet-sync/triage-new.mjs 2>&1); TR_RC=$?
+echo "$TR"
+[ $TR_RC -eq 0 ] || fail "triage of new pipeline items (see output above)"
+TR_PASS=$(echo "$TR" | grep -E '^PASS: ' | sed -E 's/^PASS: PASS \| //; s/ \| [^|]*$//' | head -3 | tr -d '"\\' | paste -sd';' - | sed 's/ | / - /g')
+[ -n "$TR_PASS" ] && osascript -e "display notification \"Passed first-pass triage: $TR_PASS. Run /career-ops pipeline\" with title \"career-ops New Role\"" 2>/dev/null
+
 echo "--- scheduled connection requests (approved, sent by this job)"
 SC=$(node data/sheet-sync/scheduled-connect.mjs 2>&1); SC_RC=$?
 echo "$SC"

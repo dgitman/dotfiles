@@ -169,6 +169,8 @@ brew "pre-commit"
 brew "pv"
 # Static type checker for Python
 brew "pyright"
+# Simple powerful testing with Python
+brew "pytest"
 # Interpreted, interactive, object-oriented programming language
 brew "python@3.13"
 # Python interface to Tcl/Tk
@@ -355,6 +357,7 @@ vscode "openai.codex-audio"
 vscode "shopify.theme-check-vscode"
 vscode "stripe.vscode-stripe"
 vscode "supabase.vscode-supabase-extension"
+npm "@brightdata/cli"
 npm "@n8n/cli"
 npm "apify-cli"
 npm "firecrawl-cli"

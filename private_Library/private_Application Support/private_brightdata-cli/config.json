@@ -1,0 +1,7 @@
+{
+    "default_format": "json",
+    "api_url": "https://api.brightdata.com",
+    "sanitize_csv": true,
+    "default_zone_unlocker": "cli_unlocker",
+    "default_zone_serp": "cli_unlocker"
+}

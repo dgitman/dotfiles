@@ -11,6 +11,41 @@
       "autoCompactWindow": 400000
     }
   },
+  "autoMode": {
+    "environment": [
+      "### Org-wide",
+      "**Organization**: None configured",
+      "**Cloud provider(s)**: None configured",
+      "**Repository visibility**: not queryable here for dgitman/dotfiles (gh visibility check returned \"not queryable here\") — treat as possibly public per shipped-default guidance; scope what is OK to commit or push there as for a public repo",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: 1Password (op CLI and shell plugin) is used for credential management in this repo (e.g. dot_config/private_op/private_plugins/private_gh.json.tmpl for gh auth, private_dot_aws/private_credentials.tmpl); raw tokens are not persisted locally",
+      "**Default / protected branches**: main (default branch per repo facts); Rulesets: none listed, Protected branches: none listed via gh — treat as unprotected absent corroborating evidence",
+      "**CI/CD deploy targets**: None configured",
+      "**Network posture**: None configured",
+      "**Host containment**: None configured — assume Claude Code runs on an ordinary developer machine (macOS) with open internet",
+      "**Source control**: The trusted repo (dgitman/dotfiles, github.com:dgitman/dotfiles.git) and its remote(s) only (no additional orgs configured)",
+      "**Trusted internal domains**: None configured",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: None configured",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: any file or store holding personal data, confidential business data, credentials, regulated data, or similarly sensitive material; preserve exact handles when known and share only with audiences cleared at the [named+specifics] bar — private_dot_aws/private_credentials.tmpl and other `private_*` chezmoi-tracked files (e.g. private_config.toml.tmpl, private_hosts.yml, private_settings.json) hold credential metadata or tokens and are written with 0600 permissions; share only with the user themself",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: personal dotfiles/macOS configuration management (chezmoi) — hobby/personal use",
+      "**Trusted repo**: dgitman/dotfiles at ~/.local/share/chezmoi, remote github.com:dgitman/dotfiles.git",
+      "**Org-specific CLIs**: None configured — op (1Password CLI) and chezmoi are personal credential/dotfile management tools, not org-specific",
+      "Git workflow auto-approval (commit, fast-forward-merge to main, push to origin without asking, provided tests pass and main hasn't diverged; never force-push) is standing approval per ~/.claude/CLAUDE.md for the user's own repos under ~/Developer and ~/.local/share/chezmoi — this repo (~/.local/share/chezmoi) is explicitly covered",
+      "Secrets/tokens, .env files must never be committed, per ~/.claude/CLAUDE.md"
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Bash(gh auth login:*) in this repo — CLAUDE.md states gh auth is handled via `op plugin run -- gh ...` through the 1Password shell plugin; running `gh auth login` directly or persisting a token locally should be flagged rather than auto-approved",
+      "Bash(git push --force*) and Bash(git push -f*) against origin github.com:dgitman/dotfiles.git — CLAUDE.md explicitly says never force-push"
+    ]
+  },
   "env": {
     "GITHUB_PERSONAL_ACCESS_TOKEN": {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/mvuum3vlf6xosk3nzjdfry3arm/token" | toJson }}
   },

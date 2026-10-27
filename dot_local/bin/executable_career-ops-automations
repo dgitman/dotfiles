@@ -1,6 +1,6 @@
 #!/bin/zsh
 # Daily career-ops job: zero-token portal scan, then sheet import + scoring through headless Claude.
-# Run by the net.gitman.career-ops-daily LaunchAgent (chezmoi-managed). Never submits or messages anyone.
+# Run by the net.gitman.career-ops-automations LaunchAgent (chezmoi-managed). Never submits or messages anyone.
 export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
 ROOT="$HOME/Developer/public/career-ops"
 LOG="$ROOT/data/sheet-sync/daily.log"

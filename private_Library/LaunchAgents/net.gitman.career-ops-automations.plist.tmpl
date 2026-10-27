@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
-  <key>Label</key><string>net.gitman.career-ops-daily</string>
+  <key>Label</key><string>net.gitman.career-ops-automations</string>
   <key>ProgramArguments</key><array><string>{{ .chezmoi.homeDir | html }}/.local/bin/career-ops-automations</string></array>
   <key>StartCalendarInterval</key><array>
     <dict><key>Hour</key><integer>8</integer><key>Minute</key><integer>3</integer></dict>
@@ -13,6 +13,6 @@
   <key>EnvironmentVariables</key><dict>
     <key>PATH</key><string>{{ .chezmoi.homeDir | html }}/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
   </dict>
-  <key>StandardOutPath</key><string>{{ .chezmoi.homeDir | html }}/Library/Logs/career-ops-daily.log</string>
-  <key>StandardErrorPath</key><string>{{ .chezmoi.homeDir | html }}/Library/Logs/career-ops-daily.log</string>
+  <key>StandardOutPath</key><string>{{ .chezmoi.homeDir | html }}/Library/Logs/career-ops-automations.log</string>
+  <key>StandardErrorPath</key><string>{{ .chezmoi.homeDir | html }}/Library/Logs/career-ops-automations.log</string>
 </dict></plist>

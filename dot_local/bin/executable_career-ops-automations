@@ -53,7 +53,22 @@ echo "--- career mail flags (review these)"
 [ -s "$ROOT/data/sheet-sync/career-mail-flags.txt" ] && tail -20 "$ROOT/data/sheet-sync/career-mail-flags.txt" || echo "none"
 
 echo "--- contact follow-ups"
-node data/sheet-sync/contact-followups.mjs || fail "contact follow-ups"
+FU=$(node data/sheet-sync/contact-followups.mjs) || fail "contact follow-ups"
+echo "$FU"
+# Pop up once per change in who needs a nudge (not on every run); the age in days is left out of the comparison.
+NUDGES=$(echo "$FU" | grep -E '\(.*tracker #[0-9]+\): ' | sed -E 's/, [0-9]+d$//')
+NUDGE_HASH="$ROOT/data/sheet-sync/followup-popup.hash"
+if [ -n "$NUDGES" ]; then
+  NEW=$(echo "$NUDGES" | shasum | cut -d' ' -f1)
+  if [ "$NEW" != "$(cat "$NUDGE_HASH" 2>/dev/null)" ]; then
+    echo "$NEW" > "$NUDGE_HASH"
+    N=$(echo "$NUDGES" | wc -l | tr -d ' ')
+    WHO=$(echo "$NUDGES" | sed -E 's/ \(.*//' | head -3 | paste -sd, - | sed 's/,/, /g' | tr -d '"\\')
+    osascript -e "display notification \"$N to follow up: $WHO (details in data/sheet-sync/daily.log)\" with title \"career-ops LinkedIn Follow-ups\"" 2>/dev/null
+  fi
+else
+  rm -f "$NUDGE_HASH"
+fi
 
 echo "--- backup"
 DEST_FILE="$ROOT/data/sheet-sync/backup-dest"

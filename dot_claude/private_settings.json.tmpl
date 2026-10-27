@@ -1,0 +1,76 @@
+{
+  "model": "claude-sonnet-5-5",
+  "effortLevel": "medium",
+  "theme": "auto",
+  "tui": "fullscreen",
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true,
+  "enableWorkflows": true,
+  "modelSettings": {
+    "claude-sonnet-5-5": {
+      "autoCompactWindow": 400000
+    }
+  },
+  "env": {
+    "GITHUB_PERSONAL_ACCESS_TOKEN": {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/mvuum3vlf6xosk3nzjdfry3arm/token" | toJson }}
+  },
+  "enabledPlugins": {
+    "brightdata-plugin@claude-plugins-official": true,
+    "cloudflare@claude-plugins-official": true,
+    "feature-dev@claude-plugins-official": true,
+    "firecrawl@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "github@anthropic-plugin-directory": true,
+    "playwright@claude-plugins-official": true,
+    "resend@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true,
+    "slack@anthropic-plugin-directory": true,
+    "supabase@claude-plugins-official": true,
+    "vercel@claude-plugins-official": true,
+    "warp@claude-code-warp": true
+  },
+  "extraKnownMarketplaces": {
+    "claude-code-warp": {
+      "source": {
+        "source": "github",
+        "repo": "warpdotdev/claude-code-warp"
+      }
+    },
+    "make-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "integromat/make-skills"
+      }
+    }
+  },
+  "permissions": {
+    "deny": [
+      "Read(~/.aws/credentials)",
+      "Read(~/.claude/settings.json)",
+      "Read(~/.config/op/*)",
+      "Read(~/.env*)",
+      "Read(~/.ssh/*)"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(npm publish *)",
+      "Bash(pip install *)",
+      "Bash(rm -rf *)",
+      "Bash(sudo *)"
+    ],
+    "allow": [
+      "Bash(.venv/bin/python:*)",
+      "Bash(git diff)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git status)",
+      "Bash(ls *)",
+      "Bash(npm test)",
+      "Bash(pytest *)",
+      "Read(package.json)",
+      "Read(pyproject.toml)",
+      "Read(requirements.txt)"
+    ]
+  }
+}

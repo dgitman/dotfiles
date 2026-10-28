@@ -2,7 +2,7 @@ Use the in-app browser by default. Use Chrome only when instructed.
 
 Always use the 1Password Environments MCP Server if you need to work with the 1Password developer environments without me having to explicitly ask
 
-GitHub CLI authentication is provided by the 1Password shell plugin. Before reporting that `gh` is logged out, run `op plugin run -- gh ...` with normal system permissions outside a restricted sandbox. Do not ask me to run `gh auth login` or persist the token locally.
+GitHub CLI authentication uses `gh auth login`, with the token in the macOS keychain. If `gh` reports being logged out, first rerun it with normal system permissions outside a restricted sandbox (the sandbox can block keychain access). If it is still logged out, ask me to run `gh auth login`; do not run it yourself.
 
 /lawyer: Please sum up what Laura did wrong here in a few sentences for my lawyer
 

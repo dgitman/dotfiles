@@ -57,14 +57,37 @@ gcloud_signin() {
   esac
 }
 
+# Verify the GitHub CLI is signed in; offer `gh auth login` if not. The token
+# goes to the macOS keychain. Returns nonzero when sign-in is incomplete.
+gh_signin() {
+  if ! command -v gh >/dev/null 2>&1; then
+    echo "GitHub CLI is missing; skipping sign-in."
+    return 1
+  fi
+  local answer
+  if gh auth status --hostname github.com >/dev/null 2>&1; then
+    echo "GitHub CLI is signed in."
+    return 0
+  fi
+  read -r -p "Sign in to GitHub CLI now? [y/N] " answer
+  case "$answer" in
+    y|Y|yes|YES)
+      # Shows a one-time code and a link to open in your preferred browser.
+      gh auth login --hostname github.com --git-protocol ssh --skip-ssh-key --web &&
+        gh auth status --hostname github.com >/dev/null &&
+        echo "GitHub CLI sign-in verified."
+      ;;
+    *) return 1 ;;
+  esac
+}
+
 # Clone every non-archived repo of each owner that is not already present.
 clone_repos() {
   local owner repo dir names cloned=0
   # First connection to github.com: record its host key instead of prompting.
   export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=accept-new"
   for owner in "${REPO_OWNERS[@]}"; do
-    # The wrapper gets the GitHub token from 1Password.
-    if ! names=$("$HOME/.local/bin/gh" repo list "$owner" --no-archived --limit 1000 \
+    if ! names=$(gh repo list "$owner" --no-archived --limit 1000 \
         --json name --jq '.[].name'); then
       echo "Could not list $owner repos; skipping them."
       continue
@@ -270,8 +293,14 @@ main() {
   chezmoi git -- config core.hooksPath git-hooks
 
   # 5. Steps the README used to list as manual.
-  info "Cloning GitHub repos"
-  clone_repos || echo "Repo cloning did not finish; re-run to retry."
+  info "Checking GitHub CLI sign-in"
+  if gh_signin; then
+    info "Cloning GitHub repos"
+    clone_repos || echo "Repo cloning did not finish; re-run to retry."
+  else
+    echo "GitHub CLI sign-in not finished; run: gh auth login"
+    echo "Skipping repo cloning; re-run this script afterwards to clone."
+  fi
 
   info "Adding the printer"
   add_printer || true

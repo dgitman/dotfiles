@@ -123,8 +123,9 @@ on the next launch.
 
 ## GitHub CLI auth
 
-- Single account (`dgitman`), authenticated via the 1Password `gh` plugin
-  (`GH_TOKEN` env var), scoped with broad repo/org/workflow permissions.
+- Single account (`dgitman`), authenticated with `gh auth login`; the token
+  lives in the macOS keychain, not in tracked files. `bootstrap.sh` offers the
+  sign-in on a new Mac.
 - `git_protocol` is set to `ssh` — both `gh` and all repos under
   `~/Developer` use SSH remotes (`git@github.com:...`), not HTTPS.
 
@@ -207,7 +208,10 @@ done, so it is safe to re-run:
    (`git@github.com:dgitman/dotfiles.git`) so `brewfile-sync` can push through
    the 1Password SSH agent.
 6. Finishes the steps that used to be manual:
-   - clones every non-archived repo of `dgitman` and `because-ventures` into
+   - checks GitHub CLI sign-in and offers `gh auth login` (browser link and
+     one-time code; the token is stored in the macOS keychain) if needed;
+   - once signed in, clones every non-archived repo of `dgitman` and
+     `because-ventures` into
      `~/Developer/<owner>/<repo>` over SSH (existing folders are left alone;
      the dotfiles repo itself is skipped);
    - adds the Brother HL-L2460DW over AirPrint as `Brother_HL_L2460DW` if it is

@@ -17,9 +17,6 @@ copilot() {
 gemini() {
     op plugin run -- gemini "$@"
 }
-gh() {
-    op plugin run -- gh "$@"
-}
 openai() {
     op plugin run -- openai "$@"
 }

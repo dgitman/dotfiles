@@ -1,2 +1,3 @@
 .local/bin/dotfiles-setup
 .chezmoi.toml
+.local/bin/gh

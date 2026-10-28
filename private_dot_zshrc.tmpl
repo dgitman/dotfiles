@@ -3,6 +3,8 @@
 # ==============================================================================
 export HOMEBREW_AUTO_UPDATE_SECS=86400  # Only auto-update Homebrew once per day
 export HOMEBREW_GITHUB_API_TOKEN='{{ onepasswordRead "op://Private/GitHub/token" | replace "'" "'\"'\"'" }}'
+export TRIPIT_USERNAME='{{ onepasswordRead "op://Private/mqttpx6jk6d6esquezpb4gxb64/username" | replace "'" "'\"'\"'" }}'
+export TRIPIT_PASSWORD='{{ onepasswordRead "op://Private/mqttpx6jk6d6esquezpb4gxb64/password" | replace "'" "'\"'\"'" }}'
 
 # Unique arrays prevent duplicate shell path entries
 typeset -U path fpath

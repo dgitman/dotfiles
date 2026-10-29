@@ -85,6 +85,12 @@ brew "uvwasi"
 brew "node"
 # CLI tool for Cloudflare Workers
 brew "cloudflare-wrangler"
+# HTTP/3 library written in C
+brew "libnghttp3"
+# IETF QUIC protocol implementation
+brew "libngtcp2"
+# C library implementing the SSH2 protocol
+brew "libssh2"
 # AV1 decoder targeted to be small and fast
 brew "dav1d"
 # Select default apps for documents and URL schemes on macOS
@@ -137,12 +143,6 @@ brew "oniguruma"
 brew "jq"
 # Library for large linear classification
 brew "liblinear"
-# HTTP/3 library written in C
-brew "libnghttp3"
-# IETF QUIC protocol implementation
-brew "libngtcp2"
-# C library implementing the SSH2 protocol
-brew "libssh2"
 # YAML Parser
 brew "libyaml"
 # Powerful, lightweight programming language

@@ -1,17 +1,71 @@
 {
+  "env": {
+    "GITHUB_PERSONAL_ACCESS_TOKEN": {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/mvuum3vlf6xosk3nzjdfry3arm/token" | toJson }}
+  },
+  "permissions": {
+    "allow": [
+      "Bash(.venv/bin/python:*)",
+      "Bash(git diff)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git status)",
+      "Bash(ls *)",
+      "Bash(npm test)",
+      "Bash(pytest *)",
+      "Read(package.json)",
+      "Read(pyproject.toml)",
+      "Read(requirements.txt)"
+    ],
+    "deny": [
+      "Read(~/.aws/credentials)",
+      "Read(~/.claude/settings.json)",
+      "Read(~/.config/op/*)",
+      "Read(~/.env*)",
+      "Read(~/.ssh/*)"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(npm publish *)",
+      "Bash(pip install *)",
+      "Bash(rm -rf *)",
+      "Bash(sudo *)"
+    ]
+  },
   "model": "claude-sonnet-5-5",
-  "effortLevel": "medium",
-  "theme": "auto",
-  "tui": "fullscreen",
-  "inputNeededNotifEnabled": true,
-  "agentPushNotifEnabled": true,
   "enableWorkflows": true,
+  "enabledPlugins": {
+    "cloudflare@claude-plugins-official": true,
+    "feature-dev@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "github@anthropic-plugin-directory": true,
+    "playwright@claude-plugins-official": true,
+    "resend@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true,
+    "slack@anthropic-plugin-directory": true,
+    "vercel@anthropic-plugin-directory": true,
+    "cc-plugin-you-should-know@builtin": true,
+    "aws-core@anthropic-plugin-directory": true,
+    "firecrawl@anthropic-plugin-directory": true
+  },
+  "extraKnownMarketplaces": {},
+  "effortLevel": "medium",
   "modelSettings": {
     "claude-sonnet-5-5": {
       "autoCompactWindow": 400000
     }
   },
+  "tui": "fullscreen",
+  "theme": "auto",
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true,
   "autoMode": {
+    "soft_deny": [
+      "$defaults",
+      "Bash(gh auth login:*) in this repo — CLAUDE.md states gh auth is handled via `op plugin run -- gh ...` through the 1Password shell plugin; running `gh auth login` directly or persisting a token locally should be flagged rather than auto-approved",
+      "Bash(git push --force*) and Bash(git push -f*) against origin github.com:dgitman/dotfiles.git — CLAUDE.md explicitly says never force-push",
+      "Bash(git push origin main:*) in career-ops-hq/career-ops — main is protected by an active ruleset (main-merge-queue); direct pushes to main should be confirmed rather than auto-approved"
+    ],
     "environment": [
       "### Org-wide",
       "**Organization**: None configured",
@@ -39,73 +93,6 @@
       "**Org-specific CLIs**: None configured — op (1Password CLI) and chezmoi are personal credential/dotfile management tools, not org-specific",
       "Git workflow auto-approval (commit, fast-forward-merge to main, push to origin without asking, provided tests pass and main hasn't diverged; never force-push) is standing approval per ~/.claude/CLAUDE.md for the user's own repos under ~/Developer and ~/.local/share/chezmoi — this repo (~/.local/share/chezmoi) is explicitly covered",
       "Secrets/tokens, .env files must never be committed, per ~/.claude/CLAUDE.md"
-    ],
-    "soft_deny": [
-      "$defaults",
-      "Bash(git push --force*) and Bash(git push -f*) against origin github.com:dgitman/dotfiles.git — CLAUDE.md explicitly says never force-push",
-    "Bash(git push origin main:*) in career-ops-hq/career-ops — main is protected by an active ruleset (main-merge-queue); direct pushes to main should be confirmed rather than auto-approved"
-    ]
-  },
-  "env": {
-    "GITHUB_PERSONAL_ACCESS_TOKEN": {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/mvuum3vlf6xosk3nzjdfry3arm/token" | toJson }}
-  },
-  "enabledPlugins": {
-    "brightdata-plugin@claude-plugins-official": true,
-    "cloudflare@claude-plugins-official": true,
-    "feature-dev@claude-plugins-official": true,
-    "firecrawl@claude-plugins-official": true,
-    "frontend-design@claude-plugins-official": true,
-    "github@anthropic-plugin-directory": true,
-    "playwright@claude-plugins-official": true,
-    "resend@claude-plugins-official": true,
-    "security-guidance@claude-plugins-official": true,
-    "slack@anthropic-plugin-directory": true,
-    "supabase@claude-plugins-official": true,
-    "vercel@claude-plugins-official": true,
-    "warp@claude-code-warp": true
-  },
-  "extraKnownMarketplaces": {
-    "claude-code-warp": {
-      "source": {
-        "source": "github",
-        "repo": "warpdotdev/claude-code-warp"
-      }
-    },
-    "make-marketplace": {
-      "source": {
-        "source": "github",
-        "repo": "integromat/make-skills"
-      }
-    }
-  },
-  "permissions": {
-    "deny": [
-      "Read(~/.aws/credentials)",
-      "Read(~/.claude/settings.json)",
-      "Read(~/.config/op/*)",
-      "Read(~/.env*)",
-      "Read(~/.ssh/*)"
-    ],
-    "ask": [
-      "Bash(git push *)",
-      "Bash(npm publish *)",
-      "Bash(pip install *)",
-      "Bash(rm -rf *)",
-      "Bash(sudo *)"
-    ],
-    "allow": [
-      "Bash(.venv/bin/python:*)",
-      "Bash(git diff)",
-      "Bash(git diff *)",
-      "Bash(git log *)",
-      "Bash(git show *)",
-      "Bash(git status)",
-      "Bash(ls *)",
-      "Bash(npm test)",
-      "Bash(pytest *)",
-      "Read(package.json)",
-      "Read(pyproject.toml)",
-      "Read(requirements.txt)"
     ]
   }
 }

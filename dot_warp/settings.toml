@@ -53,7 +53,7 @@ command_denylist = [
 ]
 computer_use = "always_ask"
 directory_allowlist = []
-execute_commands = "always_ask"
+execute_commands = "agent_decides"
 mcp_allowlist = []
 mcp_denylist = []
 mcp_permissions = "agent_decides"
@@ -65,6 +65,9 @@ write_to_pty = "always_allow"
 
 [agents.third_party]
 should_render_cli_agent_toolbar = true
+
+[agents.voice]
+voice_input_toggle_key = "fn"
 
 [privacy]
 telemetry_enabled = true

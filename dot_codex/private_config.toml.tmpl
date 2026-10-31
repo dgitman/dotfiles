@@ -41,9 +41,6 @@ enabled = true
 [plugins."chrome@openai-bundled"]
 enabled = true
 
-[plugins."code-review@openai-bundled"]
-enabled = true
-
 [plugins."codex-app-tools@openai-bundled"]
 enabled = true
 
@@ -113,6 +110,9 @@ enabled = true
 [plugins."pagecrawl@pagecrawl"]
 enabled = true
 
+[plugins."linkedin-mcp-server@linkedin-mcp-server"]
+enabled = true
+
 [mcp_servers.1password]
 command = "/Applications/1Password.app/Contents/MacOS/1password-mcp"
 
@@ -120,32 +120,20 @@ command = "/Applications/1Password.app/Contents/MacOS/1password-mcp"
 approval_mode = "approve"
 
 [mcp_servers.capsolver]
-args = ["capsolver-mcp"]
 command = "uvx"
-enabled = true
+args = ["capsolver-mcp"]
 
 [mcp_servers.capsolver.env]
 CAPSOLVER_API_KEY = "op://5muo7u2aqulocq4t75j7ykbw2u/bdcvenrvwr2gn66zwwhabfe2tm/26443wvz5orwcddeckk3dqxqre/ro4ejmced5sbqpacz6yrwr7l5y"
 
-[mcp_servers.trakt-david]
-enabled = true
+[mcp_servers.trakt]
 command = "uvx"
 args = ["--from", "git+https://github.com/wwiens/trakt_mcpserver", "trakt-mcp"]
 
-[mcp_servers.trakt-david.env]
-TRAKT_CLIENT_ID = {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/t7aiboqrptwqpqk6fe5em4ag7u/client_id" | toJson }}
-TRAKT_CLIENT_SECRET = "op://ts4jmaranagdjfxrtkfukeglcm/t7aiboqrptwqpqk6fe5em4ag7u/client_secret"
+[mcp_servers.trakt.env]
 TRAKT_AUTH_TOKEN_PATH = "{{ .chezmoi.homeDir }}/.trakt-mcp/auth_token_david.json"
-
-[mcp_servers.trakt-emalie]
-enabled = true
-command = "uvx"
-args = ["--from", "git+https://github.com/wwiens/trakt_mcpserver", "trakt-mcp"]
-
-[mcp_servers.trakt-emalie.env]
-TRAKT_CLIENT_ID = {{ onepasswordRead "op://Emalie/2o5fnrqglcfbhkoqnzuuya2dh4/client_id" | toJson }}
-TRAKT_CLIENT_SECRET = "op://Emalie/2o5fnrqglcfbhkoqnzuuya2dh4/client_secret"
-TRAKT_AUTH_TOKEN_PATH = "{{ .chezmoi.homeDir }}/.trakt-mcp/auth_token_emalie.json"
+TRAKT_CLIENT_ID = {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/t7aiboqrptwqpqk6fe5em4ag7u/client_id" | toJson }}
+TRAKT_CLIENT_SECRET = {{ onepasswordRead "op://ts4jmaranagdjfxrtkfukeglcm/t7aiboqrptwqpqk6fe5em4ag7u/client_secret" | toJson }}
 
 [mcp_servers.node_repl]
 args = []
@@ -165,10 +153,13 @@ NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = ""
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = ""
 NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = ""
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.1016.61520"
-NODE_REPL_TRUSTED_SERVICES = '{"browser":"{{ .chezmoi.homeDir }}/.codex/plugins/cache/openai-bundled/browser/26.1016.61520/scripts/browser-service.mjs","sky":"@oai/sky/service"}'
+BROWSER_USE_CODEX_APP_VERSION = "26.1023.51421"
+NODE_REPL_TRUSTED_SERVICES = '{"browser":"{{ .chezmoi.homeDir }}/.codex/plugins/cache/openai-bundled/browser/26.1023.51421/scripts/browser-service.mjs","sky":"@oai/sky/service"}'
 SKY_CUA_SERVICE_PATH = "{{ .chezmoi.homeDir }}/.codex/computer-use/Codex Computer Use.app"
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex"
+
+[mcp_servers.n8n]
+url = "https://dgitman.app.n8n.cloud/mcp-server/http"
 
 # Desktop preferences
 [desktop]
@@ -240,6 +231,10 @@ source_type = "git"
 [marketplaces.pagecrawl]
 source_type = "git"
 source = "https://github.com/pagecrawl/skills.git"
+
+[marketplaces.linkedin-mcp-server]
+source_type = "git"
+source = "https://github.com/stickerdaniel/linkedin-mcp-server.git"
 
 # Terminal preferences
 [tui]
@@ -487,3 +482,9 @@ trusted_hash = "sha256:6a3b3af655efa426e920425de93a830fe25b8b5a62ef7b9a699e7ff40
 
 [hooks.state."warp@codex-warp:hooks/hooks.json:user_prompt_submit:0:0"]
 trusted_hash = "sha256:2480a7db650a36e05d8005aabca58b9d106f3b7a46f7094d7747d0d77773f75c"
+
+[hooks.state."n8n-skills@n8n-io:hooks/hooks.json:pre_tool_use:6:0"]
+trusted_hash = "sha256:cf9295f2890a857c2f76fcbdc2f5dd3c352e14f21f0e712e54ff5675fcf1361b"
+
+[hooks.state."n8n-skills@n8n-io:hooks/hooks.json:pre_tool_use:7:0"]
+trusted_hash = "sha256:c8407b61da60fa7940676c2d1e79a505f74166bf104a0d537cd2cf50822575ef"

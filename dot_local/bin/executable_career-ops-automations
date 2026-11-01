@@ -9,10 +9,15 @@ SHEET_ID=$(tr -d '[:space:]' < "$ROOT/data/automations/sheet-id") || exit 1
 exec >> "$LOG" 2>&1
 ERRS=()
 fail() { ERRS+=("$1"); echo "ERROR: $1"; }
-echo; echo "===== $(date '+%Y-%m-%d %H:%M:%S') daily run ====="
+LOCK="${TMPDIR:-/tmp}/career-ops-automations.lock"
+mkdir "$LOCK" 2>/dev/null || { echo; echo "===== $(date '+%Y-%m-%d %H:%M:%S') skipped: previous run still going ====="; exit 0; }
+trap 'rmdir "$LOCK" 2>/dev/null' EXIT
+# Hourly run: portal scan + full ATS sweep every hour; the rest (sheet, mail, LinkedIn, triage, backup) only at 08, 12, 16 and 20.
+case "$(date +%H)" in 08|12|16|20) FULL=1 ;; *) FULL=0 ;; esac
+echo; echo "===== $(date '+%Y-%m-%d %H:%M:%S') $([ "$FULL" = 1 ] && echo "daily run" || echo "hourly scan") ====="
 
 echo "--- git pull"
-if [ "$(git branch --show-current)" = "main" ] && [ -z "$(git status --porcelain --untracked-files=no)" ]; then
+if [ "$FULL" = 1 ] && [ "$(git branch --show-current)" = "main" ] && [ -z "$(git status --porcelain --untracked-files=no)" ]; then
   BEFORE=$(git rev-parse --short HEAD)
   git pull --ff-only --quiet 2>&1 | tail -3
   AFTER=$(git rev-parse --short HEAD)
@@ -24,6 +29,19 @@ fi
 echo "--- scan"
 node scan.mjs --since 2 --quiet | sed -n '/scan-summary/,/→ Run/p' | grep -E "Total jobs|New offers|Duplicates|Filtered"
 [ "${pipestatus[1]}" -eq 0 ] || fail "portal scan"
+
+echo "--- full ATS sweep"
+node scan-ats-full.mjs --since 1 --ats greenhouse,lever,ashby,workday --limit 500 2>&1 | tail -12
+[ "${pipestatus[1]}" -eq 0 ] || fail "full ATS sweep"
+
+if [ "$FULL" != 1 ]; then
+  echo "===== done (hourly scan) $(date '+%H:%M:%S') ====="
+  if [ ${#ERRS[@]} -gt 0 ]; then
+    osascript -e "display notification \"Failed: ${(j:, :)ERRS}. See data/automations/daily.log\" with title \"career-ops Automation Error\"" 2>/dev/null
+    exit 1
+  fi
+  exit 0
+fi
 
 echo "--- pagecrawl poll"
 node data/automations/poll-pagecrawl.mjs 2>&1 | tail -15

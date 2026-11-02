@@ -67,6 +67,13 @@ echo "$TR"
 TR_PASS=$(echo "$TR" | grep -E '^PASS: ' | sed -E 's/^PASS: PASS \| //; s/ \| [^|]*$//' | head -3 | tr -d '"\\' | paste -sd';' - | sed 's/ | / - /g')
 [ -n "$TR_PASS" ] && osascript -e "display notification \"Passed first-pass triage: $TR_PASS. Run /career-ops pipeline\" with title \"career-ops New Role\"" 2>/dev/null
 
+echo "--- evaluation of triage-passed roles (report + tracker row only; no CV, PDF, cover letter or application)"
+EV=$(node data/automations/evaluate-new.mjs --max 3 2>&1); EV_RC=$?
+echo "$EV"
+[ $EV_RC -eq 0 ] || fail "evaluation of triage-passed roles (see output above)"
+EV_REVIEW=$(echo "$EV" | grep -E '^REVIEW: ' | sed 's/^REVIEW: //' | head -2 | tr -d '"\\' | paste -sd';' -)
+[ -n "$EV_REVIEW" ] && osascript -e "display notification \"Evaluated 4.0 or better: $EV_REVIEW\" with title \"career-ops Ready for Review\"" 2>/dev/null
+
 echo "--- scheduled connection requests (approved, sent by this job)"
 SC=$(node data/automations/scheduled-connect.mjs 2>&1); SC_RC=$?
 echo "$SC"

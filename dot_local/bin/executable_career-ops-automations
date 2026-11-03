@@ -83,7 +83,14 @@ EV_REVIEW=$(echo "$EV" | grep -E '^REVIEW: ' | sed 's/^REVIEW: //' | head -2 | t
 [ -n "$EV_REVIEW" ] && osascript -e "display notification \"Evaluated 4.0 or better: $EV_REVIEW\" with title \"career-ops Ready for Review\"" 2>/dev/null
 
 echo "--- scheduled connection requests (approved, sent by this job)"
-SC=$(node data/automations/scheduled-connect.mjs 2>&1); SC_RC=$?
+# Once a day, like the LinkedIn check above; the stamp is written first, delete it to force a run.
+SC_STAMP="$ROOT/data/automations/scheduled-connect-last-run"
+if [ "$(cat "$SC_STAMP" 2>/dev/null)" = "$(date +%F)" ]; then
+  SC="skipped: already ran today"; SC_RC=0
+else
+  date +%F > "$SC_STAMP"
+  SC=$(node data/automations/scheduled-connect.mjs 2>&1); SC_RC=$?
+fi
 echo "$SC"
 [ $SC_RC -eq 0 ] || fail "scheduled connection requests (see output above)"
 SC_MSG=$(echo "$SC" | grep -E '^(SENT|HOLD|CHECK):' | head -2 | tr -d '"\\' | paste -sd' ' -)

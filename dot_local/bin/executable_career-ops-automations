@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Hourly career-ops job: zero-token portal scan, full ATS sweep, LinkedIn and mail checks, triage, follow-ups, backup.
+# Hourly career-ops job: zero-token portal scan, full ATS sweep, LinkedIn (once a day) and mail checks, triage, follow-ups, backup.
 # Run by the net.gitman.career-ops-automations LaunchAgent (chezmoi-managed). Never submits or messages anyone.
 export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
 ROOT="$HOME/Developer/public/career-ops"
@@ -31,8 +31,16 @@ echo "--- full ATS sweep"
 node scan-ats-full.mjs --since 1 --ats greenhouse,lever,ashby,workday --limit 500 2>&1 | tail -12
 [ "${pipestatus[1]}" -eq 0 ] || fail "full ATS sweep"
 
-echo "--- linkedin direct: connection status + messages (read-only)"
-node data/automations/linkedin-direct.mjs || fail "linkedin direct check (LinkedIn MCP; see output above)"
+echo "--- linkedin direct: connection status + messages (read-only, once a day)"
+# LinkedIn warned about automated traffic, so only the first run of each day touches it. The stamp is written before
+# the call so a failed check is not retried every hour; delete the stamp file to force a run.
+LI_STAMP="$ROOT/data/automations/linkedin-last-run"
+if [ "$(cat "$LI_STAMP" 2>/dev/null)" = "$(date +%F)" ]; then
+  echo "skipped: already checked today"
+else
+  date +%F > "$LI_STAMP"
+  node data/automations/linkedin-direct.mjs || fail "linkedin direct check (LinkedIn MCP; see output above)"
+fi
 
 echo "--- career mail (read-only)"
 # Zero-token pre-check through gws: only start the headless Claude run when the Career label has unseen threads.

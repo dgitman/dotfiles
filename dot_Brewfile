@@ -211,14 +211,6 @@ brew "pagecrawl/tap/pagecrawl-relay", trusted: true
 cask "1password-cli@beta"
 # Password manager
 cask "1password@beta"
-# Classic After Dark screen savers emulator
-cask "afterglow"
-# Agent orchestration platform
-cask "antigravity"
-# Terminal interface for Antigravity agents
-cask "antigravity-cli"
-# AI Coding Agent IDE
-cask "antigravity-ide"
 # Application uninstaller
 cask "appcleaner"
 # Menu bar icon organiser
@@ -239,22 +231,12 @@ cask "cleanmymac"
 cask "cleanmymac-cli"
 # OpenAI's coding agent that runs in your terminal
 cask "codex"
-# Web browser with integrated AI assistant
-cask "comet"
-# Brings the power of Copilot coding agent directly to your terminal
-cask "copilot-cli"
-# Write, edit, and chat about your code with AI
-cask "cursor"
 # Command-line agent for Cursor
 cask "cursor-cli"
 # Voice and text chat software
 cask "discord"
-# App to build and share containerised applications and microservices
-cask "docker-desktop"
 # Client for the Dropbox cloud storage service
 cask "dropbox"
-# Collaborative team software
-cask "figma"
 cask "font-fira-code-nerd-font"
 # Set of tools to manage resources and applications hosted on Google Cloud
 cask "gcloud-cli"
@@ -268,12 +250,6 @@ cask "google-drive"
 cask "google-gemini"
 # Grammarly for desktop
 cask "grammarly-desktop"
-# AI teammates that work across your apps and tools
-cask "grok-bot"
-# Extensible coding agent for the terminal
-cask "grok-build"
-# Open-source video transcoder
-cask "handbrake-app"
 # iPhone management application
 cask "imazing"
 # Spot and merge differences in text and image files or folders
@@ -290,48 +266,26 @@ cask "microsoft-teams"
 cask "monitorcontrol"
 # VPN client for secure internet access and private browsing
 cask "nordvpn"
-# App to write, plan, collaborate, and get organised
-cask "notion"
+# Knowledge base that works on top of a local folder of plain text Markdown files
+cask "obsidian"
 # The official CLI for the OpenAI API.
 cask "openai/tools/openai", trusted: true
-# AI-powered answer engine with Personal Computer agent
-cask "perplexity"
-# Collaboration platform for API development
-cask "postman"
-# Imaging utility to install operating systems to a microSD card
-cask "raspberry-pi-imager"
 # ScanSnap Scanner software
 cask "scansnap-home"
 # Client for the Progress ShareFile storage service
 cask "sharefile"
-# Instant messaging application focusing on security
-cask "signal"
 # Team communication and collaboration software
 cask "slack"
 # Music streaming service
 cask "spotify"
 # Remote access and connectivity software focused on security
 cask "teamviewer"
-# Messaging app with a focus on speed and security
-cask "telegram"
-# Web browser focusing on security
-cask "tor-browser"
-# Open-source BitTorrent client
-cask "transmission"
 # File transfer application
 cask "transmit"
-# Calling and messaging application focusing on security
-cask "viber"
 # Open-source code editor
 cask "visual-studio-code"
 # Rust-based terminal
 cask "warp"
-# Free messaging and calling application
-cask "wechat"
-# Native desktop client for WhatsApp
-cask "whatsapp"
-# Network protocol analyzer
-cask "wireshark-app"
 # Video communication and virtual meeting platform
 cask "zoom"
 mas "1Password for Safari", id: 1569813296

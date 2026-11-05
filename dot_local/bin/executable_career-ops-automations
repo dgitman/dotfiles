@@ -114,6 +114,35 @@ else
   rm -f "$NUDGE_HASH"
 fi
 
+echo "--- posting liveness sweep (once a day; fixes expired postings, never touches Applied or Interview rows)"
+# Checks pending pipeline items and Evaluated rows with check-liveness.mjs. Expired ones are moved to Processed or
+# Discarded; anything unreadable for 3 days, or a suspicious batch of expiries, is reported here. The stamp is written first.
+LV_STAMP="$ROOT/data/automations/liveness-last-run"
+if [ "$(cat "$LV_STAMP" 2>/dev/null)" = "$(date +%F)" ]; then
+  LV="skipped: already ran today"; LV_RC=0
+else
+  date +%F > "$LV_STAMP"
+  LV=$(node data/automations/liveness-sweep.mjs 2>&1); LV_RC=$?
+fi
+echo "$LV"
+[ $LV_RC -eq 0 ] || fail "posting liveness sweep (see output above)"
+LV_MSG=$(echo "$LV" | grep -E '^NOTIFY: ' | sed 's/^NOTIFY: //' | head -2 | tr -d '"\\' | paste -sd';' -)
+[ -n "$LV_MSG" ] && osascript -e "display notification \"$LV_MSG\" with title \"career-ops Posting Check\"" 2>/dev/null
+
+echo "--- portal audit (once a week; reports newly broken boards, edits nothing)"
+# Runs audit-portals.mjs and compares with last week. portals.yml is never changed by this job. The stamp is the ISO week.
+PA_STAMP="$ROOT/data/automations/portal-audit-last-run"
+if [ "$(cat "$PA_STAMP" 2>/dev/null)" = "$(date +%G-W%V)" ]; then
+  PA="skipped: already ran this week"; PA_RC=0
+else
+  date +%G-W%V > "$PA_STAMP"
+  PA=$(node data/automations/portal-audit.mjs 2>&1); PA_RC=$?
+fi
+echo "$PA"
+[ $PA_RC -eq 0 ] || fail "portal audit (see output above)"
+PA_MSG=$(echo "$PA" | grep -E '^NOTIFY: ' | sed 's/^NOTIFY: //' | head -2 | tr -d '"\\' | paste -sd';' -)
+[ -n "$PA_MSG" ] && osascript -e "display notification \"$PA_MSG\" with title \"career-ops Portal Audit\"" 2>/dev/null
+
 echo "--- backup"
 DEST_FILE="$ROOT/data/automations/backup-dest"
 if [ -s "$DEST_FILE" ]; then

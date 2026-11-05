@@ -82,6 +82,11 @@ echo "$EV"
 EV_REVIEW=$(echo "$EV" | grep -E '^REVIEW: ' | sed 's/^REVIEW: //' | head -2 | tr -d '"\\' | paste -sd';' -)
 [ -n "$EV_REVIEW" ] && osascript -e "display notification \"Evaluated 4.0 or better: $EV_REVIEW\" with title \"career-ops Ready for Review\"" 2>/dev/null
 
+echo "--- auto-skip: any Evaluated row scoring under 3.8 (whole tracker, not only this run's evaluations)"
+SK=$(node data/automations/skip-low-scores.mjs 2>&1); SK_RC=$?
+echo "$SK"
+[ $SK_RC -eq 0 ] || fail "auto-skip of Evaluated rows under 3.8 (see output above)"
+
 echo "--- scheduled connection requests (approved, sent by this job)"
 # Once a day, like the LinkedIn check above; the stamp is written first, delete it to force a run.
 SC_STAMP="$ROOT/data/automations/scheduled-connect-last-run"

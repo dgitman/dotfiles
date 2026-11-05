@@ -185,6 +185,8 @@ brew "rbenv"
 brew "rclone"
 # Perl-powered file rename script with many helpful built-ins
 brew "rename"
+# Utility that provides fast incremental file transfer
+brew "rsync"
 # Powerful, clean, object-oriented scripting language
 brew "ruby@3.4"
 # Command-line tool for Stripe

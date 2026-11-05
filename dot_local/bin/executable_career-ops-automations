@@ -149,7 +149,8 @@ if [ -s "$DEST_FILE" ]; then
   DEST=$(head -1 "$DEST_FILE")
   if [ -d "$(dirname "$DEST")" ]; then
     mkdir -p "$DEST/claude-memory"
-    rsync -a --exclude '.git/' --exclude 'node_modules/' --exclude '.env' --exclude '.DS_Store' \
+    # -W copies whole files: rsync's delta mode maps the old copy on Google Drive, which Drive refuses with "mmap: Resource deadlock avoided".
+    rsync -aW --exclude '.git/' --exclude 'node_modules/' --exclude '.env' --exclude '.DS_Store' \
       --exclude 'data/Connections.csv' --exclude 'web/' --exclude 'dashboard/' \
       --include 'cv.md' --include 'article-digest.md' --include 'portals.yml' --include 'voice-dna.md' \
       --include 'config/' --include 'config/profile.yml' --include 'config/cv-facts.json' \

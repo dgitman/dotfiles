@@ -229,6 +229,8 @@ cask "claude-code"
 cask "cleanmymac"
 # Command-line interface for CleanMyMac
 cask "cleanmymac-cli"
+# AI code review CLI
+cask "coderabbit"
 # OpenAI's coding agent that runs in your terminal
 cask "codex"
 # Command-line agent for Cursor

@@ -161,7 +161,7 @@ if [ -s "$DEST_FILE" ]; then
     else
       # -W copies whole files: rsync's delta mode maps the old copy on Google Drive, which Drive refuses with "mmap: Resource deadlock avoided".
       rsync -aW --exclude '.git/' --exclude 'node_modules/' --exclude '.env' --exclude '.env.*' --exclude '.DS_Store' \
-        --exclude 'Connections.csv' --exclude 'web/' --exclude 'dashboard/' \
+        --exclude 'web/' --exclude 'dashboard/' \
         --include 'cv.md' --include 'article-digest.md' --include 'portals.yml' --include 'voice-dna.md' \
         --include 'config/' --include 'config/profile.yml' --include 'config/cv-facts.json' \
         --include 'modes/' --include 'modes/_profile.md' --include 'modes/_brief.md' --include 'modes/_custom.md' \
@@ -172,10 +172,10 @@ if [ -s "$DEST_FILE" ]; then
     fi \
       && rsync -a "$HOME/.claude/projects/-Users-dgitman-Developer-public-career-ops/memory/" "$DEST/claude-memory/" \
       && echo "backed up to Drive: $(du -sh "$DEST" | cut -f1)" || { echo "backup FAILED"; fail "backup"; }
-    # Guard: these must never sit in the backup (secrets; third-party LinkedIn data). Fails loudly if one appears.
+    # Guard: secrets must never sit in the backup. Fails loudly if a .env file appears.
     # No depth limit, case-insensitive, and a failed scan counts as a failure (find's errors go to the log, not /dev/null).
-    if LEAKED=$(find "$DEST" \( -iname '.env' -o -iname '.env.*' -o -iname 'Connections.csv' \) -print); then
-      [ -z "$LEAKED" ] || { echo "backup contains files that must not be backed up:"; echo "$LEAKED"; fail "backup contains .env or Connections.csv"; }
+    if LEAKED=$(find "$DEST" \( -iname '.env' -o -iname '.env.*' \) -print); then
+      [ -z "$LEAKED" ] || { echo "backup contains .env files:"; echo "$LEAKED"; fail "backup contains .env files"; }
     else
       fail "backup leak scan failed"
     fi

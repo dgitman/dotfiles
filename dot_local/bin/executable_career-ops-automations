@@ -160,8 +160,8 @@ if [ -s "$DEST_FILE" ]; then
       node "$ROOT/backup.mjs" --dest "$DEST"
     else
       # -W copies whole files: rsync's delta mode maps the old copy on Google Drive, which Drive refuses with "mmap: Resource deadlock avoided".
-      rsync -aW --exclude '.git/' --exclude 'node_modules/' --exclude '.env' --exclude '.DS_Store' \
-        --exclude 'data/Connections.csv' --exclude 'web/' --exclude 'dashboard/' \
+      rsync -aW --exclude '.git/' --exclude 'node_modules/' --exclude '.env' --exclude '.env.*' --exclude '.DS_Store' \
+        --exclude 'Connections.csv' --exclude 'web/' --exclude 'dashboard/' \
         --include 'cv.md' --include 'article-digest.md' --include 'portals.yml' --include 'voice-dna.md' \
         --include 'config/' --include 'config/profile.yml' --include 'config/cv-facts.json' \
         --include 'modes/' --include 'modes/_profile.md' --include 'modes/_brief.md' --include 'modes/_custom.md' \
@@ -173,8 +173,12 @@ if [ -s "$DEST_FILE" ]; then
       && rsync -a "$HOME/.claude/projects/-Users-dgitman-Developer-public-career-ops/memory/" "$DEST/claude-memory/" \
       && echo "backed up to Drive: $(du -sh "$DEST" | cut -f1)" || { echo "backup FAILED"; fail "backup"; }
     # Guard: these must never sit in the backup (secrets; third-party LinkedIn data). Fails loudly if one appears.
-    LEAKED=$(find "$DEST" -maxdepth 4 \( -name '.env' -o -name '.env.*' -o -name 'Connections.csv' \) 2>/dev/null)
-    [ -z "$LEAKED" ] || { echo "backup contains files that must not be backed up:"; echo "$LEAKED"; fail "backup contains .env or Connections.csv"; }
+    # No depth limit, case-insensitive, and a failed scan counts as a failure (find's errors go to the log, not /dev/null).
+    if LEAKED=$(find "$DEST" \( -iname '.env' -o -iname '.env.*' -o -iname 'Connections.csv' \) -print); then
+      [ -z "$LEAKED" ] || { echo "backup contains files that must not be backed up:"; echo "$LEAKED"; fail "backup contains .env or Connections.csv"; }
+    else
+      fail "backup leak scan failed"
+    fi
   else
     echo "backup skipped: Drive folder not available"
   fi

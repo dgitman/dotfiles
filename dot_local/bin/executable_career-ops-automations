@@ -156,8 +156,11 @@ if [ -s "$DEST_FILE" ]; then
     mkdir -p "$DEST/claude-memory"
     # Prefer the checkout's backup.mjs (career-ops PR #6603): whole-file copies, and it skips data/cache, which is ~890 MB of
     # disposable HTTP cache the rsync below copies. Until a pull brings backup.mjs in, fall back to the rsync.
-    if [ -f "$ROOT/backup.mjs" ]; then
-      node "$ROOT/backup.mjs" --dest "$DEST"
+    # TEMPORARY until PR #6603 merges: if the checkout has no backup.mjs yet, use the copy in the feat/backup-script worktree.
+    BACKUP_JS="$ROOT/backup.mjs"
+    [ -f "$BACKUP_JS" ] || BACKUP_JS="$HOME/Developer/public/career-ops-backup/backup.mjs"
+    if [ -f "$BACKUP_JS" ]; then
+      CAREER_OPS_ROOT="$ROOT" node "$BACKUP_JS" --dest "$DEST"
     else
       # -W copies whole files: rsync's delta mode maps the old copy on Google Drive, which Drive refuses with "mmap: Resource deadlock avoided".
       rsync -aW --exclude '.git/' --exclude 'node_modules/' --exclude '.env' --exclude '.env.*' --exclude '.DS_Store' \

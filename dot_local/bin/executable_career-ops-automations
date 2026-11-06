@@ -154,16 +154,22 @@ if [ -s "$DEST_FILE" ]; then
   DEST=$(head -1 "$DEST_FILE")
   if [ -d "$(dirname "$DEST")" ]; then
     mkdir -p "$DEST/claude-memory"
-    # -W copies whole files: rsync's delta mode maps the old copy on Google Drive, which Drive refuses with "mmap: Resource deadlock avoided".
-    rsync -aW --exclude '.git/' --exclude 'node_modules/' --exclude '.env' --exclude '.DS_Store' \
-      --exclude 'data/Connections.csv' --exclude 'web/' --exclude 'dashboard/' \
-      --include 'cv.md' --include 'article-digest.md' --include 'portals.yml' --include 'voice-dna.md' \
-      --include 'config/' --include 'config/profile.yml' --include 'config/cv-facts.json' \
-      --include 'modes/' --include 'modes/_profile.md' --include 'modes/_brief.md' --include 'modes/_custom.md' \
-      --include 'data/***' --include 'reports/***' --include 'output/***' --include 'jds/***' \
-      --include 'interview-prep/***' --include 'documents/***' --include 'writing-samples/***' \
-      --include 'batch/' --include 'batch/tracker-additions/***' \
-      --exclude '*' "$ROOT/" "$DEST/" \
+    # Prefer the checkout's backup.mjs (career-ops PR #6603): whole-file copies, and it skips data/cache, which is ~890 MB of
+    # disposable HTTP cache the rsync below copies. Until a pull brings backup.mjs in, fall back to the rsync.
+    if [ -f "$ROOT/backup.mjs" ]; then
+      node "$ROOT/backup.mjs" --dest "$DEST"
+    else
+      # -W copies whole files: rsync's delta mode maps the old copy on Google Drive, which Drive refuses with "mmap: Resource deadlock avoided".
+      rsync -aW --exclude '.git/' --exclude 'node_modules/' --exclude '.env' --exclude '.DS_Store' \
+        --exclude 'data/Connections.csv' --exclude 'web/' --exclude 'dashboard/' \
+        --include 'cv.md' --include 'article-digest.md' --include 'portals.yml' --include 'voice-dna.md' \
+        --include 'config/' --include 'config/profile.yml' --include 'config/cv-facts.json' \
+        --include 'modes/' --include 'modes/_profile.md' --include 'modes/_brief.md' --include 'modes/_custom.md' \
+        --include 'data/***' --include 'reports/***' --include 'output/***' --include 'jds/***' \
+        --include 'interview-prep/***' --include 'documents/***' --include 'writing-samples/***' \
+        --include 'batch/' --include 'batch/tracker-additions/***' \
+        --exclude '*' "$ROOT/" "$DEST/"
+    fi \
       && rsync -a "$HOME/.claude/projects/-Users-dgitman-Developer-public-career-ops/memory/" "$DEST/claude-memory/" \
       && echo "backed up to Drive: $(du -sh "$DEST" | cut -f1)" || { echo "backup FAILED"; fail "backup"; }
   else

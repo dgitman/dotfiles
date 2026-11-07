@@ -15,7 +15,7 @@ class RepoSecretScanTests(unittest.TestCase):
         self.calls = self.root/'calls'
         self.repo = self.root/'owner/repo'; (self.repo/'.git').mkdir(parents=True)
         (self.repo/'.git/index').write_text('')
-        self.env = dict(os.environ, PATH=str(self.bin)+':/usr/bin:/bin')
+        self.env = dict(os.environ, PATH=str(self.bin)+':/usr/bin:/bin', HOME=str(self.root))
 
     def tearDown(self):
         self.temp.cleanup()
@@ -59,6 +59,24 @@ class RepoSecretScanTests(unittest.TestCase):
         self.trufflehog(status=1)
         result = self.scan(self.repo)
         self.assertIn('FAILED owner/repo exit 1', result.stdout)
+
+    def ignore(self, text):
+        path = self.root/'.config/repo-secret-scan/ignore'
+        path.parent.mkdir(parents=True, exist_ok=True); path.write_text(text)
+
+    def test_ignored_findings_are_counted_not_printed(self):
+        self.trufflehog(finding(True), finding(False, 'other.env'))
+        self.ignore('# reviewed\nowner/repo Github config.env  # public test key\nowner/repo Github other.env:3 commit abcdef1\n')
+        result = self.scan(self.repo)
+        self.assertEqual(result.returncode, 0)
+        self.assertEqual(result.stdout, 'scanned 1 repos, 2 findings ignored\n')
+
+    def test_ignore_matches_whole_words_only(self):
+        self.trufflehog(finding(True))
+        self.ignore('owner/rep\nowner/repo Github config\n')
+        result = self.scan(self.repo)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn('VERIFIED owner/repo Github config.env:3', result.stdout)
 
     def test_skips_worktrees_empty_repos_and_non_repos(self):
         self.trufflehog()

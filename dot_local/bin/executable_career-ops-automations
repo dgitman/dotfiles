@@ -148,6 +148,19 @@ echo "$PA"
 PA_MSG=$(echo "$PA" | grep -E '^NOTIFY: ' | sed 's/^NOTIFY: //' | head -2 | tr -d '"\\' | paste -sd';' -)
 [ -n "$PA_MSG" ] && osascript -e "display notification \"$PA_MSG\" with title \"career-ops Portal Audit\"" 2>/dev/null
 
+echo "--- list sort (once a week; sorts the keyword lists in portals.yml, order and inline tags only)"
+# data/automations/sort-lists.mjs keeps a backup in data/automations/sort-backups/ and aborts if the entries would differ.
+# Stamp is the ISO week, written first like the portal audit; delete it to force a run.
+SL_STAMP="$ROOT/data/automations/sort-lists-last-run"
+if [ "$(cat "$SL_STAMP" 2>/dev/null)" = "$(date +%G-W%V)" ]; then
+  SL="skipped: already ran this week"; SL_RC=0
+else
+  date +%G-W%V > "$SL_STAMP"
+  SL=$(node data/automations/sort-lists.mjs 2>&1); SL_RC=$?
+fi
+echo "$SL"
+[ $SL_RC -eq 0 ] || fail "list sort (see output above)"
+
 echo "--- backup"
 DEST_FILE="$ROOT/data/automations/backup-dest"
 if [ -s "$DEST_FILE" ]; then

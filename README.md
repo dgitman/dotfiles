@@ -107,8 +107,11 @@ the home path, a private value, or a credential-shaped string, no
 `dot_chezmoi.*` file is managed, every managed LaunchAgent's program exists,
 every 1Password shell plugin config in `~/.config/op/plugins` is tracked,
 gitleaks finds nothing in the repo history (reviewed false positives are in
-`.gitleaksignore`), the global secret-scanning hooks are on, and the repo tests
-pass. For packages, it checks that every npm global package
+`.gitleaksignore`), the global secret-scanning hooks are on, TruffleHog finds no
+live credentials in the history of this repo or the `dgitman` and
+`because-ventures` repos in `~/Developer`, and the repo tests pass. TruffleHog (`~/.local/bin/repo-secret-scan`) tests each
+candidate credential against the service that issued it, and reports only where
+it was found. For packages, it checks that every npm global package
 and uv tool is in the Brewfile (brewfile-sync records them, and the install
 script reinstalls them with Homebrew Bundle) and that everything in the
 Brewfile is installed. It also lists pipx apps and pip packages installed

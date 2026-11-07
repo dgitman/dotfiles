@@ -122,6 +122,32 @@ else
   issue "global git hooks are not set up (hook.global-pre-commit in ~/.gitconfig and pre-commit)"
 fi
 
+# TruffleHog over the history of this repo and the repos of the owners bootstrap.sh
+# clones; ~/Developer/public holds other people's. It tests each candidate
+# credential against the service that issued it. A live credential needs rotating
+# by hand; history rewrites are not a fix on their own.
+if command -v trufflehog >/dev/null 2>&1; then
+  "$HOME/.local/bin/repo-secret-scan" "$src" "$HOME"/Developer/dgitman/* "$HOME"/Developer/because-ventures/* \
+    >"$scratch/trufflehog" 2>&1
+  if ! grep -q '^scanned ' "$scratch/trufflehog"; then
+    issue "repo-secret-scan did not finish; run it by hand"
+  elif grep -qE '^(VERIFIED|UNKNOWN|FAILED) ' "$scratch/trufflehog"; then
+    grep -q '^VERIFIED ' "$scratch/trufflehog" &&
+      issue "TruffleHog confirmed live credentials in repo history; the owner must rotate them:"
+    grep -q '^VERIFIED ' "$scratch/trufflehog" && sed -n 's/^VERIFIED /          /p' "$scratch/trufflehog"
+    grep -q '^UNKNOWN ' "$scratch/trufflehog" &&
+      review "TruffleHog could not verify these possible credentials in repo history:"
+    grep -q '^UNKNOWN ' "$scratch/trufflehog" && sed -n 's/^UNKNOWN /          /p' "$scratch/trufflehog"
+    grep -q '^FAILED ' "$scratch/trufflehog" &&
+      review "TruffleHog could not scan these repos:"
+    grep -q '^FAILED ' "$scratch/trufflehog" && sed -n 's/^FAILED /          /p' "$scratch/trufflehog"
+  else
+    ok "TruffleHog finds no live credentials: $(grep '^scanned ' "$scratch/trufflehog")"
+  fi
+else
+  issue "trufflehog is not installed; run: brew install trufflehog"
+fi
+
 # A dot_chezmoi.* source file writes an unused ~/.chezmoi.* instead of config.
 if chezmoi managed --include=files | grep -q '^\.chezmoi\.'; then
   issue "a dot_chezmoi.* source file is managed; config belongs in .chezmoi.toml.tmpl"

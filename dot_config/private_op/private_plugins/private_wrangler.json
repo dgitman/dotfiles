@@ -1,0 +1,15 @@
+{
+	"account_id": "DADTWU6NSBFM3HJANY5SUOCXEU",
+	"entrypoint": [
+		"wrangler"
+	],
+	"credentials": [
+		{
+			"plugin": "wrangler",
+			"credential_type": "api_token",
+			"usage_id": "api_token",
+			"vault_id": "ts4jmaranagdjfxrtkfukeglcm",
+			"item_id": "kd5oav5lykj4jgxshi3moxrxce"
+		}
+	]
+}

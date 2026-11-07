@@ -1,0 +1,15 @@
+{
+	"account_id": "DADTWU6NSBFM3HJANY5SUOCXEU",
+	"entrypoint": [
+		"gemini"
+	],
+	"credentials": [
+		{
+			"plugin": "gemini",
+			"credential_type": "api_key",
+			"usage_id": "api_key",
+			"vault_id": "ts4jmaranagdjfxrtkfukeglcm",
+			"item_id": "xksthrq2whv2dk6o5ua2qdcspq"
+		}
+	]
+}

@@ -1,0 +1,15 @@
+{
+	"account_id": "DADTWU6NSBFM3HJANY5SUOCXEU",
+	"entrypoint": [
+		"codex"
+	],
+	"credentials": [
+		{
+			"plugin": "openai",
+			"credential_type": "api_key",
+			"usage_id": "api_key",
+			"vault_id": "ts4jmaranagdjfxrtkfukeglcm",
+			"item_id": "lssbus3yjn244myop2zv4vdcgu"
+		}
+	]
+}

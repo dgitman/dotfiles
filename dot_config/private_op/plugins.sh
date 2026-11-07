@@ -17,9 +17,6 @@ gemini() {
 openai() {
     op plugin run -- openai "$@"
 }
-stripe() {
-    op plugin run -- stripe "$@"
-}
 vercel() {
     op plugin run -- vercel "$@"
 }

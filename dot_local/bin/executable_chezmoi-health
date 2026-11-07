@@ -18,7 +18,8 @@ scratch=$(mktemp -d "${TMPDIR:-/tmp}/chezmoi-health.XXXXXX")
 trap 'rm -rf "$scratch"' EXIT
 
 # 1Password must be unlocked for templates that read secrets to render.
-if /usr/bin/perl -e 'alarm 20; exec @ARGV' op whoami >/dev/null 2>&1; then
+# op whoami only reports an existing session; op vault list signs in through the app.
+if /usr/bin/perl -e 'alarm 60; exec @ARGV' op vault list >/dev/null 2>&1; then
   ok "1Password CLI is connected"
 else
   issue "1Password CLI is not connected; unlock 1Password, then run again"

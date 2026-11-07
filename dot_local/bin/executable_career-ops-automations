@@ -160,7 +160,7 @@ if [ -s "$DEST_FILE" ]; then
     BACKUP_JS="$ROOT/backup.mjs"
     [ -f "$BACKUP_JS" ] || BACKUP_JS="$HOME/Developer/public/career-ops-backup/backup.mjs"
     if [ -f "$BACKUP_JS" ]; then
-      CAREER_OPS_ROOT="$ROOT" node "$BACKUP_JS" --dest "$DEST"
+      CAREER_OPS_ROOT="$ROOT" node "$BACKUP_JS" --dest "$DEST" --include-connections
     else
       # -W copies whole files: rsync's delta mode maps the old copy on Google Drive, which Drive refuses with "mmap: Resource deadlock avoided".
       rsync -aW --exclude '.git/' --exclude 'node_modules/' --exclude '.env' --exclude '.env.*' --exclude '.DS_Store' \

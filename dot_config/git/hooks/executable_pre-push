@@ -1,0 +1,41 @@
+#!/bin/bash
+# Global pre-push hook: review the commits being pushed with CodeRabbit, then
+# run the repository's own hook. Major or critical findings block the push; a
+# review that cannot run (signed out, offline, out of reviews) only warns.
+# `git push --no-verify` skips all hooks.
+set -euo pipefail
+
+# Git sends the refs on stdin; keep them for the repository's own hook.
+refs=$(cat)
+head=$(git rev-parse --verify --quiet HEAD || true)
+
+review() {
+  local args=(--committed --gate major) status=0
+  # A new branch has no remote commit to compare with; CodeRabbit picks the base.
+  if [[ ! "$1" =~ ^0+$ ]] && git merge-base --is-ancestor "$1" HEAD 2>/dev/null; then
+    args+=(--base-commit "$1")
+  fi
+  coderabbit review "${args[@]}" </dev/null >&2 || status=$?
+  case "$status" in
+    0) ;;
+    2)
+      echo "Push blocked: CodeRabbit found major issues. Fix them, or skip with git push --no-verify." >&2
+      exit 1
+      ;;
+    *) echo "CodeRabbit review could not run (exit $status); pushing without it." >&2 ;;
+  esac
+}
+
+if command -v coderabbit >/dev/null 2>&1; then
+  # CodeRabbit reviews the checkout, so only a push of the current commit counts.
+  while read -r _ local_sha remote_ref remote_sha; do
+    if [[ "$remote_ref" == refs/heads/* && "$local_sha" == "$head" ]]; then
+      review "$remote_sha"
+      break
+    fi
+  done <<<"$refs"
+else
+  echo "Global pre-push hook: coderabbit is not installed; review skipped." >&2
+fi
+
+exec "$(dirname "$0")/chain-repo-hook" pre-push "$@" <<<"$refs"

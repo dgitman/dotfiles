@@ -148,7 +148,7 @@ echo "$PA"
 PA_MSG=$(echo "$PA" | grep -E '^NOTIFY: ' | sed 's/^NOTIFY: //' | head -2 | tr -d '"\\' | paste -sd';' -)
 [ -n "$PA_MSG" ] && osascript -e "display notification \"$PA_MSG\" with title \"career-ops Portal Audit\"" 2>/dev/null
 
-echo "--- list sort (once a week; portals.yml keyword lists and tracked_companies, data/follow-ups.md; order and inline tags only)"
+echo "--- list sort (once a week; portals.yml keyword lists and tracked_companies, data/follow-ups.md, the Processed section of data/pipeline.md; order and inline tags only)"
 # data/automations/sort-lists.mjs keeps a backup in data/automations/sort-backups/ and aborts if the entries would differ.
 # Stamp is the ISO week, written first like the portal audit; delete it to force a run.
 SL_STAMP="$ROOT/data/automations/sort-lists-last-run"

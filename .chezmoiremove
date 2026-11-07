@@ -1,3 +1,17 @@
 .local/bin/dotfiles-setup
 .chezmoi.toml
 .local/bin/gh
+.config/git/hooks/chain-repo-hook
+.config/git/hooks/applypatch-msg
+.config/git/hooks/commit-msg
+.config/git/hooks/post-applypatch
+.config/git/hooks/post-checkout
+.config/git/hooks/post-commit
+.config/git/hooks/post-merge
+.config/git/hooks/post-rewrite
+.config/git/hooks/pre-applypatch
+.config/git/hooks/pre-auto-gc
+.config/git/hooks/pre-merge-commit
+.config/git/hooks/pre-rebase
+.config/git/hooks/prepare-commit-msg
+.config/git/hooks/push-to-checkout

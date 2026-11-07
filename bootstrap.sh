@@ -291,6 +291,8 @@ main() {
   chezmoi git -- remote set-url origin "git@github.com:$REPO.git"
   # Block commits that would publish the home path or personal email addresses.
   chezmoi git -- config core.hooksPath git-hooks
+  # brewfile-sync pushes this repo hourly; keep it out of the CodeRabbit review.
+  chezmoi git -- config hook.coderabbit-review.enabled false
 
   # 5. Steps the README used to list as manual.
   info "Checking GitHub CLI sign-in"

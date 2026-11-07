@@ -62,6 +62,9 @@ other=$(git ls-remote --heads origin | awk '{print $2}' | grep -vx refs/heads/ma
 # The privacy hooks must be on.
 [ "$(git config --get core.hooksPath)" = git-hooks ] && ok "privacy hooks are enabled" ||
   issue "privacy hooks are off; run: chezmoi git -- config core.hooksPath git-hooks"
+# Pushes from this repo stay out of the CodeRabbit review; brewfile-sync pushes hourly.
+[ "$(git config --bool --get hook.coderabbit-review.enabled)" = false ] && ok "CodeRabbit review is off for this repo" ||
+  issue "CodeRabbit review is on for this repo; run: chezmoi git -- config hook.coderabbit-review.enabled false"
 
 # No tracked file may contain the home path or a private value from chezmoi data.
 {
@@ -113,10 +116,10 @@ if command -v gitleaks >/dev/null 2>&1; then
 else
   issue "gitleaks is not installed; run: brew install gitleaks"
 fi
-if [ "$(git config --global core.hooksPath)" = "~/.config/git/hooks" ] && command -v pre-commit >/dev/null 2>&1; then
+if [ "$(git config --global hook.global-pre-commit.command)" = "~/.config/git/hooks/pre-commit" ] && command -v pre-commit >/dev/null 2>&1; then
   ok "global git hooks run the gitleaks pre-commit scan"
 else
-  issue "global git hooks are not set up (core.hooksPath ~/.config/git/hooks and pre-commit)"
+  issue "global git hooks are not set up (hook.global-pre-commit in ~/.gitconfig and pre-commit)"
 fi
 
 # A dot_chezmoi.* source file writes an unused ~/.chezmoi.* instead of config.

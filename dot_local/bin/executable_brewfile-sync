@@ -106,12 +106,13 @@ fi
 # --only preserves unrelated staged changes. Disable signing and hooks solely for
 # this unattended commit to avoid prompts or hooks staging additional paths.
 git -C "$repo" -c commit.gpgsign=false -c core.hooksPath=/dev/null \
+    -c hook.global-pre-commit.enabled=false \
     commit --only -m 'Update Brewfile from installed packages' -- dot_Brewfile
 # Push the current branch to its configured upstream after a successful commit.
 if ! git -C "$repo" rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' >/dev/null 2>&1; then
     fail 'Commit succeeded, but no upstream is configured for the current branch.'
 fi
-if ! git -C "$repo" push; then
+if ! git -C "$repo" -c hook.coderabbit-review.enabled=false push; then
     fail 'Commit succeeded, but git push failed.'
 fi
 log 'Updated, committed, and pushed dot_Brewfile only.'

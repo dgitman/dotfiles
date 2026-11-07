@@ -1,13 +1,12 @@
 #!/bin/bash
-# Global pre-push hook: review the commits being pushed with CodeRabbit, then
-# run the repository's own hook. Major or critical findings block the push; a
-# review that cannot run (signed out, offline, out of reviews) only warns.
+# Global pre-push hook (hook.coderabbit-review in ~/.gitconfig): review the
+# commits being pushed with CodeRabbit. Major or critical findings block the
+# push; a review that cannot run (signed out, offline, out of reviews) only warns.
 # The review sends the diff to CodeRabbit; opt a repository out with
-# `git config hooks.coderabbit false`. `git push --no-verify` skips all hooks.
+# `git config hook.coderabbit-review.enabled false`. `git push --no-verify` skips
+# all hooks.
 set -euo pipefail
 
-# Git sends the refs on stdin; keep them for the repository's own hook.
-refs=$(cat)
 head=$(git rev-parse --verify --quiet HEAD || true)
 
 review() {
@@ -27,18 +26,16 @@ review() {
   esac
 }
 
-if [ "$(git config --bool --get hooks.coderabbit || true)" = false ]; then
-  echo "CodeRabbit review is off for this repository (hooks.coderabbit)." >&2
-elif command -v coderabbit >/dev/null 2>&1; then
-  # CodeRabbit reviews the checkout, so only a push of the current commit counts.
-  while read -r _ local_sha remote_ref remote_sha; do
-    if [[ "$remote_ref" == refs/heads/* && "$local_sha" == "$head" ]]; then
-      review "$remote_sha"
-      break
-    fi
-  done <<<"$refs"
-else
+if ! command -v coderabbit >/dev/null 2>&1; then
   echo "Global pre-push hook: coderabbit is not installed; review skipped." >&2
+  exit 0
 fi
 
-exec "$(dirname "$0")/chain-repo-hook" pre-push "$@" <<<"$refs"
+# CodeRabbit reviews the checkout, so only a push of the current commit counts.
+# Git sends the refs on stdin.
+while read -r _ local_sha remote_ref remote_sha; do
+  if [[ "$remote_ref" == refs/heads/* && "$local_sha" == "$head" ]]; then
+    review "$remote_sha"
+    break
+  fi
+done

@@ -18,8 +18,13 @@
         gpgsign = true
 [core]
 	excludesfile = ~/.gitignore_global
-	# Global hooks: gitleaks via pre-commit, then each repo's own hooks.
-	hooksPath = ~/.config/git/hooks
+# Global hooks run in every repository, before its own (git help hook).
+[hook "global-pre-commit"]
+	event = pre-commit
+	command = ~/.config/git/hooks/pre-commit
+[hook "coderabbit-review"]
+	event = pre-push
+	command = ~/.config/git/hooks/pre-push
 [credential "https://github.com"]
 	helper = 
 	helper = !/opt/homebrew/bin/gh auth git-credential

@@ -77,31 +77,26 @@ there and run `chezmoi init`.
 
 ## Secret scanning in every repository
 
-`~/.gitconfig` sets `core.hooksPath = ~/.config/git/hooks`, so these hooks run
-in every repository on this Mac:
+`~/.gitconfig` defines two config-based hooks (`git help hook`), which run in
+every repository on this Mac, before the repository's own hooks:
 
-- `pre-commit` runs the global pre-commit config,
-  `~/.config/pre-commit/config.yaml`, which scans staged changes with
-  `gitleaks` (redacted output; a repository's `.gitleaks.toml` and
+- `hook.global-pre-commit` runs `~/.config/git/hooks/pre-commit`, which runs the
+  global pre-commit config, `~/.config/pre-commit/config.yaml`. That scans staged
+  changes with `gitleaks` (redacted output; a repository's `.gitleaks.toml` and
   `.gitleaksignore` apply). It then runs the repository's own
-  `.pre-commit-config.yaml`, if any, and its own `.git/hooks/pre-commit`.
-- `pre-push` reviews the commits being pushed with `coderabbit review --committed
-  --gate major`. Major or critical findings block the push; a review that cannot
-  run (signed out, offline, out of reviews) only warns. It then runs the
-  repository's own `.git/hooks/pre-push`. The review sends the diff to
-  CodeRabbit, a third-party service, from every repository that uses these hooks;
-  turn it off for a sensitive one with `git config hooks.coderabbit false`.
-  `git push --no-verify` skips it for a single push.
-- Every other hook name is a symlink to `chain-repo-hook`, which runs the
-  repository's `.git/hooks/<name>`, so hooks installed by tools such as Git LFS
-  keep working.
+  `.pre-commit-config.yaml`, unless `pre-commit install` already hooked it up.
+- `hook.coderabbit-review` runs `~/.config/git/hooks/pre-push`, which reviews the
+  commits being pushed with `coderabbit review --committed --gate major`. Major
+  or critical findings block the push; a review that cannot run (signed out,
+  offline, out of reviews) only warns. The review sends the diff to CodeRabbit, a
+  third-party service; turn it off for a sensitive repository with
+  `git config hook.coderabbit-review.enabled false`. This repo has it off, set by
+  `bootstrap.sh`, because `brewfile-sync` pushes hourly.
 
-A global `core.hooksPath` makes `pre-commit install` refuse to run; that is
-expected, because the global hook already runs a repository's
-`.pre-commit-config.yaml`. A repository that sets its own `core.hooksPath`
-(like this one) skips the global hooks, so its hooks must call the global
-config themselves, as `git-hooks/pre-commit` does. Add more global checks to
-`dot_config/pre-commit/config.yaml`. `git commit --no-verify` skips all hooks.
+A repository's own hooks in `.git/hooks` or its own `core.hooksPath` (like this
+one's `git-hooks`) keep working, and the global hooks run there too. `git commit
+--no-verify` and `git push --no-verify` skip all of them. Add more global checks
+to `dot_config/pre-commit/config.yaml`. Config-based hooks need Git 2.54 or newer.
 
 ## Weekly health check
 

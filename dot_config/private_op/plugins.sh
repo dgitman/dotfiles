@@ -11,9 +11,6 @@ brew() {
 codex() {
     op plugin run -- codex "$@"
 }
-copilot() {
-    op plugin run -- copilot "$@"
-}
 gemini() {
     op plugin run -- gemini "$@"
 }

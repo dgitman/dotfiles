@@ -33,6 +33,7 @@
     ]
   },
   "model": "claude-sonnet-5-5",
+  "attribution": { "commit": "", "pr": "" },
   "enableWorkflows": true,
   "enabledPlugins": {
     "cloudflare@claude-plugins-official": true,
@@ -64,7 +65,8 @@
       "$defaults",
       "Bash(gh auth login:*) in this repo — CLAUDE.md states gh auth is handled via `op plugin run -- gh ...` through the 1Password shell plugin; running `gh auth login` directly or persisting a token locally should be flagged rather than auto-approved",
       "Bash(git push --force*) and Bash(git push -f*) against origin github.com:dgitman/dotfiles.git — CLAUDE.md explicitly says never force-push",
-      "Bash(git push origin main:*) in career-ops-hq/career-ops — main is protected by an active ruleset (main-merge-queue); direct pushes to main should be confirmed rather than auto-approved"
+      "Bash(git push origin main:*) in career-ops-hq/career-ops — main is protected by an active ruleset (main-merge-queue); direct pushes to main should be confirmed rather than auto-approved",
+      "Bash(npm run deploy:*) in this repo without explicit confirmation — deploys to the production Cloudflare Worker trakt-list-sync that handles live watch-history repairs"
     ],
     "environment": [
       "### Org-wide",
@@ -87,12 +89,25 @@
       "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment",
       "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
       "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "**Cloud provider(s)**: Cloudflare Workers (per README — Worker `trakt-list-sync` in the \"Personal\" Cloudflare account)",
+      "**Repository visibility**: private (dgitman/trakt-watch-history-repair, confirmed via gh)",
+      "**Secrets management**: 1Password CLI (op) is used for provisioning per README (\"Provisioning also uses Python 3 and the 1Password CLI\"); raw tokens are not persisted locally; secrets/.env files must never be committed per ~/.claude/CLAUDE.md",
+      "**Default / protected branches**: main (default branch, confirmed via gh); Rulesets: none listed, Protected branches: none listed via gh — treat as unprotected absent corroborating evidence",
+      "**CI/CD deploy targets**: Cloudflare Worker `trakt-list-sync` (production deployment target, deployed via `npm run deploy` from this repository only per README)",
+      "**Source control**: The trusted repo (dgitman/trakt-watch-history-repair) and its origin remote (github.com:dgitman/trakt-watch-history-repair.git) only — no additional orgs configured",
+      "**Key internal services**: trakt-list-sync.dgitman-personal.workers.dev (Cloudflare Worker administration endpoint, set as SYNC_URL per README; contacted 6× in this project's transcripts)",
+      "**Sensitive data locations & audiences**: any file or store holding personal data, confidential business data, credentials, regulated data, or similarly sensitive material; preserve exact handles when known and share only with audiences cleared at the [named+specifics] bar — scripts/provision-secrets.py and files matching `.env*` / `*auth_token*` (per .gitignore) likely hold credential material; share only with the user themself",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment (hyphen/underscore/dot-delimited)",
       "### User-specific",
       "**Primary use of Claude Code**: personal dotfiles/macOS configuration management (chezmoi) — hobby/personal use",
       "**Trusted repo**: wildcard — ~/.local/share/chezmoi (dgitman/dotfiles, github.com:dgitman/dotfiles.git) and everything under ~/Developer/** (all repos and their origin remotes, including dgitman/*, because-ventures/* and career-ops-hq/*)",
       "**Org-specific CLIs**: None configured — op (1Password CLI) and chezmoi are personal credential/dotfile management tools, not org-specific",
       "Git workflow auto-approval (commit, fast-forward-merge to main, push to origin without asking, provided tests pass and main hasn't diverged; never force-push) is standing approval per ~/.claude/CLAUDE.md for the user's own repos under ~/Developer and ~/.local/share/chezmoi — this repo (~/.local/share/chezmoi) is explicitly covered",
-      "Secrets/tokens, .env files must never be committed, per ~/.claude/CLAUDE.md"
+      "Secrets/tokens, .env files must never be committed, per ~/.claude/CLAUDE.md",
+      "**Primary use of Claude Code**: personal/hobby software development (Cloudflare Worker maintenance for a personal Trakt watch-history repair job)",
+      "**Trusted repo**: this repo only — {{ .chezmoi.homeDir }}/Developer/dgitman/trakt-watch-history-repair (dgitman/trakt-watch-history-repair, github.com:dgitman/trakt-watch-history-repair.git)",
+      "**Org-specific CLIs**: None configured — op (1Password CLI) is a personal credential management tool, not org-specific",
+      "Git workflow auto-approval (commit, fast-forward-merge to main, push to origin without asking, provided tests pass and main hasn't diverged; never force-push) is standing approval per ~/.claude/CLAUDE.md for the user's own repos under ~/Developer — this repo is covered"
     ]
   }
 }

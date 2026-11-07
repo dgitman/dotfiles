@@ -315,6 +315,33 @@
       "skillFolderHash": "b2c46fb0c4bf9c9408d00f38c0fec76e8419643c",
       "installedAt": "2026-10-28T00:35:10.112Z",
       "updatedAt": "2026-10-28T00:35:10.112Z"
+    },
+    "create-payment-credential": {
+      "source": "stripe/link-cli",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/stripe/link-cli.git",
+      "skillPath": "skills/create-payment-credential/SKILL.md",
+      "skillFolderHash": "b051610d930d39dd0e7fc5fd891422fb03eb4ae4",
+      "installedAt": "2026-11-04T22:12:57.037Z",
+      "updatedAt": "2026-11-04T22:16:15.939Z"
+    },
+    "financial-insights": {
+      "source": "stripe/link-cli",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/stripe/link-cli.git",
+      "skillPath": "skills/financial-insights/SKILL.md",
+      "skillFolderHash": "3e3941a5d2625ae93434edacb736f0d55e10a95a",
+      "installedAt": "2026-11-04T22:12:57.040Z",
+      "updatedAt": "2026-11-04T22:16:15.941Z"
+    },
+    "use-link-identity": {
+      "source": "stripe/link-cli",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/stripe/link-cli.git",
+      "skillPath": "skills/use-link-identity/SKILL.md",
+      "skillFolderHash": "db2addce3f4f7feacd51ef073e44fdca35a9feb3",
+      "installedAt": "2026-11-04T22:12:57.040Z",
+      "updatedAt": "2026-11-04T22:16:15.941Z"
     }
   },
   "dismissed": {

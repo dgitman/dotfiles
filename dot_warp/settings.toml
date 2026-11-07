@@ -157,3 +157,8 @@ show_global_search = true
 
 [warp_drive]
 enabled = true
+
+[cloud_platform]
+
+[cloud_platform.third_party_api_keys]
+can_use_warp_credits_with_byok = true

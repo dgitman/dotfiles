@@ -1,1 +1,1 @@
-allow-scripts=esbuild,fsevents
+allow-scripts=@stripe/link-cli

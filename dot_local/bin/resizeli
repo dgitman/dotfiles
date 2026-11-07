@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+import sys
+import os
+from PIL import Image, ImageOps
+
+def resize_for_linkedin(image_path, output_path="linkedin_output.png"):
+    # Target Specifications
+    TARGET_WIDTH = 1200
+    TARGET_HEIGHT = 627
+    
+    # Required Logo Boundary Margins
+    MARGIN_LEFT = 180
+    MARGIN_RIGHT = 180
+    MARGIN_TOP = 190
+    MARGIN_BOTTOM = 190
+    
+    # Calculate available internal canvas size for the core content
+    max_content_width = TARGET_WIDTH - (MARGIN_LEFT + MARGIN_RIGHT)    # 840px
+    max_content_height = TARGET_HEIGHT - (MARGIN_TOP + MARGIN_BOTTOM)  # 247px
+    
+    if not os.path.exists(image_path):
+        print(f"Error: Source image '{image_path}' not found.")
+        sys.path.exit(1)
+        
+    with Image.open(image_path) as img:
+        # Preserve original aspect ratio while fitting within safe boundaries
+        img.thumbnail((max_content_width, max_content_height), Image.Resampling.LANCZOS)
+        content_w, content_h = img.size
+        
+        # Create a new pristine canvas filled with your background padding color
+        # Automatically detects translucent pixels to backfill with solid white if needed
+        bg_color = (255, 255, 255) if img.mode not in ('RGBA', 'LA') else (255, 255, 255, 255)
+        canvas = Image.new(img.mode, (TARGET_WIDTH, TARGET_HEIGHT), bg_color)
+        
+        # Center the asset horizontally and vertically within the safe content zone
+        paste_x = MARGIN_LEFT + (max_content_width - content_w) // 2
+        paste_y = MARGIN_TOP + (max_content_height - content_h) // 2
+        
+        canvas.paste(img, (paste_x, paste_y))
+        
+        # Save output cleanly optimized under 5MB 
+        canvas.save(output_path, "PNG", optimize=True)
+        print(f"Success! Optimized banner saved cleanly to: {output_path}")
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: python3 resize_linkedin.py <path_to_image> [output_path]")
+        sys.exit(1)
+        
+    source = sys.argv[1]
+    destination = sys.argv[2] if len(sys.argv) > 2 else "linkedin_resized.png"
+    resize_for_linkedin(source, destination)

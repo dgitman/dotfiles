@@ -113,6 +113,9 @@ enabled = true
 [plugins."linkedin-mcp-server@linkedin-mcp-server"]
 enabled = true
 
+[plugins."career-ops@career-ops"]
+enabled = true
+
 [mcp_servers.1password]
 command = "/Applications/1Password.app/Contents/MacOS/1password-mcp"
 
@@ -153,13 +156,40 @@ NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = ""
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = ""
 NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = ""
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.1023.51421"
-NODE_REPL_TRUSTED_SERVICES = '{"browser":"{{ .chezmoi.homeDir }}/.codex/plugins/cache/openai-bundled/browser/26.1023.51421/scripts/browser-service.mjs","sky":"@oai/sky/service"}'
-SKY_CUA_SERVICE_PATH = "{{ .chezmoi.homeDir }}/.codex/computer-use/Codex Computer Use.app"
+BROWSER_USE_CODEX_APP_VERSION = "26.1103.41825"
+NODE_REPL_TRUSTED_SERVICES = '{"browser":"/Users/dgitman/.codex/plugins/cache/openai-bundled/browser/26.1103.41825/scripts/browser-service.mjs","sky":"@oai/sky/service"}'
+SKY_CUA_SERVICE_PATH = "/Users/dgitman/.codex/computer-use/Codex Computer Use.app"
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex"
 
 [mcp_servers.n8n]
 url = "https://dgitman.app.n8n.cloud/mcp-server/http"
+
+[mcp_servers.amazon-orders]
+enabled = true
+command = "npx"
+args = ["--yes", "amz-order-history-csv-mcp"]
+
+[mcp_servers.amazon-orders.tools.check_amazon_auth_status]
+approval_mode = "approve"
+
+[mcp_servers.amazon-orders.tools.get_amazon_orders]
+approval_mode = "approve"
+
+[mcp_servers.amazon-orders.tools.export_amazon_orders_csv]
+approval_mode = "approve"
+
+[mcp_servers.amazon-orders.tools.export_amazon_items_csv]
+approval_mode = "approve"
+
+[mcp_servers.target]
+enabled = true
+command = "npx"
+args = ["@striderlabs/mcp-target"]
+
+[mcp_servers.amazon-orders-local]
+enabled = true
+command = "node"
+args = ["{{ .chezmoi.homeDir }}/Developer/dgitman/amazon-order-history-csv-download-mcp/dist/index.js"]
 
 # Desktop preferences
 [desktop]
@@ -235,6 +265,10 @@ source = "https://github.com/pagecrawl/skills.git"
 [marketplaces.linkedin-mcp-server]
 source_type = "git"
 source = "https://github.com/stickerdaniel/linkedin-mcp-server.git"
+
+[marketplaces.career-ops]
+source_type = "git"
+source = "https://github.com/career-ops-hq/career-ops.git"
 
 # Terminal preferences
 [tui]
@@ -488,3 +522,7 @@ trusted_hash = "sha256:cf9295f2890a857c2f76fcbdc2f5dd3c352e14f21f0e712e54ff5675f
 
 [hooks.state."n8n-skills@n8n-io:hooks/hooks.json:pre_tool_use:7:0"]
 trusted_hash = "sha256:c8407b61da60fa7940676c2d1e79a505f74166bf104a0d537cd2cf50822575ef"
+
+[hooks.state."career-ops@career-ops:hooks/hooks.json:session_start:0:0"]
+trusted_hash = "sha256:bbc88cddd5c9b1a95caa45000d9cd71b0dfa9fd2948f654858ba253bd6d26a3f"
+trusted_content_hash = "sha256:7d8a97fa44b4283879d0f0cdbf5b94217f242253f73f96d09b26b55bddc65fa9"

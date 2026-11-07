@@ -88,7 +88,10 @@ in every repository on this Mac:
 - `pre-push` reviews the commits being pushed with `coderabbit review --committed
   --gate major`. Major or critical findings block the push; a review that cannot
   run (signed out, offline, out of reviews) only warns. It then runs the
-  repository's own `.git/hooks/pre-push`. `git push --no-verify` skips it.
+  repository's own `.git/hooks/pre-push`. The review sends the diff to
+  CodeRabbit, a third-party service, from every repository that uses these hooks;
+  turn it off for a sensitive one with `git config hooks.coderabbit false`.
+  `git push --no-verify` skips it for a single push.
 - Every other hook name is a symlink to `chain-repo-hook`, which runs the
   repository's `.git/hooks/<name>`, so hooks installed by tools such as Git LFS
   keep working.

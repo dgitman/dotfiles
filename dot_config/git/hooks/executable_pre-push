@@ -2,7 +2,8 @@
 # Global pre-push hook: review the commits being pushed with CodeRabbit, then
 # run the repository's own hook. Major or critical findings block the push; a
 # review that cannot run (signed out, offline, out of reviews) only warns.
-# `git push --no-verify` skips all hooks.
+# The review sends the diff to CodeRabbit; opt a repository out with
+# `git config hooks.coderabbit false`. `git push --no-verify` skips all hooks.
 set -euo pipefail
 
 # Git sends the refs on stdin; keep them for the repository's own hook.
@@ -26,7 +27,9 @@ review() {
   esac
 }
 
-if command -v coderabbit >/dev/null 2>&1; then
+if [ "$(git config --bool --get hooks.coderabbit || true)" = false ]; then
+  echo "CodeRabbit review is off for this repository (hooks.coderabbit)." >&2
+elif command -v coderabbit >/dev/null 2>&1; then
   # CodeRabbit reviews the checkout, so only a push of the current commit counts.
   while read -r _ local_sha remote_ref remote_sha; do
     if [[ "$remote_ref" == refs/heads/* && "$local_sha" == "$head" ]]; then

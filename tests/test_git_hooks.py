@@ -151,6 +151,14 @@ class GlobalPrePushTests(unittest.TestCase):
         self.assertEqual(self.push('v1').returncode, 0)
         self.assertFalse(self.args.exists())
 
+    def test_repo_opt_out_skips_review(self):
+        self.coderabbit(2)
+        self.git('config', 'hooks.coderabbit', 'false')
+        result = self.push()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse(self.args.exists())
+        self.assertTrue(self.pushed())
+
     def test_repo_hook_still_gets_refs(self):
         self.coderabbit(0)
         seen = self.root/'seen'

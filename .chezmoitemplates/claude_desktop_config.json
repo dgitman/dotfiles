@@ -100,35 +100,48 @@
           "groups": [
             {
               "id": "cg-00bd2d38-2fab-433d-906a-4dab938be5db",
-              "name": "Websites"
+              "name": "Websites",
+              "mode": "code"
             },
             {
               "id": "cg-3e642554-a198-4ce2-bdbf-f39c100e6c30",
-              "name": "Sync & migration"
+              "name": "Sync & migration",
+              "mode": "code"
             },
             {
               "id": "cg-533bff2a-fe92-47fa-8af3-d016fe07b5fb",
-              "name": "Legal / court"
+              "name": "Legal / court",
+              "mode": "code"
             },
             {
               "id": "cg-fb5d24b8-2d2d-49d7-b967-3b4a73e5a80b",
-              "name": "Sheets & automation"
+              "name": "Sheets & automation",
+              "mode": "code"
             },
             {
               "id": "cg-74279aa0-eb9c-4de8-b6ae-a311a4fdb0cd",
-              "name": "Scrapers & monitors"
+              "name": "Scrapers & monitors",
+              "mode": "code"
             },
             {
               "id": "cg-3ab31ab2-1c2d-48a3-a50a-354c2c2b9804",
-              "name": "Media & travel"
+              "name": "Media & travel",
+              "mode": "code"
             },
             {
               "id": "cg-bb27b4a2-b1f6-4211-9d08-4e4d9d866641",
-              "name": "Games & fun"
+              "name": "Games & fun",
+              "mode": "code"
             },
             {
               "id": "cg-4a1ec0fa-d3a7-4e4d-b127-385d3ca99f00",
-              "name": "Tools"
+              "name": "Tools",
+              "mode": "code"
+            },
+            {
+              "id": "cg-605ed748-4173-4703-9a7b-31b41f147229",
+              "name": "Career",
+              "mode": "code"
             }
           ]
         }
@@ -147,7 +160,8 @@
               "show": {
                 "metadata": false,
                 "emptyGroups": false,
-                "sideChats": false
+                "sideChats": false,
+                "slack": true
               },
               "collapsed": false,
               "shown": true
@@ -163,7 +177,8 @@
               "show": {
                 "metadata": false,
                 "emptyGroups": false,
-                "sideChats": false
+                "sideChats": false,
+                "slack": true
               },
               "collapsed": true,
               "shown": false
@@ -174,13 +189,31 @@
               "v": 2,
               "name": "Legal / court",
               "order": 2,
-              "groupBy": "status",
-              "sortBy": "alpha",
+              "sortBy": "recency",
               "ascending": false,
               "show": {
                 "metadata": true,
                 "emptyGroups": false,
-                "sideChats": false
+                "sideChats": false,
+                "slack": true
+              },
+              "collapsed": true,
+              "shown": true,
+              "members": []
+            },
+            {
+              "id": "cg-605ed748-4173-4703-9a7b-31b41f147229",
+              "kind": "manual",
+              "v": 2,
+              "name": "Career",
+              "order": 3,
+              "sortBy": "recency",
+              "ascending": false,
+              "show": {
+                "metadata": true,
+                "emptyGroups": false,
+                "sideChats": false,
+                "slack": true
               },
               "collapsed": false,
               "shown": true,
@@ -191,16 +224,16 @@
               "kind": "manual",
               "v": 2,
               "name": "Websites",
-              "order": 3,
-              "groupBy": "status",
-              "sortBy": "alpha",
+              "order": 4,
+              "sortBy": "recency",
               "ascending": false,
               "show": {
                 "metadata": true,
                 "emptyGroups": false,
-                "sideChats": false
+                "sideChats": false,
+                "slack": true
               },
-              "collapsed": false,
+              "collapsed": true,
               "shown": true,
               "members": []
             },
@@ -209,16 +242,16 @@
               "kind": "manual",
               "v": 2,
               "name": "Media & travel",
-              "order": 4,
-              "groupBy": "status",
-              "sortBy": "alpha",
+              "order": 5,
+              "sortBy": "recency",
               "ascending": false,
               "show": {
                 "metadata": true,
                 "emptyGroups": false,
-                "sideChats": false
+                "sideChats": false,
+                "slack": true
               },
-              "collapsed": false,
+              "collapsed": true,
               "shown": true,
               "members": []
             },
@@ -227,16 +260,16 @@
               "kind": "manual",
               "v": 2,
               "name": "Sync & migration",
-              "order": 5,
-              "groupBy": "status",
-              "sortBy": "alpha",
+              "order": 6,
+              "sortBy": "recency",
               "ascending": false,
               "show": {
                 "metadata": true,
                 "emptyGroups": false,
-                "sideChats": false
+                "sideChats": false,
+                "slack": true
               },
-              "collapsed": false,
+              "collapsed": true,
               "shown": true,
               "members": []
             },
@@ -245,16 +278,16 @@
               "kind": "manual",
               "v": 2,
               "name": "Scrapers & monitors",
-              "order": 6,
-              "groupBy": "status",
-              "sortBy": "alpha",
+              "order": 7,
+              "sortBy": "recency",
               "ascending": false,
               "show": {
                 "metadata": true,
                 "emptyGroups": false,
-                "sideChats": false
+                "sideChats": false,
+                "slack": true
               },
-              "collapsed": false,
+              "collapsed": true,
               "shown": true,
               "members": []
             },
@@ -263,16 +296,16 @@
               "kind": "manual",
               "v": 2,
               "name": "Sheets & automation",
-              "order": 7,
-              "groupBy": "status",
-              "sortBy": "alpha",
+              "order": 8,
+              "sortBy": "recency",
               "ascending": false,
               "show": {
                 "metadata": true,
                 "emptyGroups": false,
-                "sideChats": false
+                "sideChats": false,
+                "slack": true
               },
-              "collapsed": false,
+              "collapsed": true,
               "shown": true,
               "members": []
             },
@@ -281,16 +314,16 @@
               "kind": "manual",
               "v": 2,
               "name": "Games & fun",
-              "order": 8,
-              "groupBy": "status",
-              "sortBy": "alpha",
+              "order": 9,
+              "sortBy": "recency",
               "ascending": false,
               "show": {
                 "metadata": true,
                 "emptyGroups": false,
-                "sideChats": false
+                "sideChats": false,
+                "slack": true
               },
-              "collapsed": false,
+              "collapsed": true,
               "shown": true,
               "members": []
             },
@@ -299,14 +332,14 @@
               "kind": "manual",
               "v": 2,
               "name": "Tools",
-              "order": 9,
-              "groupBy": "status",
-              "sortBy": "alpha",
+              "order": 10,
+              "sortBy": "recency",
               "ascending": false,
               "show": {
                 "metadata": true,
                 "emptyGroups": false,
-                "sideChats": false
+                "sideChats": false,
+                "slack": true
               },
               "collapsed": false,
               "shown": true,
@@ -317,14 +350,15 @@
               "kind": "sessions",
               "v": 2,
               "name": "",
-              "order": 10,
+              "order": 11,
               "groupBy": "status",
               "sortBy": "alpha",
               "ascending": false,
               "show": {
                 "metadata": true,
                 "emptyGroups": true,
-                "sideChats": false
+                "sideChats": false,
+                "slack": true
               },
               "collapsed": false,
               "shown": true

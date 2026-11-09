@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Hourly career-ops job: zero-token portal scan, full ATS sweep, LinkedIn (once a day) and mail checks, triage, follow-ups, backup.
+# Hourly career-ops job: zero-token portal scan, full ATS sweep, mail checks, triage, follow-ups, backup.
 # Run by the net.gitman.career-ops-automations LaunchAgent (chezmoi-managed). Never submits or messages anyone.
 export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
 ROOT="$HOME/Developer/public/career-ops"
@@ -30,17 +30,6 @@ node scan.mjs --since 2 --quiet | sed -n '/scan-summary/,/→ Run/p' | grep -E "
 echo "--- full ATS sweep"
 node scan-ats-full.mjs --since 1 --ats greenhouse,lever,ashby,workday --limit 500 2>&1 | tail -12
 [ "${pipestatus[1]}" -eq 0 ] || fail "full ATS sweep"
-
-echo "--- linkedin direct: connection status + messages (read-only, once a day)"
-# LinkedIn warned about automated traffic, so only the first run of each day touches it. The stamp is written before
-# the call so a failed check is not retried every hour; delete the stamp file to force a run.
-LI_STAMP="$ROOT/data/automations/linkedin-last-run"
-if [ "$(cat "$LI_STAMP" 2>/dev/null)" = "$(date +%F)" ]; then
-  echo "skipped: already checked today"
-else
-  date +%F > "$LI_STAMP"
-  node data/automations/linkedin-direct.mjs || fail "linkedin direct check (LinkedIn MCP; see output above)"
-fi
 
 echo "--- career mail (read-only)"
 # Zero-token pre-check through gws: only start the headless Claude run when the Career label has unseen threads.
@@ -86,20 +75,6 @@ echo "--- auto-skip: any Evaluated row scoring under 3.8 (whole tracker, not onl
 SK=$(node data/automations/skip-low-scores.mjs 2>&1); SK_RC=$?
 echo "$SK"
 [ $SK_RC -eq 0 ] || fail "auto-skip of Evaluated rows under 3.8 (see output above)"
-
-echo "--- scheduled connection requests (approved, sent by this job)"
-# Once a day, like the LinkedIn check above; the stamp is written first, delete it to force a run.
-SC_STAMP="$ROOT/data/automations/scheduled-connect-last-run"
-if [ "$(cat "$SC_STAMP" 2>/dev/null)" = "$(date +%F)" ]; then
-  SC="skipped: already ran today"; SC_RC=0
-else
-  date +%F > "$SC_STAMP"
-  SC=$(node data/automations/scheduled-connect.mjs 2>&1); SC_RC=$?
-fi
-echo "$SC"
-[ $SC_RC -eq 0 ] || fail "scheduled connection requests (see output above)"
-SC_MSG=$(echo "$SC" | grep -E '^(SENT|HOLD|CHECK):' | head -2 | tr -d '"\\' | paste -sd' ' -)
-[ -n "$SC_MSG" ] && osascript -e "display notification \"$SC_MSG\" with title \"career-ops LinkedIn Request\"" 2>/dev/null
 
 echo "--- contact follow-ups"
 FU=$(node data/automations/contact-followups.mjs) || fail "contact follow-ups"

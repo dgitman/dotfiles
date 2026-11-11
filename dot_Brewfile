@@ -2,6 +2,7 @@ tap "composio-temp/tap", "https://github.com/composio-temp/homebrew-tap.git", tr
 tap "composiohq/tap", "https://github.com/composio-temp/homebrew-tap.git", trusted: true
 tap "daptify14/tap"
 tap "integromat/tap"
+tap "kylenesium/tap", "https://github.com/KyleNesium/homebrew-tap"
 tap "openai/tools"
 tap "oven-sh/bun", trusted: true
 tap "pagecrawl/tap"
@@ -213,6 +214,8 @@ brew "pagecrawl/tap/pagecrawl-relay", trusted: true
 cask "1password-cli@beta"
 # Password manager
 cask "1password@beta"
+# Claude Code rate limits, context health, and token usage in your menu bar
+cask "kylenesium/tap/aibattery", trusted: true
 # Application uninstaller
 cask "appcleaner"
 # Menu bar icon organiser

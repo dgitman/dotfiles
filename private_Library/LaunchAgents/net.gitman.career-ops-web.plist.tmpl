@@ -5,7 +5,22 @@
   <key>ProgramArguments</key><array>
     <string>/bin/sh</string>
     <string>-c</string>
-    <string>npm ci &amp;&amp; npm run build &amp;&amp; exec npm start</string>
+    <string>
+# Install only when package-lock.json changed since the last npm ci.
+lock=$(shasum package-lock.json | cut -d' ' -f1)
+if [ "$(cat node_modules/.ci-stamp 2>/dev/null)" != "$lock" ]; then
+  rm -f .next/.build-stamp
+  npm ci || exit 1
+  echo "$lock" > node_modules/.ci-stamp
+fi
+# Build only when the repo commit or its uncommitted changes differ from the last build.
+src=$( { git rev-parse HEAD; git status --porcelain; git diff HEAD; } | shasum | cut -d' ' -f1)
+if [ "$(cat .next/.build-stamp 2>/dev/null)" != "$src" ]; then
+  npm run build || exit 1
+  echo "$src" > .next/.build-stamp
+fi
+exec npm start
+</string>
   </array>
   <key>WorkingDirectory</key><string>{{ .chezmoi.homeDir }}/Developer/public/career-ops/web</string>
   <key>RunAtLoad</key><true/>

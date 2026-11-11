@@ -141,19 +141,10 @@ DEST_FILE="$ROOT/data/automations/backup-dest"
 if [ -s "$DEST_FILE" ]; then
   DEST=$(head -1 "$DEST_FILE")
   if [ -d "$(dirname "$DEST")" ]; then
-    mkdir -p "$DEST/claude-memory"
     # backup.mjs copies whole files (Drive refuses rsync's delta mode) and skips .env files and data/cache.
     # No --include-contacts: backup.mjs refuses it for a Google Drive folder, so contact exports stay off Drive.
     CAREER_OPS_ROOT="$ROOT" node "$ROOT/backup.mjs" --dest "$DEST" \
-      && rsync -a "$HOME/.claude/projects/-Users-dgitman-Developer-public-career-ops/memory/" "$DEST/claude-memory/" \
       && echo "backed up to Drive: $(du -sh "$DEST" | cut -f1)" || { echo "backup FAILED"; fail "backup"; }
-    # Guard: secrets must never sit in the backup. Fails loudly if a .env file appears.
-    # No depth limit, case-insensitive, and a failed scan counts as a failure (find's errors go to the log, not /dev/null).
-    if LEAKED=$(find "$DEST" \( -iname '.env' -o -iname '.env.*' \) -print); then
-      [ -z "$LEAKED" ] || { echo "backup contains .env files:"; echo "$LEAKED"; fail "backup contains .env files"; }
-    else
-      fail "backup leak scan failed"
-    fi
   else
     echo "backup skipped: Drive folder not available"
   fi

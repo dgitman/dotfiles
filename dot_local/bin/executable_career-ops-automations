@@ -142,25 +142,9 @@ if [ -s "$DEST_FILE" ]; then
   DEST=$(head -1 "$DEST_FILE")
   if [ -d "$(dirname "$DEST")" ]; then
     mkdir -p "$DEST/claude-memory"
-    # Prefer the checkout's backup.mjs (career-ops PR #6603): whole-file copies, and it skips data/cache, which is ~890 MB of
-    # disposable HTTP cache the rsync below copies. Until a pull brings backup.mjs in, fall back to the rsync.
-    # TEMPORARY until PR #6603 merges: if the checkout has no backup.mjs yet, use the copy in the feat/backup-script worktree.
-    BACKUP_JS="$ROOT/backup.mjs"
-    [ -f "$BACKUP_JS" ] || BACKUP_JS="$HOME/Developer/public/career-ops-backup/backup.mjs"
-    if [ -f "$BACKUP_JS" ]; then
-      CAREER_OPS_ROOT="$ROOT" node "$BACKUP_JS" --dest "$DEST" --include-contacts
-    else
-      # -W copies whole files: rsync's delta mode maps the old copy on Google Drive, which Drive refuses with "mmap: Resource deadlock avoided".
-      rsync -aW --exclude '.git/' --exclude 'node_modules/' --exclude '.env' --exclude '.env.*' --exclude '.DS_Store' \
-        --exclude 'web/' --exclude 'dashboard/' \
-        --include 'cv.md' --include 'article-digest.md' --include 'portals.yml' --include 'voice-dna.md' \
-        --include 'config/' --include 'config/profile.yml' --include 'config/cv-facts.json' \
-        --include 'modes/' --include 'modes/_profile.md' --include 'modes/_brief.md' --include 'modes/_custom.md' \
-        --include 'data/***' --include 'reports/***' --include 'output/***' --include 'jds/***' \
-        --include 'interview-prep/***' --include 'documents/***' --include 'writing-samples/***' \
-        --include 'batch/' --include 'batch/tracker-additions/***' \
-        --exclude '*' "$ROOT/" "$DEST/"
-    fi \
+    # backup.mjs copies whole files (Drive refuses rsync's delta mode) and skips .env files and data/cache.
+    # No --include-contacts: backup.mjs refuses it for a Google Drive folder, so contact exports stay off Drive.
+    CAREER_OPS_ROOT="$ROOT" node "$ROOT/backup.mjs" --dest "$DEST" \
       && rsync -a "$HOME/.claude/projects/-Users-dgitman-Developer-public-career-ops/memory/" "$DEST/claude-memory/" \
       && echo "backed up to Drive: $(du -sh "$DEST" | cut -f1)" || { echo "backup FAILED"; fail "backup"; }
     # Guard: secrets must never sit in the backup. Fails loudly if a .env file appears.

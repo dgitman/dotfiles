@@ -2,7 +2,7 @@ tap "composio-temp/tap", "https://github.com/composio-temp/homebrew-tap.git", tr
 tap "composiohq/tap", "https://github.com/composio-temp/homebrew-tap.git", trusted: true
 tap "daptify14/tap"
 tap "integromat/tap"
-tap "jhlee0409/tap"
+tap "jhlee0409/tap", trusted: { casks: ["claude-code-history-viewer"] }
 tap "kylenesium/tap", "https://github.com/KyleNesium/homebrew-tap"
 tap "openai/tools"
 tap "oven-sh/bun", trusted: true
@@ -231,8 +231,6 @@ cask "daptify14/tap/chezit", trusted: true
 cask "claude"
 # Terminal-based AI coding assistant
 cask "claude-code"
-# Browse and analyze Claude Code conversation history offline
-cask "jhlee0409/tap/claude-code-history-viewer", trusted: true
 # Tool to remove unnecessary files and folders from disk
 cask "cleanmymac"
 # Command-line interface for CleanMyMac

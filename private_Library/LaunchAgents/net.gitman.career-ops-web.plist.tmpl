@@ -3,9 +3,9 @@
 <plist version="1.0"><dict>
   <key>Label</key><string>net.gitman.career-ops-web</string>
   <key>ProgramArguments</key><array>
-    <string>/opt/homebrew/bin/node</string>
-    <string>server.mjs</string>
-    <string>start</string>
+    <string>/bin/sh</string>
+    <string>-c</string>
+    <string>npm ci &amp;&amp; npm run build &amp;&amp; exec npm start</string>
   </array>
   <key>WorkingDirectory</key><string>{{ .chezmoi.homeDir }}/Developer/public/career-ops/web</string>
   <key>RunAtLoad</key><true/>

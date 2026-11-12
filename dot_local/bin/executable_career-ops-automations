@@ -155,7 +155,7 @@ if [ -s "$DEST_FILE" ]; then
   if [ -d "$(dirname "$DEST")" ]; then
     # backup.mjs copies whole files (Drive refuses rsync's delta mode) and skips .env files and data/cache.
     # No --include-contacts: backup.mjs refuses it for a Google Drive folder, so contact exports stay off Drive.
-    CAREER_OPS_ROOT="$ROOT" node "$ROOT/backup.mjs" --dest "$DEST" \
+    CAREER_OPS_ROOT="$ROOT" node "$ROOT/backup.mjs" --dest "$DEST" --include-claude-memory \
       && echo "backed up to Drive: $(du -sh "$DEST" | cut -f1)" || { echo "backup FAILED"; fail "backup"; }
   else
     echo "backup skipped: Drive folder not available"

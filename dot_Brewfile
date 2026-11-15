@@ -9,8 +9,6 @@ tap "oven-sh/bun", trusted: true
 tap "pagecrawl/tap"
 # Open-source formatting library for C++
 brew "fmt"
-# C/C++ and Java libraries for Unicode and globalization
-brew "icu4c@78"
 # Unicode conversion routines, fast
 brew "simdutf"
 # WHATWG-compliant and fast URL parser written in modern C++
@@ -109,6 +107,8 @@ brew "ffmpeg"
 brew "gemini-cli"
 # GitHub command-line tool
 brew "gh"
+# C/C++ and Java libraries for Unicode and globalization
+brew "icu4c@78"
 # Double-Array Trie Library
 brew "libdatrie"
 # Distributed revision control system

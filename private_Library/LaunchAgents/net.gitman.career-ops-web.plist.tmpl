@@ -10,7 +10,16 @@
 lock=$(shasum package-lock.json | cut -d' ' -f1)
 if [ "$(cat node_modules/.ci-stamp 2>/dev/null)" != "$lock" ]; then
   rm -f .next/.build-stamp
-  npm ci || exit 1
+  # npm ci can fail with ENOTEMPTY when something (Spotlight, another install) touches
+  # node_modules mid-delete. Wipe it and retry before giving up.
+  ok=0
+  for attempt in 1 2 3; do
+    if npm ci; then ok=1; break; fi
+    echo "npm ci failed (attempt $attempt); wiping node_modules and retrying"
+    rm -rf node_modules
+    sleep 5
+  done
+  [ "$ok" = 1 ] || exit 1
   echo "$lock" > node_modules/.ci-stamp
 fi
 # Build only when the repo commit or its uncommitted changes differ from the last build.

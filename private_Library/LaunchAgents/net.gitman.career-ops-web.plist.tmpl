@@ -25,7 +25,8 @@ fi
 # Build only when the repo commit or its uncommitted changes differ from the last build.
 src=$( { git rev-parse HEAD; git status --porcelain; git diff HEAD; } | shasum | cut -d' ' -f1)
 if [ "$(cat .next/.build-stamp 2>/dev/null)" != "$src" ]; then
-  npm run build || exit 1
+  # A failed build usually means a corrupt install; drop the stamp so the next launch reinstalls.
+  npm run build || { rm -f node_modules/.ci-stamp; exit 1; }
   echo "$src" > .next/.build-stamp
 fi
 exec npm start

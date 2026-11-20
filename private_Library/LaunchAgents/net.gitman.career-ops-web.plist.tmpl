@@ -6,6 +6,23 @@
     <string>/bin/sh</string>
     <string>-c</string>
     <string>
+# Single-flight guard: two overlapping installs corrupt node_modules (ENOTEMPTY).
+# mkdir is atomic; the owner pid lets a later run steal a lock left by a dead process.
+guard=/tmp/career-ops-web-install.lock
+child=
+cleanup() { [ -n "$child" ] &amp;&amp; kill "$child" 2>/dev/null; rm -rf "$guard"; }
+for i in $(seq 1 200); do
+  if mkdir "$guard" 2>/dev/null; then echo $$ > "$guard/pid"; break; fi
+  owner=$(cat "$guard/pid" 2>/dev/null)
+  if [ -n "$owner" ] &amp;&amp; ! kill -0 "$owner" 2>/dev/null; then rm -rf "$guard"; continue; fi
+  echo "another install/build holds $guard (pid $owner); waiting"
+  sleep 3
+done
+[ "$(cat "$guard/pid" 2>/dev/null)" = "$$" ] || { echo "could not take $guard"; exit 1; }
+trap 'cleanup; exit 143' TERM INT
+trap cleanup EXIT
+# Run a command in the background and wait, so a TERM can interrupt it and kill the child.
+run() { "$@" &amp; child=$!; wait $child; rc=$?; child=; return $rc; }
 # Install only when package-lock.json changed since the last npm ci.
 lock=$(shasum package-lock.json | cut -d' ' -f1)
 if [ "$(cat node_modules/.ci-stamp 2>/dev/null)" != "$lock" ]; then
@@ -14,7 +31,7 @@ if [ "$(cat node_modules/.ci-stamp 2>/dev/null)" != "$lock" ]; then
   # node_modules mid-delete. Wipe it and retry before giving up.
   ok=0
   for attempt in 1 2 3; do
-    if npm ci; then ok=1; break; fi
+    if run npm ci; then ok=1; break; fi
     echo "npm ci failed (attempt $attempt); wiping node_modules and retrying"
     rm -rf node_modules
     sleep 5
@@ -26,9 +43,11 @@ fi
 src=$( { git rev-parse HEAD; git status --porcelain; git diff HEAD; } | shasum | cut -d' ' -f1)
 if [ "$(cat .next/.build-stamp 2>/dev/null)" != "$src" ]; then
   # A failed build usually means a corrupt install; drop the stamp so the next launch reinstalls.
-  npm run build || { rm -f node_modules/.ci-stamp; exit 1; }
+  run npm run build || { rm -f node_modules/.ci-stamp; exit 1; }
   echo "$src" > .next/.build-stamp
 fi
+trap - EXIT TERM INT
+rm -rf "$guard"
 exec npm start
 </string>
   </array>

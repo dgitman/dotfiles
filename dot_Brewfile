@@ -85,12 +85,6 @@ brew "uvwasi"
 brew "node"
 # CLI tool for Cloudflare Workers
 brew "cloudflare-wrangler"
-# HTTP/3 library written in C
-brew "libnghttp3"
-# IETF QUIC protocol implementation
-brew "libngtcp2"
-# C library implementing the SSH2 protocol
-brew "libssh2"
 # AV1 decoder targeted to be small and fast
 brew "dav1d"
 # Select default apps for documents and URL schemes on macOS
@@ -103,8 +97,6 @@ brew "fdupes"
 brew "sdl2-compat"
 # Play, record, convert, and stream select audio and video codecs
 brew "ffmpeg"
-# Interact with Google Gemini AI models from the command-line
-brew "gemini-cli"
 # GitHub command-line tool
 brew "gh"
 # C/C++ and Java libraries for Unicode and globalization
@@ -145,6 +137,12 @@ brew "oniguruma"
 brew "jq"
 # Library for large linear classification
 brew "liblinear"
+# HTTP/3 library written in C
+brew "libnghttp3"
+# IETF QUIC protocol implementation
+brew "libngtcp2"
+# C library implementing the SSH2 protocol
+brew "libssh2"
 # YAML Parser
 brew "libyaml"
 # Powerful, lightweight programming language
@@ -239,8 +237,6 @@ cask "cleanmymac-cli"
 cask "coderabbit"
 # OpenAI's coding agent that runs in your terminal
 cask "codex"
-# Command-line agent for Cursor
-cask "cursor-cli"
 # Voice and text chat software
 cask "discord"
 # Client for the Dropbox cloud storage service
